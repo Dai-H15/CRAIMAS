@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Companies, About, Idea, Motivation, D_Company, Adoption
+from .models import Companies, About, Idea, Motivation, D_Company, Adoption, RegistSets
 # Register your models here.
 
 admin.site.register(Companies)
@@ -8,3 +8,4 @@ admin.site.register(Idea)
 admin.site.register(Motivation)
 admin.site.register(D_Company)
 admin.site.register(Adoption)
+admin.site.register(RegistSets)

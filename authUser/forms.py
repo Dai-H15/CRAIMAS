@@ -9,6 +9,7 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = [CustomUser.USERNAME_FIELD] + CustomUser.REQUIRED_FIELDS + ['password1', 'password2']
+        labels = {"y_graduation": "卒業(見込)年度"}
 
 
 class LoginForm(AuthenticationForm):

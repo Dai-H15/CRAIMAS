@@ -8,7 +8,7 @@ from django.db.models.signals import post_save
 
 
 class CustomUser(AbstractUser):
-    c_id = models.CharField(max_length=100)
+    U_ID = models.CharField(max_length=100)
     y_graduation = models.IntegerField()
-    
+    REQUIRED_FIELDS = ["y_graduation"]
 

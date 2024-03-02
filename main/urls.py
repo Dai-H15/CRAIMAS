@@ -8,4 +8,5 @@ urlpatterns = [
     path("show/", views.show_data, name="show"),
     path("mypage/", views.mypage, name="mypage"),
     path("view_my_post/<str:id>", views.view_my_post, name="view_my_post"),
+    path("delete_posts/<str:id>", views.delete_posts, name="delete_posts")
 ]

@@ -19,6 +19,25 @@ def collect_regsets(user):
     res = RegistSets.objects.filter(by_U_ID=user.U_ID)
     return res
 
+
+def getRegistSets(RegistID, contexts):
+    post = RegistSets.objects.get(RegistID=RegistID)
+    C_Form = CompaniesForm(instance=post.company)
+    A_Form = AboutForm(instance=post.about)
+    I_Form = IdeaForm(instance=post.idea)
+    M_Form = MotivationForm(instance=post.motivation)
+    D_Form = D_CompanyForm(instance=post.d_company)
+    AD_Form = AdoptionForm(instance=post.adoption)
+    contexts["post"] = post
+    contexts["C_Form"] = C_Form
+    contexts["A_Form"] = A_Form
+    contexts["I_Form"] = I_Form
+    contexts["M_Form"] = M_Form
+    contexts["D_Form"] = D_Form
+    contexts["AD_Form"] = AD_Form
+    return contexts
+
+
 # Views
 def index(request):
     contexts = collect_regnum()
@@ -123,21 +142,16 @@ def mypage(request):
 def view_my_post(request, id):
     contexts = {}
     try:
-        post = RegistSets.objects.get(RegistID=id)
-        C_Form = CompaniesForm(instance=post.company)
-        A_Form = AboutForm(instance=post.about)
-        I_Form = IdeaForm(instance=post.idea)
-        M_Form = MotivationForm(instance=post.motivation)
-        D_Form = D_CompanyForm(instance=post.d_company)
-        AD_Form = AdoptionForm(instance=post.adoption)
-        print(C_Form)
-        contexts["post"] = post
-        contexts["C_Form"] = C_Form
-        contexts["A_Form"] = A_Form
-        contexts["I_Form"] = I_Form
-        contexts["M_Form"] = M_Form
-        contexts["D_Form"] = D_Form
-        contexts["AD_Form"] = AD_Form
+        contexts = getRegistSets(id, contexts)
     except RegistSets.DoesNotExist:
         return redirect(to="mypage")
     return render(request, "main/view_my_post.html", contexts)
+
+
+def delete_posts(request, id):
+    contexts = getRegistSets(id, {})
+    if request.method == "POST":
+        post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
+        post.delete()
+        return redirect(to="mypage")
+    return render(request, "main/delete.html", contexts)

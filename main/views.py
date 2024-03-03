@@ -162,6 +162,7 @@ def delete_posts(request, id):
         if "del_C_Form" in request.POST:
             post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
             post.delete()
+            RegistSets.objects.get(RegistID=id).delete()
         else:
             post = RegistSets.objects.get(RegistID=id)
             print(request.POST)

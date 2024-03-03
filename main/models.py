@@ -122,4 +122,7 @@ class RegistSets(models.Model):
     regist_publish = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.company.name
+        if self.company is not None:
+            return self.company.name
+        else:
+            return 'No Company'

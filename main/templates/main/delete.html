@@ -14,41 +14,49 @@
             {% csrf_token %}
             <div class = "container">
 
-            <div class = "row text-center border">
-                <h5>企業情報</h5>
-                <table class = "col">
-                    {% for field in C_Form %}
-                        <tr>
-                            <td>{{ field.label }}:</td>
-                            <td>{{ field.value }}</td>
-                        </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            <div class ="row border mt-4 px-2">
+            <div class = "row text-center border mt-4 px-2">
                 <div class = "col border-end">
-                <h5>事業内容</h5>
-                <table>
+                    <h5>企業情報</h5>
+                    <table class = "col mx-auto">
+                        <input class = "btn-check" type="checkbox" name="del_C_Form" id="del_C_Form" autocomplete="off">
+                        <label class = "btn btn-outline-warning" for="del_C_Form" >削除(事業内容等すべての情報も削除されます)</label>
+                        {% for field in C_Form %}
+                            <tr>
+                                <td>{{ field.label }}:</td>
+                                <td>{{ field.value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            <div class ="row text-center border mt-4 px-2">
+                <div class = "col border-end">
+                <h5>事業内容</h5>{% if A_Form %}
+                <table class = "col  mx-auto">
+                    <input class = "btn-check" type="checkbox" name="del_A_Form" id="del_A_Form" autocomplete="off">
+                    <label class = "btn btn-outline-warning" for="del_A_Form" >削除</label>
                     {% for field in A_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
                             <td>{{ field.value }}</td>
                         </tr>
                     {% endfor %}
-                </table>
+                </table>{% endif %}
             </div>
             <div class = "col">
                 <div class = "row ">
                     <div class = "col ">
-                    <h5>経営理念等</h5>
-                        <table>
+                    <h5>経営理念等</h5>{% if I_Form %}
+                    <input class = "btn-check" type="checkbox" name="del_I_Form" id="del_I_Form" autocomplete="off">
+                    <label class = "btn btn-outline-warning" for="del_I_Form" >削除</label>
+                        <table class = "col  mx-auto">
                             {% for field in I_Form %}
                                 <tr>
                                     <td>{{ field.label }}:</td>
                                     <td>{{ field.value }}</td>
                                 </tr>
                             {% endfor %}
-                        </table>
+                        </table>{% endif %}
                     </div>
                 </div>
             </div>
@@ -56,36 +64,47 @@
         </div>
         <div class ="row border mt-4 ">
             <h4 class = " text-center m-3">志望動機・企業情報</h4>
-            <div class = "col border">
-            <h5>志望動機シート</h5>
-            <table>{% for field in M_Form %}
+            <div class = "col text-center border">
+            <h5>志望動機シート</h5>{% if M_Form %}
+            <input class = "btn-check" type="checkbox" name="del_M_Form" id="del_M_Form" autocomplete="off">
+                    <label class = "btn btn-outline-warning" for="del_M_Form" >削除</label>
+            <table class = "col  mx-auto">
+                {% for field in M_Form %}
                 <tr>
                     <td>{{ field.label }}:</td>
                     <td>{{ field.value }}</td>
                 </tr>
-            {% endfor %}</table>
+            {% endfor %}</table>{% endif %}
         </div>
         <div class = "col">
             <div class = "row ">
-                <div class = "col border-top">
-                <h5>企業データ</h5>
-                    <table>{% for field in D_Form %}
+                <div class = "col text-center border-top">
+                <h5>企業データ</h5>{% if D_Form %}
+                <input class = "btn-check" type="checkbox" name="del_D_Form" id="del_D_Form" autocomplete="off">
+                    <label class = "btn btn-outline-warning" for="del_D_Form" >削除</label>
+                    <table class = "col  mx-auto">
+                        {% for field in D_Form %}
                         <tr>
                             <td>{{ field.label }}: </td>
                             <td>{{ field.value }}</td>
                         </tr>
-                    {% endfor %}</table>
+                    {% endfor %}</table>{% endif %}
                 </div>
             </div>
             <div class = "row">
-                <div class  ="col border-top" >
-                    <h5>採用情報</h5>
-                    <table>{% for field in AD_Form %}
+                <div class  ="col text-center border-top" >
+                    <h5>採用情報</h5>{% if AD_Form %}
+                    
+                    <input class = "btn-check" type="checkbox" name="del_AD_Form" id="del_AD_Form" autocomplete="off">
+                    <label class = "btn btn-outline-warning" for="del_AD_Form" >削除</label>
+                    
+                    <table class = "col  mx-auto">
+                        {% for field in AD_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
                             <td>{{ field.value }}</td>
                         </tr>
-                    {% endfor %}</table>
+                    {% endfor %}</table>{% endif %}
                 </div>
             </div>
             <div class = "row border-top text-center">

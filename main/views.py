@@ -10,7 +10,7 @@ import secrets
 def collect_regnum():
     res = {
         "num_c": Companies.objects.count(),
-        "num_a": About.objects.count(),
+        "num_a": RegistSets.objects.count(),
         }
     return res
 
@@ -22,24 +22,33 @@ def collect_regsets(user):
 
 def getRegistSets(RegistID, contexts):
     post = RegistSets.objects.get(RegistID=RegistID)
-    C_Form = CompaniesForm(instance=post.company)
-    A_Form = AboutForm(instance=post.about)
-    I_Form = IdeaForm(instance=post.idea)
-    M_Form = MotivationForm(instance=post.motivation)
-    D_Form = D_CompanyForm(instance=post.d_company)
-    AD_Form = AdoptionForm(instance=post.adoption)
     contexts["post"] = post
-    contexts["C_Form"] = C_Form
-    contexts["A_Form"] = A_Form
-    contexts["I_Form"] = I_Form
-    contexts["M_Form"] = M_Form
-    contexts["D_Form"] = D_Form
-    contexts["AD_Form"] = AD_Form
+    if post.company is not None:
+        C_Form = CompaniesForm(instance=post.company)
+        contexts["C_Form"] = C_Form
+    if post.about is not None:
+        A_Form = AboutForm(instance=post.about)
+        contexts["A_Form"] = A_Form
+    if post.idea is not None:
+        I_Form = IdeaForm(instance=post.idea)
+        contexts["I_Form"] = I_Form
+    if post.motivation is not None:
+        M_Form = MotivationForm(instance=post.motivation)
+        contexts["M_Form"] = M_Form
+    if post.d_company is not None:
+        D_Form = D_CompanyForm(instance=post.d_company)
+        contexts["D_Form"] = D_Form
+    if post.adoption is not None:
+        AD_Form = AdoptionForm(instance=post.adoption)
+        contexts["AD_Form"] = AD_Form
+
     return contexts
 
 
 # Views
 def index(request):
+    if "CampanyID" in request.session:
+        del request.session["CampanyID"]
     contexts = collect_regnum()
     return render(request, "main/index.html", contexts)
 
@@ -115,7 +124,6 @@ def regist_all(request):
     return render(request, "main/regist_all.html", contexts)
 
 
-
 def show_data(request):
     companies = Companies.objects.all()
     contexts = {
@@ -151,7 +159,179 @@ def view_my_post(request, id):
 def delete_posts(request, id):
     contexts = getRegistSets(id, {})
     if request.method == "POST":
-        post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
-        post.delete()
+        if "del_C_Form" in request.POST:
+            post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
+            post.delete()
+        else:
+            post = RegistSets.objects.get(RegistID=id)
+            print(request.POST)
+            if "del_A_Form" in request.POST:
+                print("del_A_Form")
+                post.about.delete()
+            if "del_I_Form" in request.POST:
+                print("del_I_Form")
+                post.idea.delete()
+            if "del_M_Form" in request.POST:
+                print("del_M_Form")
+                post.motivation.delete()
+            if "del_D_Form" in request.POST:
+                print("del_D_Form")
+                post.d_company.delete()
+            if "del_AD_Form" in request.POST:
+                print("del_AD_Form")
+                post.adoption.delete()
         return redirect(to="mypage")
     return render(request, "main/delete.html", contexts)
+
+
+def regist_sets(request):
+    contexts = collect_regnum()
+    return render(request, "main/sets/main.html", contexts)
+
+
+def create_company(request):
+    contexts = collect_regnum()
+    if request.method == "POST":
+        C_Form = CompaniesForm(request.POST)
+        if C_Form.is_valid():
+            CompanyID = secrets.token_hex(64)
+            n_CForm = C_Form.save(commit=False)
+            n_CForm.CompanyID = CompanyID
+            n_CForm.save()
+            Temp_regist = RegistSets.objects.create(RegistID=secrets.token_hex(64), by_U_ID=CustomUser.objects.get(username=request.user), company=Companies.objects.get(CompanyID=CompanyID))
+            request.session["RegistID"] = Temp_regist.RegistID
+            print("new company created.")
+            return redirect("create_about")
+    C_Form = CompaniesForm()
+    contexts["C_Form"] = C_Form
+    return render(request, "main/sets/create_company.html", contexts)
+
+
+def import_company(request):
+    contexts = collect_regnum()
+    if request.method == "POST":
+        if "import" in request.POST:
+            copy_company = Companies.objects.get(CompanyID=request.POST["ID"])
+            CompanyID = secrets.token_hex(64)
+            copy_company.CompanyID = CompanyID
+            copy_company.save()
+            Temp_regist = RegistSets.objects.create(RegistID=secrets.token_hex(64), by_U_ID=CustomUser.objects.get(username=request.user), company=Companies.objects.get(CompanyID=CompanyID))
+            request.session["RegistID"] = Temp_regist.RegistID
+            return redirect("create_about")
+    companies = Companies.objects.all()
+    contexts["posts"] = companies
+    return render(request, "main/sets/import_company.html", contexts)
+
+
+def create_about(request):
+    contexts = collect_regnum()
+    A_Form = AboutForm()
+    contexts["A_Form"] = A_Form
+    contexts["C_Form"] = CompaniesForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).company)
+    if request.method == "POST":
+        A_Form = AboutForm(request.POST)
+        if A_Form.is_valid():
+            n_AForm = A_Form.save(commit=False)
+            n_AForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            AboutID = secrets.token_hex(64)
+            n_AForm.AboutID = AboutID
+            n_AForm.save()
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+            Temp_regist.about = About.objects.get(AboutID=AboutID)
+            Temp_regist.save()
+            return redirect("create_idea")
+
+    return render(request, "main/sets/create_about.html", contexts)
+
+
+def create_idea(request):
+    contexts = collect_regnum()
+    contexts["A_Form"] = AboutForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).about)
+    I_Form = IdeaForm()
+    contexts["I_Form"] = I_Form
+    if request.method == "POST":
+        I_Form = IdeaForm(request.POST)
+        if I_Form.is_valid():
+            n_IForm = I_Form.save(commit=False)
+            n_IForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            IdeaID = secrets.token_hex(64)
+            n_IForm.IdeaID = IdeaID
+            n_IForm.save()
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+            Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID)
+            Temp_regist.save()
+            return redirect("create_motivation")
+    return render(request, "main/sets/create_idea.html", contexts)
+
+
+def create_motivation(request):
+    contexts = collect_regnum()
+    contexts["I_Form"] = IdeaForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).idea)
+    M_Form = MotivationForm()
+    contexts["M_Form"] = M_Form
+    if request.method == "POST":
+        M_Form = MotivationForm(request.POST)
+        if M_Form.is_valid():
+            n_MForm = M_Form.save(commit=False)
+            n_MForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            MotivationID = secrets.token_hex(64)
+            n_MForm.MotivationID = MotivationID
+            n_MForm.save()
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+            Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID)
+            Temp_regist.save()
+            return redirect("create_d_company")
+    return render(request, "main/sets/create_motivation.html", contexts)
+
+
+def create_d_company(request):
+    contexts = collect_regnum()
+    contexts["M_Form"] = MotivationForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).motivation)
+    D_Form = D_CompanyForm()
+    contexts["D_Form"] = D_Form
+    if request.method == "POST":
+        D_Form = D_CompanyForm(request.POST)
+        if D_Form.is_valid():
+            n_DForm = D_Form.save(commit=False)
+            n_DForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            D_CompanyID = secrets.token_hex(64)
+            n_DForm.D_CompanyID = D_CompanyID
+            n_DForm.save()
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+            Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
+            Temp_regist.save()
+            return redirect("create_adoption")
+    return render(request, "main/sets/create_d_company.html", contexts)
+
+
+def create_adoption(request):
+    contexts = collect_regnum()
+    contexts["D_Form"] = D_CompanyForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).d_company)
+    AD_Form = AdoptionForm()
+    contexts["AD_Form"] = AD_Form
+    if request.method == "POST":
+        AD_Form = AdoptionForm(request.POST)
+        if AD_Form.is_valid():
+            n_ADForm = AD_Form.save(commit=False)
+            n_ADForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            AdoptionID = secrets.token_hex(64)
+            n_ADForm.AdoptionID = AdoptionID
+            n_ADForm.save()
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+            Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
+            Temp_regist.save()
+            return redirect("create_complete")
+    return render(request, "main/sets/create_adoption.html", contexts)
+
+
+def create_complete(request):
+    contexts = collect_regnum()
+    regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+    del request.session["RegistID"]
+    contexts["C_Form"] = CompaniesForm(instance=regist.company)
+    contexts["A_Form"] = AboutForm(instance=regist.about)
+    contexts["I_Form"] = IdeaForm(instance=regist.idea)
+    contexts["M_Form"] = MotivationForm(instance=regist.motivation)
+    contexts["D_Form"] = D_CompanyForm(instance=regist.d_company)
+    contexts["AD_Form"] = AdoptionForm(instance=regist.adoption)
+    return render(request, "main/sets/create_complete.html", contexts)

@@ -24,48 +24,31 @@
         </div>
         <div class= "row">
             <div class = "container">
-                <div class = "row"><!---ユーザー情報一覧-->
-                    <table class = "col text-center border m-3">
-                        <tr>
-                        <th>ユーザー名</th>
-                        <th>卒業年度</th>
-                        <th>投稿数</th>
-                        </tr>
-                        <tr>
-                            <td>{{user}}</td>
-                            <td>{{user.y_graduation}}</td>
-                            <td>{{n_regist}}件</td>
-                        </tr>
-                    </table>
-                </div>
                 <div class = "row"><!--投稿一覧-->
-                    <h3>投稿一覧</h3>
+                    <h3>企業一覧</h3>
+                    
                     <table class = "col m-3 border ">
                         <tr>
-                            <th>投稿日時</th>
                             <th>企業名</th>
                             <th>所属業界</th>
-                            <th>採用職種</th>
                             <th>担当者名</th>
                             <th>募集年度</th>
-                            <th>詳細・削除</th>
+                            <th>引用</th>
                         </tr>
                         {% for post in posts %}
                         <tr>
-                            <td>{{post.created}}</td>
-                            <td>{{post.company}}</td>
-                            <td>{{post.company.industry}}</td>
-                            <td>{{post.adoption.occupation}}</td>
-                            <td>{{post.company.contact}}</td>
-                            <td>{{post.adoption.a_year}}</td>
-                            <td><button  class = "btn btn-success" onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</button><a class = "btn btn-info  m-2"href="">編集</a><a class = "btn btn-danger" href="{% url "delete_posts" post.RegistID %}">削除</a></td>
+                            <td>{{post.name}}</td>
+                            <td>{{post.industry}}</td>
+                            <td>{{post.contact}}</td>
+                            <td>{{post.a_year}}</td>
+                            <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"><button class = "btn btn-info" type="submit">引用</button></form></td>
                         </tr>
                         {% endfor %}
                     </table>
                 </div>
                 
             </div>
-            <div class = "text-center"><a href="{% url "index" %}"><button class = "btn btn-primary">ホームに戻る</button></a></div>
+            
 
         </div>
     </div>

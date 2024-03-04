@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect,HttpResponse
+from django.shortcuts import render, redirect, HttpResponse
 from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption
 from authUser.models import CustomUser
 from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm
@@ -121,6 +121,7 @@ def regist_all(request):
 
     AD_Form = AdoptionForm()
     contexts["AD_Form"] = AD_Form
+    
     return render(request, "main/regist_all.html", contexts)
 
 
@@ -160,9 +161,12 @@ def delete_posts(request, id):
     contexts = getRegistSets(id, {})
     if request.method == "POST":
         if "del_C_Form" in request.POST:
-            post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
-            post.delete()
-            RegistSets.objects.get(RegistID=id).delete()
+            try:
+                post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
+                post.delete()
+                RegistSets.objects.get(RegistID=id).delete()
+            except:
+                RegistSets.objects.get(RegistID=id).delete()
         else:
             post = RegistSets.objects.get(RegistID=id)
             print(request.POST)
@@ -336,3 +340,87 @@ def create_complete(request):
     contexts["D_Form"] = D_CompanyForm(instance=regist.d_company)
     contexts["AD_Form"] = AdoptionForm(instance=regist.adoption)
     return render(request, "main/sets/create_complete.html", contexts)
+
+
+def edit_posts(request, id):
+    contexts = getRegistSets(id, collect_regnum())
+    NotFound = []
+    if "A_Form" not in contexts:
+        contexts["A_Form"] = AboutForm()
+        NotFound.append("A_Form")
+    if "I_Form" not in contexts:
+        contexts["I_Form"] = IdeaForm()
+        NotFound.append("I_Form")
+    if "M_Form" not in contexts:
+        contexts["M_Form"] = MotivationForm()
+        NotFound.append("M_Form")
+    if "D_Form" not in contexts:
+        contexts["D_Form"] = D_CompanyForm()
+        NotFound.append("D_Form")
+    if "AD_Form" not in contexts:
+        contexts["AD_Form"] = AdoptionForm()
+        NotFound.append("AD_Form")
+    request.session["NotFound"] = NotFound
+    if request.method == "POST":
+        Temp_regist = RegistSets.objects.get(RegistID=id)
+        if "A_Form" in request.session["NotFound"]:
+            AboutID = secrets.token_hex(64)
+            A_Form = AboutForm(request.POST)
+        else:
+            A_Form = AboutForm(request.POST, instance=Temp_regist.about)
+            AboutID = Temp_regist.about.AboutID
+        if "I_Form" in request.session["NotFound"]:
+            I_Form = IdeaForm(request.POST)
+            IdeaID = secrets.token_hex(64)
+        else:
+            I_Form = IdeaForm(request.POST, instance=Temp_regist.idea)
+            IdeaID = Temp_regist.idea.IdeaID
+        if "M_Form" in request.session["NotFound"]:
+            MotivationID = secrets.token_hex(64)
+            M_Form = MotivationForm(request.POST)
+        else:
+            M_Form = MotivationForm(request.POST, instance=Temp_regist.motivation)
+            MotivationID = Temp_regist.motivation.MotivationID
+        if "D_Form" in request.session["NotFound"]:
+            D_CompanyID = secrets.token_hex(64)
+            D_Form = D_CompanyForm(request.POST)
+        else:
+            D_Form = D_CompanyForm(request.POST, instance=Temp_regist.d_company)
+            D_CompanyID = Temp_regist.d_company.D_CompanyID
+        if "AD_Form" in request.session["NotFound"]:
+            AdoptionID = secrets.token_hex(64)
+            AD_Form = AdoptionForm(request.POST)
+        else:
+            AD_Form = AdoptionForm(request.POST, instance=Temp_regist.adoption)
+            AdoptionID = Temp_regist.adoption.AdoptionID
+        if A_Form.is_valid() and I_Form.is_valid() and M_Form.is_valid() and D_Form.is_valid() and AD_Form.is_valid():
+            n_AForm = A_Form.save(commit=False)
+            n_IForm = I_Form.save(commit=False)
+            n_MForm = M_Form.save(commit=False)
+            n_DForm = D_Form.save(commit=False)
+            n_ADForm = AD_Form.save(commit=False)
+
+            n_AForm.AboutID = AboutID
+            n_IForm.IdeaID = IdeaID
+            n_MForm.MotivationID = MotivationID
+            n_DForm.D_CompanyID = D_CompanyID
+            n_ADForm.AdoptionID = AdoptionID
+            n_AForm.company_name = Temp_regist.company
+            n_IForm.company_name = Temp_regist.company
+            n_MForm.company_name = Temp_regist.company
+            n_DForm.company_name = Temp_regist.company
+            n_ADForm.company_name = Temp_regist.company
+            n_AForm.save()
+            n_IForm.save()
+            n_MForm.save()
+            n_DForm.save()
+            n_ADForm.save()
+            Temp_regist.about = About.objects.get(AboutID=AboutID)
+            Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID)
+            Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID)
+            Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
+            Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
+            Temp_regist.save()
+            return redirect("mypage")
+
+    return render(request, "main/edit_posts.html", contexts)

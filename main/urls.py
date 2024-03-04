@@ -9,6 +9,7 @@ urlpatterns = [
     path("mypage/", views.mypage, name="mypage"),
     path("view_my_post/<str:id>", views.view_my_post, name="view_my_post"),
     path("delete_posts/<str:id>", views.delete_posts, name="delete_posts"),
+    path("edit_posts/<str:id>", views.edit_posts, name="edit_posts"),
     path("regist_base/regist_sets/", views.regist_sets, name="regist_sets"),
     path("regist_base/regist_sets/create_company/", views.create_company, name="create_company"),
     path("regist_base/regist_sets/import_company/", views.import_company, name="import_company"),

@@ -58,7 +58,7 @@
                             <td>{{post.adoption.occupation}}</td>
                             <td>{{post.company.contact}}</td>
                             <td>{{post.adoption.a_year}}</td>
-                            <td><button  class = "btn btn-success" onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</button><a class = "btn btn-info  m-2"href="">編集</a><a class = "btn btn-danger" href="{% url "delete_posts" post.RegistID %}">削除</a></td>
+                            <td><button  class = "btn btn-success" onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</button><a class = "btn btn-info  m-2"href="{% url "edit_posts" post.RegistID %}">編集</a><a class = "btn btn-danger" href="{% url "delete_posts" post.RegistID %}">削除</a></td>
                         </tr>
                         {% endfor %}
                     </table>

@@ -4,6 +4,8 @@ from authUser.models import CustomUser
 from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum
 import secrets, requests
 from urllib.parse import quote
+from django.contrib.auth.decorators import login_required
+
 
 # Functions
 
@@ -60,6 +62,7 @@ def index(request):
     return render(request, "main/index.html", contexts)
 
 
+@login_required
 def regist_base(request):
     contexts = collect_regnum()
     return render(request, "main/regist_base.html", contexts)
@@ -145,18 +148,16 @@ def show_data(request):
     return render(request, "main/show.html", contexts)
 
 
+@login_required
 def mypage(request):
     contexts = collect_regnum()
-    if request.user.is_authenticated:
-        user = CustomUser.objects.get(username=request.user)
-        contexts["user"] = user
-        n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
-        contexts["n_regist"] = n_regist
-        contexts["regsets"] = collect_regsets(user)
-        posts = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
-        contexts["posts"] = posts
-    else:
-        return redirect(to="login")
+    user = CustomUser.objects.get(username=request.user)
+    contexts["user"] = user
+    n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
+    contexts["n_regist"] = n_regist
+    contexts["regsets"] = collect_regsets(user)
+    posts = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
+    contexts["posts"] = posts
     return render(request, "main/mypage.html", contexts)
 
 

@@ -1,8 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import secrets
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
 
 # Create your models here.
 
@@ -10,5 +7,5 @@ from django.db.models.signals import post_save
 class CustomUser(AbstractUser):
     U_ID = models.CharField(max_length=100)
     y_graduation = models.IntegerField()
-    REQUIRED_FIELDS = ["y_graduation"]
-
+    gBIZINFO_key = models.CharField(max_length=100)
+    REQUIRED_FIELDS = ["y_graduation", "gBIZINFO_key"]

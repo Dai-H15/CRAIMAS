@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption
 from authUser.models import CustomUser
-from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm
-import secrets
+from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum
+import secrets, requests
+from urllib.parse import quote
 
 # Functions
 
@@ -47,8 +48,14 @@ def getRegistSets(RegistID, contexts):
 
 # Views
 def index(request):
-    if "CampanyID" in request.session:
-        del request.session["CampanyID"]
+    if "CompanyID" in request.session:
+        del request.session["CompanyID"]
+    if "RegistID" in request.session:
+        del request.session["RegistID"]
+    if "NotFound" in request.session:
+        del request.session["NotFound"]
+    if "forms" in request.session:
+        del request.session["forms"]
     contexts = collect_regnum()
     return render(request, "main/index.html", contexts)
 
@@ -104,10 +111,19 @@ def regist_all(request):
             n_RegistSets.save()
             contexts["C_Data"] = C_Data
             return render(request, "main/regist_done.html", contexts)
-    C_Form = CompaniesForm()
+    if "forms" in request.session:
+        C_Form = CompaniesForm(request.session["forms"]["C_Form"])
+        A_Form = AboutForm(request.session["forms"]["A_Form"])
+        D_Form = D_CompanyForm(request.session["forms"]["D_Form"])
+        del request.session["forms"]
+    else:
+        C_Form = CompaniesForm()
+        A_Form = AboutForm()
+        D_Form = D_CompanyForm()
     contexts["C_Form"] = C_Form
 
-    A_Form = AboutForm()
+    contexts["D_Form"] = D_Form
+
     contexts["A_Form"] = A_Form
 
     I_Form = IdeaForm()
@@ -116,12 +132,8 @@ def regist_all(request):
     M_Form = MotivationForm()
     contexts["M_Form"] = M_Form
 
-    D_Form = D_CompanyForm()
-    contexts["D_Form"] = D_Form
-
     AD_Form = AdoptionForm()
     contexts["AD_Form"] = AD_Form
-    
     return render(request, "main/regist_all.html", contexts)
 
 
@@ -160,16 +172,28 @@ def view_my_post(request, id):
 def delete_posts(request, id):
     contexts = getRegistSets(id, {})
     if request.method == "POST":
-        if "del_C_Form" in request.POST:
+        if "del_R_Set" in request.POST:
+            post = RegistSets.objects.get(RegistID=id)
+            if post.about is not None:
+                post.about.delete()
+            if post.idea is not None:
+                post.idea.delete()
+            if post.motivation is not None:
+                post.motivation.delete()
+            if post.d_company is not None:
+                post.d_company.delete()
+            if post.adoption is not None:
+                post.adoption.delete()
+            post.delete()
+        elif "del_C_Form" in request.POST:
             try:
                 post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
                 post.delete()
                 RegistSets.objects.get(RegistID=id).delete()
-            except:
+            except Companies.DoesNotExist:
                 RegistSets.objects.get(RegistID=id).delete()
         else:
             post = RegistSets.objects.get(RegistID=id)
-            print(request.POST)
             if "del_A_Form" in request.POST:
                 print("del_A_Form")
                 post.about.delete()
@@ -208,6 +232,8 @@ def create_company(request):
             print("new company created.")
             return redirect("create_about")
     C_Form = CompaniesForm()
+    if "forms" in request.session:
+        C_Form = CompaniesForm(request.session["forms"]["C_Form"])
     contexts["C_Form"] = C_Form
     return render(request, "main/sets/create_company.html", contexts)
 
@@ -231,6 +257,8 @@ def import_company(request):
 def create_about(request):
     contexts = collect_regnum()
     A_Form = AboutForm()
+    if "forms" in request.session:
+        A_Form = AboutForm(request.session["forms"]["A_Form"])
     contexts["A_Form"] = A_Form
     contexts["C_Form"] = CompaniesForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).company)
     if request.method == "POST":
@@ -293,6 +321,8 @@ def create_d_company(request):
     contexts = collect_regnum()
     contexts["M_Form"] = MotivationForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).motivation)
     D_Form = D_CompanyForm()
+    if "forms" in request.session:
+        D_Form = D_CompanyForm(request.session["forms"]["D_Form"])
     contexts["D_Form"] = D_Form
     if request.method == "POST":
         D_Form = D_CompanyForm(request.POST)
@@ -424,3 +454,95 @@ def edit_posts(request, id):
             return redirect("mypage")
 
     return render(request, "main/edit_posts.html", contexts)
+
+
+def search_company(request, return_to):
+    contexts = collect_regnum()
+    contexts["return_to"] = return_to
+    form = SearchForm_corpnum()
+    if request.user.gBIZINFO_key == "default_key":
+        return HttpResponse(r"GBIZINFO_key is not set. Please set your key in your profile. <a href='/'>Profile</a>")
+    if request.method == "POST":
+        if "search" in request.POST:
+            form = SearchForm_corpnum(request.POST)
+            if form.is_valid():
+                url = "https://info.gbiz.go.jp/hojin/v1/hojin?"
+                if form.cleaned_data["prefecture"] != "00":
+                    url += "&prefecture=" + form.cleaned_data["prefecture"]
+                if form.cleaned_data["corporate_number"] != "":
+                    url += "&corporate_number" + form.cleaned_data["corporate_number"]
+                if form.cleaned_data["name"] != "":
+                    url += "&name=" + quote(form.cleaned_data["name"])
+                headers = {"Accept": "application/json", "X-hojinInfo-api-token": request.user.gBIZINFO_key}
+                if url != "https://info.gbiz.go.jp/hojin/v1/hojin?":
+                    try:
+                        r = requests.get(url, headers=headers)
+                        print(r.status_code)
+                        contexts["results"] = r.json()["hojin-infos"]
+                    except KeyError:
+                        contexts["results"] = []
+                        contexts["message"] = f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})"
+    contexts["form"] = form
+    return render(request, "main/sets/search_company.html", contexts)
+
+
+def get_more_compinfo(request, corporate_number, return_to):
+    contexts = collect_regnum()
+    contexts["return_to"] = return_to
+    if request.user.gBIZINFO_key == "default_key":
+        return HttpResponse("GBIZINFO_key is not set. Please set your key in your profile. <a href='{{url 'mypage'}}'>Profile</a>")
+    headers = {"Accept": "application/json", "X-hojinInfo-api-token": request.user.gBIZINFO_key}
+    url = "https://info.gbiz.go.jp/hojin/v1/hojin/"+corporate_number
+    contexts["result"] = requests.get(url, headers=headers).json()["hojin-infos"][0]
+    return render(request, "main/sets/get_more_compinfo.html", contexts)
+
+
+def set_searched_data(request):
+    if request.method == "POST":
+        return_to = request.POST["return_to"]
+        corporate_number = request.POST["corporate_number"]
+        url = "https://info.gbiz.go.jp/hojin/v1/hojin/"+corporate_number
+        headers = {"Accept": "application/json", "X-hojinInfo-api-token": request.user.gBIZINFO_key}
+        res = requests.get(url, headers=headers).json()["hojin-infos"][0]
+        C = {
+            "name": res["name"] if "name" in res else "None",
+            "industry": res["business_summary"] if "business_summary" in res else "None",
+            "president": (res["representative_position"] if "representative_position" in res else "") + (res["representative_name"] if "representative_name" in res else ""),
+            "a_year": "0",
+            "contact": "-",
+        }
+        
+        A = {
+            "product": res["business_summary"] if "business_summary" in res else "None",
+            "customer_txt": "-",
+            "customer": "B to B",
+            "value_txt": "-",
+            "value": "B to B",
+            "originality": "-",
+            "f_value": "-"
+        }
+
+        D = {
+            "founded": res["date_of_establishment"] if "date_of_establishment" in res else "0",
+            "founded_t": "more100",
+            "capital": res["capital_stock_summary_of_business_results"] if "capital_stock_summary_of_business_results" in res else 0,
+            "sales_n": res["net_sales_summary_of_business_results "] if "net_sales_summary_of_business_results " in res else 0,
+            "employee_n": res["employee_number "] if "employee_number " in res else 0,
+            "sales_y": res["update_date"] if "update_date" in res else 0,
+            "sales_t": "None",
+            "employee_t": "None",
+            "stock_t": "None",
+            "t_p": 0,
+            "avg_y": res["average_age "] if "average_age " in res else 0,
+            "postal_code": res["postal_code"] if "postal_code" in res else 0,
+            "location": res["location"] if "location" in res else "None",
+            "corporate_number": res["corporate_number"] if "corporate_number" in res else 0,
+            "url": res["company_url"] if "company_url" in res else "about:blank",
+        }
+
+        request.session["forms"] = {
+            "C_Form": C,
+            "A_Form": A,
+            "D_Form": D,
+        }
+        return redirect(return_to)

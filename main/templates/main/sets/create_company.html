@@ -44,8 +44,12 @@
                     
                     <div class = "row my-3">
                     <div class = "col">
-                        <a class = "btn btn-info" href="{% url "import_company" %}">情報を引用する</a>
-                    </div></div>
+                        <a class = "btn btn-info" href="{% url "import_company" %}">投稿から情報を引用する</a>
+                    </div>
+                    <div class = "col">
+                        <a class = "btn btn-success" href="{% url "search_company" "create_company" %}">gBizINFOから引用する</a>
+                    </div>
+                </div>
                     <form method = "post">
                         {% csrf_token %}
                     <div class = "row">

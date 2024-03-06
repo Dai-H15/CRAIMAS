@@ -78,7 +78,7 @@ class D_Company(models.Model):
             ("None", "なし"),
         ),
     }
-    founded = models.IntegerField()
+    founded = models.CharField(max_length=50)
     fonded_t = models.CharField(
         max_length=50, choices=C_Tags["founded_t"], default="null"
     )
@@ -92,7 +92,10 @@ class D_Company(models.Model):
     employee_t = models.CharField(
         max_length=50, choices=C_Tags["employee_t"], default="None"
     )
-
+    location = models.CharField(max_length=200)
+    postal_code = models.CharField(max_length=200)
+    corporate_number = models.CharField(max_length=20)
+    url = models.CharField(max_length=200)
     stock_t = models.CharField(max_length=50, choices=C_Tags["stock_t"], default="None")
     t_p = models.IntegerField()
     avg_y = models.IntegerField()

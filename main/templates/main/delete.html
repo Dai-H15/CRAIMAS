@@ -13,13 +13,17 @@
         <form method = "post">
             {% csrf_token %}
             <div class = "container">
-
+                <div class = "row">
+                    <input class = "btn-check" type="checkbox" name="del_R_Set" id="del_R_Set" autocomplete="off">
+                        <label class = "btn btn-outline-info" for="del_R_Set"><span class = "text-danger fw-bold">企業情報を除く</span>  全ての情報を削除（紐付け解除）</label>
+                </div>
             <div class = "row text-center border mt-4 px-2">
+                
                 <div class = "col border-end">
                     <h5>企業情報</h5>
                     <table class = "col mx-auto">
                         <input class = "btn-check" type="checkbox" name="del_C_Form" id="del_C_Form" autocomplete="off">
-                        <label class = "btn btn-outline-warning" for="del_C_Form" >削除(事業内容等すべての情報も削除されます)</label>
+                        <label class = "btn btn-outline-warning" for="del_C_Form" >削除(関連付けられた<span class = "text-danger fw-bold">投稿全て</span>が削除されます)</label>
                         {% for field in C_Form %}
                             <tr>
                                 <td>{{ field.label }}:</td>

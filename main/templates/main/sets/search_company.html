@@ -23,29 +23,45 @@
             </div>
         </div>
         <div class= "row">
-            <div class = "container">
+            <div class = "container m-3">
                 <div class = "row">
-                    <h3>紐づけ元企業一覧</h3>
+                <form method = "post">
+                    <input type="hidden" name = "search" value = "T">
+                    {% csrf_token %}
+                    <table class = "col mx-auto">{{form}}</table>
+                    <div class="text-center">
+                        <button class = "btn btn-primary" type = "submit">検索</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            <div class = "container border">
+                <div class = "row">
+                    <h3>検索結果一覧</h3>
                     <div class = "col-6 bg-warning-subtle mx-auto">
                     <p>紐づけ元企業が削除された際、すべての登録において紐づけが解除されます。</p>
+                    {% if message %}
+                    <h5 class = "text-danger-emphasis">{{message}}</h5>
+                    {% endif %}
                 </div>
 
                 </div>
                 <div class = "row"><!--投稿一覧-->
                     <table class = "col m-3 border ">
                         <tr>
+                            <th>法人番号</th>
                             <th>企業名</th>
-                            <th>所属業界</th>
-                            <th>担当者名</th>
-                            <th>募集年度</th>
+                            <th>更新日</th>
+                            <th>状況</th>
                             <th>引用</th>
                         </tr>
-                        {% for post in posts %}
+                        {% for result in results %}
                         <tr>
-                            <td>{{post.name}}</td>
-                            <td>{{post.industry}}</td>
-                            <td>{{post.contact}}</td>
-                            <td>{{post.a_year}}</td>
+                            <td><a href="{% url "get_more_compinfo"  corporate_number=result.corporate_number return_to=return_to %}">{{result.corporate_number}}</a></td>
+                            <td>{{result.name}}</td>
+                            <td>{{result.update_date}}</td>
+                            <td>{% if result.status == "-" %} 営業中 {% else %} {{result.status}}{% endif %}</td>
+                            <td>{{result.a_year}}</td>
                             <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"><button class = "btn btn-info" type="submit">引用</button></form></td>
                         </tr>
                         {% endfor %}
@@ -54,7 +70,7 @@
                 
             </div>
             <div class = " col mx-auto">
-                <a class = "btn btn-primary" href="{% url "create_company" %}">手入力に戻る</a>
+                <a class = "btn btn-primary" href="{% url return_to %}">手入力に戻る</a>
             </div>
 
         </div>

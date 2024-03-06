@@ -13,10 +13,13 @@ urlpatterns = [
     path("regist_base/regist_sets/", views.regist_sets, name="regist_sets"),
     path("regist_base/regist_sets/create_company/", views.create_company, name="create_company"),
     path("regist_base/regist_sets/import_company/", views.import_company, name="import_company"),
+    path("regit_base/regit_sets/search_company/return_to=<str:return_to>", views.search_company, name="search_company"),
+    path(r"regist_base/regist_sets/get_more_compinfo/?corporate_number=<str:corporate_number>&return_to=<str:return_to>", views.get_more_compinfo, name="get_more_compinfo"),
     path("regist_base/regist_sets/create_about", views.create_about, name="create_about"),
     path("regist_base/regist_sets/create_idea", views.create_idea, name="create_idea"),
     path("regist_base/regist_sets/create_motivation", views.create_motivation, name="create_motivation"),
     path("regist_base/regist_sets/create_d_company", views.create_d_company, name="create_d_company"),
     path("regist_base/regist_sets/create_adoption", views.create_adoption, name="create_adoption"),
     path("regist_base/regist_sets/create_complete", views.create_complete, name="create_complete"),
+    path(r"set_searched_data/", views.set_searched_data, name="set_searched_data"),
 ]

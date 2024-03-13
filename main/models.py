@@ -8,7 +8,7 @@ class Companies(models.Model):
     contact = models.CharField(max_length=200)
     a_year = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
-    CompanyID = models.CharField(max_length=200, default="default_id")
+    CompanyID = models.CharField(max_length=200, primary_key=True, unique=True)
 
     def __str__(self):
         return self.name
@@ -19,7 +19,7 @@ class About(models.Model):
         ("B to B", "B to B"),
         ("B to C", "B to C"),
     )
-    AboutID = models.CharField(max_length=200, default="default_id")
+    AboutID = models.CharField(max_length=200, primary_key=True, unique=True)
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE)
     product = models.TextField()
     customer_txt = models.TextField()
@@ -34,7 +34,7 @@ class About(models.Model):
 
 
 class Idea(models.Model):
-    IdeaID = models.CharField(max_length=200, default="default_id")
+    IdeaID = models.CharField(max_length=200, primary_key=True, unique=True)
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE)
     prospects = models.TextField()
     valuable = models.TextField()
@@ -42,7 +42,7 @@ class Idea(models.Model):
 
 
 class Motivation(models.Model):
-    MotivationID = models.CharField(max_length=200, default="default_id")
+    MotivationID = models.CharField(max_length=200, primary_key=True, unique=True)
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE)
     attraction = models.TextField()
     description = models.TextField()
@@ -51,7 +51,7 @@ class Motivation(models.Model):
 
 
 class D_Company(models.Model):
-    D_CompanyID = models.CharField(max_length=200, default="default_id")
+    D_CompanyID = models.CharField(max_length=200, primary_key=True, unique=True)
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE)
     C_Tags = {
         "founded_t": (
@@ -102,7 +102,7 @@ class D_Company(models.Model):
 
 
 class Adoption(models.Model):
-    AdoptionID = models.CharField(max_length=200, default="default_id")
+    AdoptionID = models.CharField(max_length=200, primary_key=True, unique=True)
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE)
     occupation = models.CharField(max_length=200)
     place = models.CharField(max_length=200)
@@ -113,7 +113,7 @@ class Adoption(models.Model):
 
 
 class RegistSets(models.Model):
-    RegistID = models.CharField(max_length=100)
+    RegistID = models.CharField(max_length=100, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100)
     company = models.ForeignKey(Companies, on_delete=models.SET_NULL, null=True, blank=True)
     about = models.ForeignKey(About, on_delete=models.SET_NULL, null=True, blank=True)
@@ -129,3 +129,35 @@ class RegistSets(models.Model):
             return self.company.name
         else:
             return 'No Company'
+
+
+class Interview(models.Model):
+    tags = (
+        ("briefing", "説明会"),
+        ("casual", "カジュアル面接"),
+        ("1_interview", "一次面接"),
+        ("2_interview", "二次面接"),
+        ("3_interview", "三次面接"),
+        ("l_interview", "最終面接"),
+        ("internship", "インターンシップ"),
+        ("group", "グループディスカッション"),
+        ("offer", "内定"),
+        ("test", "試験"),
+        ("other", "その他")
+    )
+    RegistID = models.ForeignKey(RegistSets, on_delete=models.CASCADE)
+    InterviewID = models.CharField(max_length=128)
+    title = models.CharField(max_length=200)
+    tag = models.CharField(max_length=50, choices=tags, default="briefing")
+    date = models.DateField()
+    interviewer = models.CharField(max_length=200)
+    zipcode = models.CharField(max_length=8)
+    place = models.CharField(max_length=200)
+    aspire = models.IntegerField(default=0)
+    reason = models.TextField(default="")
+    want_to = models.TextField(default="")
+    note = models.TextField(default="")
+    review = models.TextField(default="")
+
+    def __str__(self):
+        return self.title

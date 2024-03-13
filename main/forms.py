@@ -1,5 +1,5 @@
 from django import forms
-from .models import Companies, About, Idea, Motivation, D_Company, Adoption
+from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Interview, RegistSets
 
 
 class CompaniesForm(forms.ModelForm):
@@ -143,3 +143,32 @@ class SearchForm_corpnum(forms.Form):
     name = forms.CharField(label="企業名", required=False)
     corporate_number = forms.CharField(label="法人番号", required=False)
     prefecture = forms.ChoiceField(label="都道府県", choices=pref_choice, required=False)
+
+
+class InterviewForm(forms.ModelForm):
+    RegistID = forms.ModelChoiceField(queryset=RegistSets.objects.all(), to_field_name="RegistID", widget=forms.HiddenInput())
+
+    class Meta:
+        model = Interview
+        fields = ("RegistID", "InterviewID", "title", "tag", "date", "interviewer", "zipcode", "place", "aspire", "reason", "want_to", "note", "review")
+        labels = {
+                    "RegistID": "登録セットキー",
+                    "InterviewID": "インタビューキー",
+                    "title": "面談タイトル",
+                    "tag": "面談タグ",
+                    "date": "面談日",
+                    "interviewer": "面談者",
+                    "zipcode": "郵便番号",
+                    "place": "住所",
+                    "aspire": "志望度(0~100)%",
+                    "reason": "志望理由",
+                    "want_to": "やりたいこと",
+                    "notes": "面談メモ",
+                    "review": "面談感想"
+                  }
+        widgets = {
+            "date": forms.DateInput(attrs={"type": "date"}),
+            "aspire": forms.NumberInput(attrs={ "min": "0", "max": "100", "step": "1"}),
+            "InterviewID": forms.HiddenInput()
+
+        }

@@ -1,0 +1,54 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biz Intelli Scan</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の登録件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            {% bootstrap_form interview %}
+        </div>
+        <div class = "row my-3"><button class = "btn btn-success" onclick = "window.close()">閉じる</button></div>
+        
+    </div>
+    </div>
+    <script>
+        window.onload = function() {
+            var inputs = document.getElementsByTagName('INPUT');
+            for (var input of inputs) {
+                input.disabled = true;
+            }
+            var textareas = document.getElementsByTagName('TEXTAREA');
+            for (var textarea of textareas) {
+                textarea.disabled = true;
+            }
+            var selects = document.getElementsByTagName('SELECT');
+            for (var select of selects) {
+                select.disabled = true;
+            }
+        }
+    </script>
+</body>
+
+</html>

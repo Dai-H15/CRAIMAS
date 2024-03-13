@@ -58,23 +58,41 @@
                             <td>{{result.update_date}}</td>
                             <td>{% if result.status == "-" %} 営業中 {% else %} {{result.status}}{% endif %}</td>
                             <td>{{result.a_year}}</td>
-                            <td><form method = "post" action = "{% url "set_searched_data" %}">{% csrf_token %}<input type="hidden" value = "{{return_to}}" name = "return_to"><input type="hidden" value = "{{result.corporate_number}}" name = "corporate_number"><button class = "btn btn-info" type="submit">引用</button></form></td>
+                            <td><button class = "btn btn-info" onclick = "apply_data()">引用</button></form></td>
                         </tr>
                     </table>
                 </div>
                 
             </div>
-            <div class = " col mx-auto">
-                <a class = "btn btn-primary" href="{% url return_to %}">戻る</a>
+            <div class = " col m-3">
+                <button class = "btn btn-danger" onclick="window.close()">閉じる</button>
             </div>
 
         </div>
     </div>
     <script>
-        function open_as_window(url){
-            window.open(`${url}`, "", "width=800,height=900,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
-}
-
+        function apply_data(){
+            var form = document.createElement("form");
+            form.action = '{% url "set_searched_data" %}';
+            form.method = "POST";
+            let csrf = document.createElement("input");
+            csrf.type = 'hidden';
+            csrf.name = 'csrfmiddlewaretoken';
+            csrf.value = '{{ csrf_token }}';
+            form.appendChild(csrf);
+            let return_to = document.createElement("input");
+            return_to.type = 'hidden';
+            return_to.name = 'return_to';
+            return_to.value = '{{return_to}}';
+            form.appendChild(return_to);
+            let corporate_number = document.createElement("input");
+            corporate_number.type = 'hidden';
+            corporate_number.name = 'corporate_number';
+            corporate_number.value = '{{result.corporate_number}}';
+            form.appendChild(corporate_number);
+            window.opener.document.body.appendChild(form);
+            form.submit();
+        }
 </script>
 
         

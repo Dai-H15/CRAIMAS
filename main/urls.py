@@ -22,4 +22,8 @@ urlpatterns = [
     path("regist_base/regist_sets/create_adoption", views.create_adoption, name="create_adoption"),
     path("regist_base/regist_sets/create_complete", views.create_complete, name="create_complete"),
     path(r"set_searched_data/", views.set_searched_data, name="set_searched_data"),
+    path("get_address/<str:zipcode>", views.get_address, name="get_address"),
+    path("interview_main/<str:id>", views.interview_main, name="interview_main"),
+    path("interview_create/<str:id>", views.interview_create, name="interview_create"),
+    path("view_interview/<str:id>", views.view_interview, name="view_interview"),
 ]

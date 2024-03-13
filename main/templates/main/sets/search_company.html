@@ -53,16 +53,15 @@
                             <th>企業名</th>
                             <th>更新日</th>
                             <th>状況</th>
-                            <th>引用</th>
                         </tr>
                         {% for result in results %}
                         <tr>
-                            <td><a href="{% url "get_more_compinfo"  corporate_number=result.corporate_number return_to=return_to %}">{{result.corporate_number}}</a></td>
+                            <td><a class = "text-success" onclick="open_as_window('{% url "get_more_compinfo"  corporate_number=result.corporate_number return_to=return_to %}')">{{result.corporate_number}}</a></td>
                             <td>{{result.name}}</td>
                             <td>{{result.update_date}}</td>
                             <td>{% if result.status == "-" %} 営業中 {% else %} {{result.status}}{% endif %}</td>
                             <td>{{result.a_year}}</td>
-                            <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"><button class = "btn btn-info" type="submit">引用</button></form></td>
+                            <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"></form></td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -76,12 +75,18 @@
         </div>
     </div>
     <script>
+        let wind;
         function open_as_window(url){
-            window.open(`${url}`, "", "width=800,height=900,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
-}
+            wind = window.open(`${url}`, "view_company", "width=1200,height=500,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+            console.log(wind);
+    };
+    window.addEventListener('beforeunload', function(){
+        if (wind){
+            wind.close();
+        }
+    });
 
 </script>
-
         
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"

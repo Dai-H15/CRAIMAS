@@ -60,7 +60,20 @@
                             <td>{{post.adoption.occupation}}</td>
                             <td>{{post.company.contact}}</td>
                             <td>{{post.adoption.a_year}}</td>
-                            <td><button  class = "btn btn-success" onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</button><a class = "btn btn-info  m-2"href="{% url "edit_posts" post.RegistID %}">編集</a><a class = "btn btn-danger" href="{% url "delete_posts" post.RegistID %}">削除</a></td>
+                            <td>
+                                
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                      操作
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                      <li><a class="dropdown-item text-bg-success p-2" onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</a></li>
+                                      <li><a class="dropdown-item text-bg-info p-2" href="{% url "edit_posts" post.RegistID %}">編集</a></li>
+                                      <li><a class="dropdown-item text-bg-danger p-2" href="{% url "delete_posts" post.RegistID %}">削除</a></li>
+                                    </ul>
+                                  </div>
+                                
+                            </td>
                         </tr>
                         {% endfor %}
                     </table>
@@ -72,9 +85,16 @@
         </div>
     </div>
     <script>
+        let wind;
         function open_as_window(url){
-            window.open(`${url}`, "", "width=800,height=900,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
-}
+            wind = window.open(`${url}`, "view_post", "width=800,height=900,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+            console.log(wind);
+    };
+    window.addEventListener('beforeunload', function(){
+        if (wind){
+            wind.close();
+        }
+    });
 
 </script>
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption
+from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption, Interview
 from authUser.models import CustomUser
-from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum
+from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum, InterviewForm
 import secrets, requests
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
@@ -86,14 +86,19 @@ def regist_all(request):
             C_Data = Companies.objects.get(CompanyID=CompanyID)
             n_AForm = A_Form.save(commit=False)
             n_AForm.company_name = C_Data
+            n_AForm.AboutID = secrets.token_hex(64)
             n_IForm = I_Form.save(commit=False)
             n_IForm.company_name = C_Data
+            n_IForm.IdeaID = secrets.token_hex(64)
             n_MForm = M_Form.save(commit=False)
             n_MForm.company_name = C_Data
+            n_MForm.MotivationID = secrets.token_hex(64)
             n_DForm = D_Form.save(commit=False)
             n_DForm.company_name = C_Data
+            n_DForm.D_CompanyID = secrets.token_hex(64)
             n_ADForm = AD_Form.save(commit=False)
             n_ADForm.company_name = C_Data
+            n_ADForm.AdoptionID = secrets.token_hex(64)
 
             n_AForm.save()
             n_IForm.save()
@@ -547,3 +552,47 @@ def set_searched_data(request):
             "D_Form": D,
         }
         return redirect(return_to)
+
+
+def interview_main(request, id):
+    contexts = collect_regnum()
+    R_sets = RegistSets.objects.get(RegistID=id)
+    interviews = Interview.objects.filter(RegistID=R_sets)
+    contexts["R_sets"] = R_sets
+    contexts["interviews"] = interviews
+    return render(request, "main/interview/interview_main.html", contexts)
+
+
+def interview_create(request, id):
+    contexts = collect_regnum()
+    form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64)})
+    name = RegistSets.objects.get(RegistID=id).company.name
+    contexts["form"] = form
+    contexts["name"] = name
+    if request.method == "POST":
+        form = InterviewForm(request.POST)
+        if form.is_valid():
+            print("ok")
+            form.save()
+            return redirect("interview_main", id)
+        else:
+            print("NG")
+            print(form.errors.as_text())
+            contexts["errors"] = form.errors.as_text()
+            contexts["form"] = form
+    return render(request, "main/interview/interview_create.html", contexts)
+
+
+def get_address(request, zipcode):
+    contexts = {}
+    url = r"https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + zipcode
+    res = requests.get(url).json()["results"]
+    contexts["res"] = res
+    return render(request, "main/interview/get_address.html", contexts)
+
+
+def view_interview(request, id):
+    contexts = collect_regnum()
+    interview = InterviewForm(instance=Interview.objects.get(InterviewID=id))
+    contexts["interview"] = interview
+    return render(request, "main/interview/view_interview.html", contexts)

@@ -1,0 +1,54 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+</head>
+<body>
+    <div class = "container">
+        <h3 class = "text-center">住所検索結果</h3>
+        <p class = "text-center">反映させる住所を選択してください</p>
+        <div class = "row m-3">
+            {% if res %}
+            {% for d in res %}
+            <div class = "row border my-3" id ="{{forloop.counter}}">
+                <input class = "col-1 border" type="radio" name = "address" >
+            <div class = "col-10">
+                <label class = "form-label" for="zipcode">郵便番号</label>
+                <input class="form-control" type="text" value="{{d.zipcode}}" id = "zipcode" disabled >
+                <label class="form-label" for="address">住所</label>
+                <input class="form-control" type="text" value="{{d.address1}}{{d.address2}}{{d.address3}}" id = "address" disabled  >
+            </div>
+            
+        </div>
+            {% endfor %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    <h5>結果が存在しません。再度確認してください</h5>
+                </div>
+            {% endif %}
+            <button class = "btn btn-primary" onclick= "window.close()">閉じる</button>
+    </div>
+</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const radios = document.querySelectorAll('input[type=radio][name="address"]');
+            radios.forEach((radio) => {
+                radio.addEventListener('change', (event) => {
+                    if (event.target.checked) {
+                        let address = event.target.nextElementSibling.querySelector('#address').value;
+                        window.opener.document.getElementById('id_place').value = address;
+                        console.log(address)
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

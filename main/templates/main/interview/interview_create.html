@@ -1,0 +1,71 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ">
+    <title>Biz Intelli Scan</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の登録件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            {% if errors %}<div class="alert alert-danger text-center list-unstyled" role="alert">{% for error in errors %}{{error}} {% endfor %}</div>{% endif %}
+            <div class  = "text-center"><h4 class = "border-bottom p-3">{{name}}</h4></div>
+            <div class="container">
+                <div class="row p-3">
+                    <form method = "post">
+                    {% csrf_token %}
+                    {% for f in form %}
+                    {% if f.name == "zipcode" %}
+                    {% bootstrap_field f %}
+                    <button class = "btn btn-warning" onclick="search_zipcode()">住所を検索</button>
+                    {% else %}
+                    {% bootstrap_field f %}
+                    {% endif %}
+                    {% endfor %}
+                    <button type="submit" class = "btn btn-success">登録</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script>
+        let wind3;
+        function search_zipcode(){
+            let zipcode = document.getElementById('id_zipcode').value;
+            
+            let d_url = "{% url 'get_address' 'placeholder' %}"
+            let url = d_url.replace('placeholder', zipcode);
+            wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+            
+    };
+    window.addEventListener('beforeunload', function(){
+        if (wind3){
+            wind3.close();
+        }
+    });
+
+</script>
+</body>
+
+</html>

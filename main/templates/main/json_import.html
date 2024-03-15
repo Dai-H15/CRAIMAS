@@ -1,0 +1,39 @@
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <h5>JSONファイルから引用します。</h5>
+                <h5>ファイルをアップロードしてください</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input class="form-control" type="file" id="json" name="json">
+                    </div>
+                    <div class="row mx-3">
+                        <button type="submit" class="btn btn-primary">送信</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

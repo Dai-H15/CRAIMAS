@@ -24,6 +24,9 @@
                                 <h5>代表者名: {{C_Data.president}}</h5>
                                 <h5>担当者名: {{C_Data.contact}}</h5>
                                 <h5>募集年度: {{C_Data.a_year}}</h5>
+                                {% if In_counts %}
+                                <h5>登録された面談録の数: {{In_counts}}</h5>
+                                {% endif %}
                         </div>
                     </div>
 

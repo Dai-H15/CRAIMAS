@@ -28,4 +28,5 @@ urlpatterns = [
     path("view_interview/<str:id>", views.view_interview, name="view_interview"),
     path("calc", views.calc, name="calc"),
     path("export_sheet/<str:id>", views.export_sheet, name="export_sheet"),
+    path("json_import", views.json_import, name="json_import"),
 ]

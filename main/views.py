@@ -62,6 +62,10 @@ def index(request):
         del request.session["NotFound"]
     if "forms" in request.session:
         del request.session["forms"]
+    if "jsons" in request.session:
+        del request.session["jsons"]
+    if "Interviews" in request.session:
+        del request.session["Interviews"]
     contexts = collect_regnum()
     return render(request, "main/index.html", contexts)
 
@@ -109,9 +113,9 @@ def regist_all(request):
             n_MForm.save()
             n_DForm.save()
             n_ADForm.save()
-
+            R_ID = secrets.token_hex(64)
             n_RegistSets = RegistSets.objects.create(
-                RegistID=secrets.token_hex(64),
+                RegistID=R_ID,
                 by_U_ID=CustomUser.objects.get(username=request.user).U_ID,
                 company=C_Data,
                 about=About.objects.get(company_name=C_Data),
@@ -122,29 +126,57 @@ def regist_all(request):
             )
             n_RegistSets.save()
             contexts["C_Data"] = C_Data
+            if "Interviews" in request.session:  # Interviewの登録
+                n = 0
+                for i in request.session["Interviews"]["interviews"]:
+                    Interview.objects.create(**i, RegistID=RegistSets.objects.get(RegistID=R_ID), InterviewID=secrets.token_hex(64))
+                    n += 1
+                contexts["In_counts"] = n
             return render(request, "main/regist_done.html", contexts)
     if "forms" in request.session:
         C_Form = CompaniesForm(request.session["forms"]["C_Form"])
         A_Form = AboutForm(request.session["forms"]["A_Form"])
         D_Form = D_CompanyForm(request.session["forms"]["D_Form"])
+        I_Form = IdeaForm()
+        M_Form = MotivationForm()
+        AD_Form = AdoptionForm()
         del request.session["forms"]
+    elif "jsons" in request.session:
+        C_Form = CompaniesForm(request.session["jsons"]["C_Form"])
+        A_Form = AboutForm(request.session["jsons"]["A_Form"])
+        I_Form = IdeaForm(request.session["jsons"]["I_Form"])
+        M_Form = MotivationForm(request.session["jsons"]["M_Form"])
+        D_Form = D_CompanyForm(request.session["jsons"]["D_Form"])
+        AD_Form = AdoptionForm(request.session["jsons"]["AD_Form"])
+        if request.session["Interviews"] != "None":
+            contexts["messages"] = {"color": "warning", "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>"}
+        else:
+            contexts["messages"] = {"color": "success", "message": "<h5>インポートが完了しました。内容が正しいか確認し、登録を行ってください。</h5><h5>なお、面談録は情報に含まれていませんでした。</h5>"}
+        del request.session["jsons"]
     else:
         C_Form = CompaniesForm()
         A_Form = AboutForm()
         D_Form = D_CompanyForm()
+        I_Form = IdeaForm()
+        M_Form = MotivationForm()
+        AD_Form = AdoptionForm()
+        if "jsons" in request.session:
+            del request.session["jsons"]
+        if "Interviews" in request.session:
+            del request.session["Interviews"]
+        if "forms" in request.session:
+            del request.session["forms"]
+
     contexts["C_Form"] = C_Form
 
     contexts["D_Form"] = D_Form
 
     contexts["A_Form"] = A_Form
 
-    I_Form = IdeaForm()
     contexts["I_Form"] = I_Form
 
-    M_Form = MotivationForm()
     contexts["M_Form"] = M_Form
 
-    AD_Form = AdoptionForm()
     contexts["AD_Form"] = AD_Form
     return render(request, "main/regist_all.html", contexts)
 
@@ -630,7 +662,9 @@ def export_sheet(request, id):
         AD = dict(**{"sheet_name": "Adoption"}, **model_to_dict(R_set.adoption))
         del AD["AdoptionID"]
         sets = {"Company": C, "About": A, "Idea": Id, "Motivation": M, "D_Company": D, "Adoption": AD}
+        name = R_set.company.name
         if request.POST["data"] == "two":
+            name += "_include_interview"
             interviews = Interview.objects.filter(RegistID=id)
             sets["Interview"] = {"sheet_name": "Interviews", "interviews": [model_to_dict(interview) for interview in interviews]}
             for s in sets["Interview"]["interviews"]:
@@ -644,6 +678,7 @@ def export_sheet(request, id):
                 del s["_state"]
             if "company_name" in s:
                 del s["company_name"]
+        name += "_exported_sheet"
         if request.POST["type"] == "csv":
             response = HttpResponse(content_type='text/csv; charset=Shift-JIS')
             for s in sets.values():
@@ -652,7 +687,7 @@ def export_sheet(request, id):
                 writer.writeheader()
                 writer.writerow(s)
                 writer.writerow({})
-            response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote(("exported_sheet.csv").encode("utf8")))
+            response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote((f"{name}.csv").encode("utf8")))
             return response
         else:
             class DateTimeEncoder(json.JSONEncoder):
@@ -662,7 +697,25 @@ def export_sheet(request, id):
                     return super(DateTimeEncoder, self).default(obj)
             response = HttpResponse(content_type='application/json')
             if request.POST["type"] == "json_asF":
-                response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote(("exported_sheet.json").encode("utf8")))
+                response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote((f"{name}.json").encode("utf8")))
             response.write(json.dumps(sets, cls=DateTimeEncoder, ensure_ascii=False))
             return response
     return render(request, "main/export_sheet.html", contexts)
+
+
+def json_import(request):
+    contexts = {}
+    if request.method == "POST":
+        file = request.FILES["json"]
+        data = json.load(file)
+        request.session['jsons'] = {
+            "C_Form": data["Company"],
+            "A_Form": data["About"],
+            "I_Form": data["Idea"],
+            "M_Form": data["Motivation"],
+            "D_Form": data["D_Company"],
+            "AD_Form": data["Adoption"],
+        }
+        request.session["Interviews"] = data["Interview"] if "Interview" in data else "None"
+        return HttpResponse("<script>window.opener.location.reload();</script>")
+    return render(request, "main/json_import.html", contexts)

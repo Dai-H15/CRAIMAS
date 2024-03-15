@@ -13,6 +13,10 @@
         <div class = "row">
             <div class = "col text-center">
                 <h5>シートの内容をエクスポートします。設定を指定してください</h5>
+                <div class="alert alert-danger" role="alert">
+                    <h5>ファイルには機密情報が含まれています。</h5>
+                    <h5>取り扱いには十分注意し、漏洩しないようにしてください</h5>
+                </div>
                 <form method = "post" class = "border">
                     {% csrf_token %}
                     <div class = "col border m-3">

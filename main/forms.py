@@ -156,7 +156,7 @@ class InterviewForm(forms.ModelForm):
                     "InterviewID": "インタビューキー",
                     "title": "面談タイトル",
                     "tag": "面談タグ",
-                    "date": "面談日",
+                    "date": "面談日時",
                     "interviewer": "面談者",
                     "zipcode": "郵便番号",
                     "place": "住所",
@@ -167,7 +167,7 @@ class InterviewForm(forms.ModelForm):
                     "review": "面談感想"
                   }
         widgets = {
-            "date": forms.DateInput(attrs={"type": "date"}),
+            "date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
             "aspire": forms.NumberInput(attrs={ "min": "0", "max": "100", "step": "1"}),
             "InterviewID": forms.HiddenInput()
 

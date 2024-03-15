@@ -1,0 +1,62 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+</head>
+<body>
+    <div class = "container-fluid">
+        <h3 class = "text-center">金額入力ツール</h3>
+        <div class = "row">
+            <div class = "col text-center my-3 border">
+                <h5>金額入力欄</h5>
+                <input type="text" id = "1">億<input type="text"id = "2">万円
+            </div>
+        </div>
+        <div class = "row">
+            <div class = "col">
+                <h5>適用先</h5>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="apply_to" id="capital" checked/>
+                    <label class="form-check-label" for="apply_to"> 資本金欄 </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="apply_to" id="sales" />
+                    <label class="form-check-label" for="apply_to"> 売上高欄 </label>
+                </div>
+            </div>
+        </div>
+        <div class = "row text-center">
+            <div class = "col ">
+                <button class = "btn btn-success" onclick="apply_calc()">適用</button>
+            </div>
+            <div class = "col">
+                <button class = "btn btn-danger" onclick = "window.close()">閉じる</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function apply_calc(){
+            var capital = document.getElementById("capital");
+            var sales = document.getElementById("sales");
+            var input1 = document.getElementById("1");
+            var input2 = document.getElementById("2");
+            var value1 = input1.value;
+            var value2 = input2.value;
+            var result = value1 * 100000000 + value2 * 10000;;
+            if(capital.checked){
+                window.opener.document.getElementById("id_capital").value = result;
+            }else if(sales.checked){
+                window.opener.document.getElementById("id_sales_n").value = result;
+            }
+        }
+    </script>
+    
+</body>
+</html>

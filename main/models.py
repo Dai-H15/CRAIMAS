@@ -113,7 +113,7 @@ class Adoption(models.Model):
 
 
 class RegistSets(models.Model):
-    RegistID = models.CharField(max_length=100, primary_key=True, unique=True)
+    RegistID = models.CharField(max_length=128, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100)
     company = models.ForeignKey(Companies, on_delete=models.SET_NULL, null=True, blank=True)
     about = models.ForeignKey(About, on_delete=models.SET_NULL, null=True, blank=True)
@@ -149,7 +149,7 @@ class Interview(models.Model):
     InterviewID = models.CharField(max_length=128)
     title = models.CharField(max_length=200)
     tag = models.CharField(max_length=50, choices=tags, default="briefing")
-    date = models.DateField()
+    date = models.DateTimeField()
     interviewer = models.CharField(max_length=200)
     zipcode = models.CharField(max_length=8)
     place = models.CharField(max_length=200)

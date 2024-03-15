@@ -8,11 +8,12 @@
             integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     </head>
 <body>
-    <div class = "row text-center p-3"><div class = "col"><h3>登録情報</h3></div></div>
+    <div class = "row text-center  p-3"><div class = "col"><h3>登録情報</h3></div></div>
+    
             {% csrf_token %}
-            <div class = "container">
+            <div class = "container border">
 
-            <div class = "row text-center border">
+            <div class = "row text-center ">
                 <h5>企業情報</h5>
                 <table class = "col">
                     {% for field in C_Form %}
@@ -52,9 +53,9 @@
             </div>
             
         </div>
-        <div class ="row border mt-4 ">
+        <div class ="row border my-4 ">
             <h4 class = " text-center m-3">志望動機・企業情報</h4>
-            <div class = "col border">
+            <div class = "col border p-2">
             <h5>志望動機シート</h5>
             <table>{% for field in M_Form %}
                 <tr>
@@ -62,7 +63,10 @@
                     <td>{{ field.value }}</td>
                 </tr>
             {% endfor %}</table>
-            <div class = "row p-4 border-top"><button onclick = "open_as_window2('{% url "interview_main" post.RegistID %}')"  class = " btn btn-success">面談録</button></div>
+            <div class = "border-top">
+                <div class = "row p-4 "> <button onclick = "open_as_window2('{% url "interview_main" post.RegistID %}')"  class = " btn btn-success">面談録</button></div>
+                <div class = "row p-4 "> <button class = "btn btn-outline-warning " onclick= "open_as_window2('{% url "export_sheet" post.RegistID %}')">シートをエクスポートする</button></div>
+            </div>
             
         </div>
         

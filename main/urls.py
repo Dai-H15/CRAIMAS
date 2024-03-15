@@ -26,4 +26,6 @@ urlpatterns = [
     path("interview_main/<str:id>", views.interview_main, name="interview_main"),
     path("interview_create/<str:id>", views.interview_create, name="interview_create"),
     path("view_interview/<str:id>", views.view_interview, name="view_interview"),
+    path("calc", views.calc, name="calc"),
+    path("export_sheet/<str:id>", views.export_sheet, name="export_sheet"),
 ]

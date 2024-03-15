@@ -2,9 +2,13 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption, Interview
 from authUser.models import CustomUser
 from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum, InterviewForm
-import secrets, requests
+import secrets, requests, csv, urllib,json
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+from datetime import datetime
+from django.forms.models import model_to_dict
+
 
 
 # Functions
@@ -249,7 +253,7 @@ def import_company(request):
     if request.method == "POST":
         if "import" in request.POST:
             copy_company = Companies.objects.get(CompanyID=request.POST["ID"])
-            CompanyID = secrets.token_hex(64)
+            CompanyID = request.POST["ID"]
             copy_company.CompanyID = CompanyID
             copy_company.save()
             Temp_regist = RegistSets.objects.create(RegistID=secrets.token_hex(64), by_U_ID=CustomUser.objects.get(username=request.user), company=Companies.objects.get(CompanyID=CompanyID))
@@ -595,4 +599,70 @@ def view_interview(request, id):
     contexts = collect_regnum()
     interview = InterviewForm(instance=Interview.objects.get(InterviewID=id))
     contexts["interview"] = interview
+    if request.method == "POST":
+        form = InterviewForm(request.POST, instance=Interview.objects.get(InterviewID=id))
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                "<h4 id = 'main'>更新しました。画面を閉じてください</h4> <a onclick = 'window.close()'>閉じる</a>")
     return render(request, "main/interview/view_interview.html", contexts)
+
+
+def calc(request):
+    contexts = {}
+    return render(request, "main/calc.html", contexts)
+
+
+def export_sheet(request, id):
+    contexts = {}
+    if request.method == "POST":
+        R_set = RegistSets.objects.get(RegistID=id)
+        C = dict(**{"sheet_name": "Company"}, **model_to_dict(R_set.company))
+        del C["CompanyID"]
+        A = dict(**{"sheet_name": "About"}, **model_to_dict(R_set.about))
+        del A["AboutID"]
+        Id = dict(**{"sheet_name": "Idea"}, **model_to_dict(R_set.idea))
+        del Id["IdeaID"]
+        M = dict(**{"sheet_name": "Motivation"}, **model_to_dict(R_set.motivation))
+        del M["MotivationID"]
+        D = dict(**{"sheet_name": "D_company"}, **model_to_dict(R_set.d_company))
+        del D["D_CompanyID"]
+        AD = dict(**{"sheet_name": "Adoption"}, **model_to_dict(R_set.adoption))
+        del AD["AdoptionID"]
+        sets = {"Company": C, "About": A, "Idea": Id, "Motivation": M, "D_Company": D, "Adoption": AD}
+        if request.POST["data"] == "two":
+            interviews = Interview.objects.filter(RegistID=id)
+            sets["Interview"] = {"sheet_name": "Interviews", "interviews": [model_to_dict(interview) for interview in interviews]}
+            for s in sets["Interview"]["interviews"]:
+                if isinstance(s["date"], datetime):
+                    s["date"] = s["date"].isoformat()
+                del s["id"]
+                del s["RegistID"]
+                del s["InterviewID"]
+        for s in sets.values():
+            if "_state" in s:
+                del s["_state"]
+            if "company_name" in s:
+                del s["company_name"]
+        if request.POST["type"] == "csv":
+            response = HttpResponse(content_type='text/csv; charset=Shift-JIS')
+            for s in sets.values():
+                csv_columns = list(s.keys())
+                writer = csv.DictWriter(response, csv_columns)
+                writer.writeheader()
+                writer.writerow(s)
+                writer.writerow({})
+            response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote(("exported_sheet.csv").encode("utf8")))
+            return response
+        else:
+            class DateTimeEncoder(json.JSONEncoder):
+                def default(self, obj):
+                    if isinstance(obj, datetime):
+                        return obj.isoformat()
+                    return super(DateTimeEncoder, self).default(obj)
+            response = HttpResponse(content_type='application/json')
+            if request.POST["type"] == "json_asF":
+                response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote(("exported_sheet.json").encode("utf8")))
+            response.write(json.dumps(sets, cls=DateTimeEncoder, ensure_ascii=False))
+            return response
+    return render(request, "main/export_sheet.html", contexts)

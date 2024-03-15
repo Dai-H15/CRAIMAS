@@ -27,28 +27,41 @@
             </div>
         </div>
         <div class="row m-2">
-            {% bootstrap_form interview %}
+            <form method = "post">
+                {% csrf_token %}
+                {% for f in interview %}
+                {% if f.name == "zipcode" %}
+                {% bootstrap_field f %}
+                <button type="button" class = "btn btn-warning" onclick="search_zipcode()">住所を検索</button>
+                {% else %}
+                {% bootstrap_field f %}
+                {% endif %}
+                {% endfor %}
+                <button type="submit" class = "btn btn-success">登録</button>
+            </form>
+            
         </div>
         <div class = "row my-3"><button class = "btn btn-success" onclick = "window.close()">閉じる</button></div>
         
     </div>
     </div>
     <script>
-        window.onload = function() {
-            var inputs = document.getElementsByTagName('INPUT');
-            for (var input of inputs) {
-                input.disabled = true;
-            }
-            var textareas = document.getElementsByTagName('TEXTAREA');
-            for (var textarea of textareas) {
-                textarea.disabled = true;
-            }
-            var selects = document.getElementsByTagName('SELECT');
-            for (var select of selects) {
-                select.disabled = true;
-            }
+        let wind3;
+        function search_zipcode(){
+            let zipcode = document.getElementById('id_zipcode').value;
+            
+            let d_url = "{% url 'get_address' 'placeholder' %}"
+            let url = d_url.replace('placeholder', zipcode);
+            wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+            
+    };
+    window.addEventListener('beforeunload', function(){
+        if (wind3){
+            wind3.close();
         }
-    </script>
+    });
+
+</script>
 </body>
 
 </html>

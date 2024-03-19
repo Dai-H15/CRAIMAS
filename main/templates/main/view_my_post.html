@@ -15,7 +15,7 @@
 
             <div class = "row text-center ">
                 <h5>企業情報</h5>
-                <table class = "col">
+                <table class = "col table ">
                     {% for field in C_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
@@ -27,7 +27,7 @@
             <div class ="row border mt-4 px-2">
                 <div class = "col border-end">
                 <h5>事業内容</h5>
-                <table>
+                <table class  = "table  table-hover">
                     {% for field in A_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
@@ -40,7 +40,7 @@
                 <div class = "row ">
                     <div class = "col ">
                     <h5>経営理念等</h5>
-                        <table>
+                        <table class  = "table  table-hover">
                             {% for field in I_Form %}
                                 <tr>
                                     <td>{{ field.label }}:</td>
@@ -57,7 +57,7 @@
             <h4 class = " text-center m-3">志望動機・企業情報</h4>
             <div class = "col border p-2">
             <h5>志望動機シート</h5>
-            <table>{% for field in M_Form %}
+            <table class  = "table  table-hover">{% for field in M_Form %}
                 <tr>
                     <td>{{ field.label }}:</td>
                     <td>{{ field.value }}</td>
@@ -76,7 +76,7 @@
             <div class = "row ">
                 <div class = "col border-top">
                 <h5>企業データ</h5>
-                    <table>{% for field in D_Form %}
+                    <table class  = "table  table-hover">{% for field in D_Form %}
                         <tr>
                             <td>{{ field.label }}: </td>
                             <td>{{ field.value }}</td>
@@ -87,7 +87,7 @@
             <div class = "row">
                 <div class  ="col border-top" >
                     <h5>採用情報</h5>
-                    <table>{% for field in AD_Form %}
+                    <table class  = "table  table-hover">{% for field in AD_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
                             <td>{{ field.value }}</td>

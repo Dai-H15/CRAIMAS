@@ -2,13 +2,12 @@ from django.shortcuts import render, redirect, HttpResponse
 from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption, Interview
 from authUser.models import CustomUser
 from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum, InterviewForm
-import secrets, requests, csv, urllib,json
+import secrets, requests, csv, urllib, json
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 from datetime import datetime
 from django.forms.models import model_to_dict
-
+from django.db.models import Max, Sum, Avg, Count
 
 
 # Functions
@@ -719,3 +718,86 @@ def json_import(request):
         request.session["Interviews"] = data["Interview"] if "Interview" in data else "None"
         return HttpResponse("<script>window.opener.location.reload();</script>")
     return render(request, "main/json_import.html", contexts)
+
+
+def view_main(request, control, option):
+    contexts = collect_regnum()
+    contexts["control"] = control
+    menu = [
+            {"choice": "top", "desc": "トップページ", "th_all": []},
+            {"choice": "all", "desc": "全企業シート一覧", "th_all": ["企業名", "所属業界", "採用職種", "URL", "登録日", "詳細"]},
+            {"choice": "interview", "desc": "面談録一覧", "th_all": ["面談名", "面談日", "面談者", "志望度(%)", "詳細"]},
+            {"choice": "R_aspire", "desc": "志望度ランキング", "th_all": ["企業名", "面談回数", "志望度合計", "平均志望度", "詳細"]},
+            ]
+
+    for m in menu:
+        if m["choice"] == control:
+            current_menu = m
+            m["current"] = "true"
+            m["active"] = "active"
+        else:
+            m["current"] = "false"
+            m["active"] = ""
+
+    if control == "all":
+        contexts["results"] = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
+        contexts["th_all"] = current_menu["th_all"]
+
+    if control == "interview":
+        options = [
+            {"color": "outline-primary", "n_option": "date", "desc": "面談日時", "reverse": ""},
+            {"color": "outline-primary", "n_option": "aspire", "desc": "志望度", "reverse": ""},
+        ]
+        contexts["options"] = options
+        contexts["results"] = Interview.objects.filter(RegistID__by_U_ID=request.user.U_ID)
+        for o in options:
+            if o["n_option"] == option:
+                o["reverse"] = "_r"
+                o["active"] = "active"
+                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: getattr(x, o["n_option"]))
+            elif o["n_option"] + "_r" == option:
+                o["reverse"] = ""
+                o["active"] = "active"
+                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: getattr(x, o["n_option"]), reverse=True)
+                o["color"] = "warning"
+            else:
+                o["active"] = ""
+        contexts["th_all"] = current_menu["th_all"]
+
+    if control == "R_aspire":
+        R_sets = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
+        contexts["results"] = []
+        for R in R_sets:
+            contexts["results"].append(
+                {
+                    "R_sets": R,
+                    "c_interview": Interview.objects.filter(RegistID=R).count(),
+                    "sum_aspire": Interview.objects.filter(RegistID=R).aggregate(Sum("aspire"))["aspire__sum"] if Interview.objects.filter(RegistID=R).aggregate(Sum("aspire"))["aspire__sum"] is not None else 0,
+                    "avg_aspire": Interview.objects.filter(RegistID=R).aggregate(Avg("aspire"))["aspire__avg"] if Interview.objects.filter(RegistID=R).aggregate(Avg("aspire"))["aspire__avg"] is not None else 0,
+                }
+                )
+        options = [
+            {"color": "outline-primary", "n_option": "c_interview", "desc": "面談回数", "reverse": ""},
+            {"color": "outline-primary", "n_option": "sum_aspire", "desc": "合計志望度順", "reverse": ""},
+            {"color": "outline-primary", "n_option": "avg_aspire", "desc": "平均志望度順", "reverse": ""},
+        ]
+        for o in options:
+            if o["n_option"] == option:
+                o["reverse"] = "_r"
+                o["active"] = "active"
+                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: x[o["n_option"]])
+            elif o["n_option"] + "_r" == option:
+                o["reverse"] = ""
+                o["active"] = "active"
+                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: x[o["n_option"]], reverse=True)
+                o["color"] = "warning"
+            else:
+                o["active"] = ""
+        contexts["options"] = options
+        contexts["th_all"] = current_menu["th_all"]
+
+    if control == "top":
+        contexts["message"] = {"type": "success", "message": "左のメニューから選択してください。"}
+
+    contexts["menu"] = menu
+    return render(request, "main/view/main.html", contexts)

@@ -1,0 +1,39 @@
+<div class = "row text-center">
+    <div class = "row "><p>白: 未選択 / 青: 昇順 / 黄色: 降順</p></div>
+    {% for option in options %}
+    <div class = "col"><a class = "btn btn-{{option.color}} {{option.active}}" href="{% url "view_main" control="R_aspire" option=option.n_option|add:option.reverse %}" role = "button" >{{option.desc}}</a></div>
+    {% endfor %}
+</div>
+<table class  = "table  table-hover">
+    <thead>
+    <tr>
+        <th></th>
+        {% for th in th_all %}
+        <th scope = "col">{{th}}</th>
+        {% endfor %}
+        
+    </tr>
+</thead>
+<tbody>
+        {% for result in results %}
+        <tr>
+            <th scope = "row">{{forloop.counter}}</th>
+            <td>{{result.R_sets.company}}</td>
+            <td>{{result.c_interview}}</td>
+            <td>{{result.sum_aspire}}</td>
+            <td>{{result.avg_aspire}}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      操作
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "view_my_post" result.R_sets.RegistID %}','view{{forloop.counter}}',900,800)">シート閲覧</a></li>
+                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "interview_main" result.R_sets.RegistID %}','interview{{forloop.counter}}',400,600)">面談録閲覧</a></li>
+                    </ul>
+                  </div>
+            </td>
+        </tr>
+        {% endfor %}
+</tbody>
+</table>

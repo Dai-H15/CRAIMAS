@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="jp">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 
 </head>
+
 <body>
-    <div class= "container-fluid">
+    <div class="container-fluid">
         <div class="row border">
             <!-- ヘッダー -->
             <h2 class="text-center">Biz Intelli Scan </h2>
@@ -22,15 +24,16 @@
                 </div>
             </div>
         </div>
-        <div class= "row">
-            <div class = "container">
-                <div class = "row"><!---ユーザー情報一覧-->
-                    <table class = "col text-center border m-3">
+        <div class="row">
+            <div class="container">
+                <div class="row">
+                    <!---ユーザー情報一覧-->
+                    <table class="col text-center border m-3">
                         <tr>
-                        <th>ユーザー名</th>
-                        <th>卒業年度</th>
-                        <th>gBizINFO　APIキー</th>
-                        <th>投稿数</th>
+                            <th>ユーザー名</th>
+                            <th>卒業年度</th>
+                            <th>gBizINFO　APIキー</th>
+                            <th>投稿数</th>
                         </tr>
                         <tr>
                             <td>{{user}}</td>
@@ -40,69 +43,82 @@
                         </tr>
                     </table>
                 </div>
-                <div class = "row"><!--投稿一覧-->
+                <div class="row">
+                    <!--投稿一覧-->
                     <h3>投稿一覧</h3>
-                    <table class = "col m-3 border ">
-                        <tr>
-                            <th>投稿日時</th>
-                            <th>企業名</th>
-                            <th>所属業界</th>
-                            <th>採用職種</th>
-                            <th>担当者名</th>
-                            <th>募集年度</th>
-                            <th>詳細・削除</th>
-                        </tr>
-                        {% for post in posts %}
-                        <tr>
-                            <td>{{post.created}}</td>
-                            <td>{{post.company}}</td>
-                            <td>{{post.company.industry}}</td>
-                            <td>{{post.adoption.occupation}}</td>
-                            <td>{{post.company.contact}}</td>
-                            <td>{{post.adoption.a_year}}</td>
-                            <td>
-                                
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                      操作
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                      <li><a class="dropdown-item text-bg-success p-2" onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</a></li>
-                                      <li><a class="dropdown-item text-bg-info p-2" href="{% url "edit_posts" post.RegistID %}">編集</a></li>
-                                      <li><a class="dropdown-item text-bg-danger p-2" href="{% url "delete_posts" post.RegistID %}">削除</a></li>
-                                    </ul>
-                                  </div>
-                                
-                            </td>
-                        </tr>
-                        {% endfor %}
+                    <table class=" m-3 border table  table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">投稿日時</th>
+                                <th scope="col">企業名</th>
+                                <th scope="col">所属業界</th>
+                                <th scope="col">採用職種</th>
+                                <th scope="col">担当者名</th>
+                                <th scope="col">募集年度</th>
+                                <th scope="col">詳細・削除</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr>
+                                <td>{{post.created}}</td>
+                                <td>{{post.company}}</td>
+                                <td>{{post.company.industry}}</td>
+                                <td>{{post.adoption.occupation}}</td>
+                                <td>{{post.company.contact}}</td>
+                                <td>{{post.adoption.a_year}}</td>
+                                <td>
+
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            操作
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item text-bg-success p-2"
+                                                    onclick="open_as_window('{% url "view_my_post" post.RegistID %}')">閲覧</a>
+                                            </li>
+                                            <li><a class="dropdown-item text-bg-info p-2"
+                                                    href="{% url "edit_posts" post.RegistID %}">編集</a></li>
+                                            <li><a class="dropdown-item text-bg-danger p-2"
+                                                    href="{% url "delete_posts" post.RegistID %}">削除</a></li>
+                                        </ul>
+                                    </div>
+
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
                     </table>
                 </div>
-                
+
             </div>
-            <div class = "text-center"><a href="{% url "index" %}"><button class = "btn btn-primary">ホームに戻る</button></a></div>
+            <div class="text-center"><a href="{% url "index" %}"><button class="btn btn-primary">ホームに戻る</button></a>
+            </div>
 
         </div>
     </div>
     <script>
         let wind;
-        function open_as_window(url){
-            wind = window.open(`${url}`, "view_post", "width=800,height=900,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
+
+        function open_as_window(url) {
+            wind = window.open(`${url}`, "view_post",
+                "width=800,height=900,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
             console.log(wind);
-    };
-    window.addEventListener('beforeunload', function(){
-        if (wind){
-            wind.close();
-        }
-    });
+        };
+        window.addEventListener('beforeunload', function () {
+            if (wind) {
+                wind.close();
+            }
+        });
+    </script>
 
-</script>
 
-        
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
     </script>
 
 </body>
+
 </html>

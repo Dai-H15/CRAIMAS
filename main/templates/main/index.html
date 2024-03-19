@@ -39,15 +39,14 @@
                             <h3>マイページ</h3>
                         </div>
                     </a>
-                    <a href="/">
+                    <a href="{% url "view_main" control="top" option="default" %}">
                     <div class="col text-center p-3 border">
-                        <h3>閲覧する</h3>
+                        <h3>各種シート管理</h3>
                     </div></a>
                     <a href="{% url "regist_base" %}">
                     <div class="col text-center p-3 border">
                         <h3> 登録する</h3>
                     </div></a>
-                    
                 </div>
             </div>
         </div>

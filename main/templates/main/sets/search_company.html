@@ -47,23 +47,29 @@
 
                 </div>
                 <div class = "row"><!--投稿一覧-->
-                    <table class = "col m-3 border ">
+                    <table class = "table  table table-striped-columns m-3 table-hover border ">
+                        <thead>
                         <tr>
-                            <th>法人番号</th>
-                            <th>企業名</th>
-                            <th>更新日</th>
-                            <th>状況</th>
+                            <th></th>
+                            <th scope = "col">法人番号</th>
+                            <th scope = "col">企業名</th>
+                            <th scope = "col">更新日</th>
+                            <th scope = "col">状況</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {% for result in results %}
                         <tr>
+                            <th scope = "row">{{forloop.counter}}</th>
                             <td><a class = "text-success" onclick="open_as_window('{% url "get_more_compinfo"  corporate_number=result.corporate_number return_to=return_to %}')">{{result.corporate_number}}</a></td>
-                            <td>{{result.name}}</td>
+                            <td >{{result.name}}</td>
                             <td>{{result.update_date}}</td>
                             <td>{% if result.status == "-" %} 営業中 {% else %} {{result.status}}{% endif %}</td>
                             <td>{{result.a_year}}</td>
                             <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"></form></td>
                         </tr>
                         {% endfor %}
+                    </tbody>
                     </table>
                 </div>
                 

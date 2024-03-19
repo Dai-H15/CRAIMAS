@@ -1,0 +1,77 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biz Intelli Scan</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の登録件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="container">
+                <div class = "row">
+                        <h4>シート一覧</h4>
+                        <div class = "col-2 border p-3" style="height: 100vh">
+                            <div class="list-group">
+                                {% for m in menu %}
+                                    <a href="{% url 'view_main' control=m.choice option="default" %}" class="list-group-item list-group-item-action {{m.active}}" aria-current="true">{{m.desc}}</a>
+                                {% endfor %}
+                                
+                            </div>
+                        </div>
+                        <div class  = "col-10 border">
+                            {% if message %}
+                            <div class="alert alert-{{message.type}} m-3" role="alert">
+                                {{message.message}}
+                            </div>
+                            <div class  = "col text-center">
+                                <a class = " btn btn-primary" href="{% url "index" %}">ホームへ戻る</a>
+                            </div>
+                            {% endif %}
+                            {% if results %}
+                                {% with "main/view/tables/"|add:control|add:".html" as template_name %}
+                                    {% include template_name %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script>
+        let wind = [];
+        function open_as_window(url,name,width,height){
+            wind.push(window.open(`${url}`, `${name}`, `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`))
+    };
+    window.addEventListener('beforeunload', function(){
+        if (wind.length !=0){
+            for(let i = 0; i < wind.length; i++){
+                wind[i].close();
+            }
+        }
+    });
+</script>
+</body>
+</html>

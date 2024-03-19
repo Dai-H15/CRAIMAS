@@ -56,18 +56,18 @@
 
             <div class = "row text-center border">
                 <h5>企業情報</h5>
-                <table class = "col">{{C_Form.as_table}}</table>
+                <table class  = "table  table-hover">{{C_Form.as_table}}</table>
             </div>
             <div class ="row border mt-4 px-2">
                 <div class = "col border-end">
                 <h5>事業内容</h5>
-                <table >{{A_Form.as_table}}</table>
+                <table class  = "table  table-hover">{{A_Form.as_table}}</table>
             </div>
             <div class = "col">
                 <div class = "row ">
                     <div class = "col ">
                     <h5>経営理念等</h5>
-                        <table>{{I_Form.as_table}}</table>
+                        <table class  = "table  table-hover">{{I_Form.as_table}}</table>
                     </div>
                 </div>
             </div>
@@ -77,20 +77,20 @@
             <h4 class = " text-center m-3">志望動機・企業情報</h4>
             <div class = "col border">
             <h5>志望動機シート</h5>
-            <table>{{M_Form.as_table}}</table>
+            <table class  = "table  table-hover">{{M_Form.as_table}}</table>
         </div>
         <div class = "col">
             <div class = "row ">
                 <div class = "col border-top">
                 <h5 class = "col">企業データ</h5>
                 <button type="button" class="btn btn-outline-warning my-3" onclick = "open_as_window('{% url "calc" %}',600,300)">金額入力ツール</button>
-                    <table>{{D_Form.as_table}}</table>
+                    <table class  = "table  table-hover">{{D_Form.as_table}}</table>
                 </div>
             </div>
             <div class = "row">
                 <div class  ="col border-top" >
                     <h5>採用情報</h5>
-                    <table>{{AD_Form}}</table>
+                    <table class  = "table  table-hover">{{AD_Form}}</table>
                 </div>
             </div>
             <div class = "row border-top text-center">

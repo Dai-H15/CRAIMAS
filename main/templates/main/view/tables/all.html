@@ -1,0 +1,38 @@
+<table class  = "table  table-hover">
+    <thead>
+    <tr>
+        <th></th>
+        {% for th in th_all %}
+        <th scope = "col">{{th}}</th>
+        {% endfor %}
+        
+    </tr>
+</thead>
+<tbody>
+        {% for result in results %}
+        <tr>
+            <th scope = "row">{{forloop.counter}}</th>
+            <td>{{result.company}}</td>
+            <td>{{result.company.industry}}</td>
+            <td>{{result.adoption.occupation}}</td>
+            {% if result.d_company.url == "about:blank" %}
+            <td>-</td>
+            {% else %}
+            <td><a class = "text-primary border-0" onclick="open_as_window('{{result.d_company.url}}','c_site{{forloop.counter}}',1200,1000)">サイト</a></td>
+            {% endif %}
+            <td>{{result.created}}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      操作
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "view_my_post" result.RegistID %}','view{{forloop.counter}}',900,800)">シート閲覧</a></li>
+                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "interview_main" result.RegistID %}','interview{{forloop.counter}}',400,600)">面談録閲覧</a></li>
+                    </ul>
+                  </div>
+            </td>
+        </tr>
+        {% endfor %}
+</tbody>
+</table>

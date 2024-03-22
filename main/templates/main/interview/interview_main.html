@@ -30,7 +30,7 @@
                 <div class="row p-3">
                     <ul class = "list-unstyled">
                     {% for interview in interviews %}
-                    <li><a onclick="view_interview('{{interview.InterviewID}}')"><p>{{interview}}</p></a></li>
+                    <li><a onclick="view_interview('{{interview.InterviewID}}')"><p>{{interview.title}} <br> ({{interview.date}})</p></a></li>
                     {% endfor %}
                 </ul>
                     <a href="{% url "interview_create" R_sets.RegistID %}" class = "btn btn-success"> 新規作成 </a>

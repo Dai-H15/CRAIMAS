@@ -1,13 +1,33 @@
 from django.shortcuts import render, redirect, HttpResponse
-from .models import Companies, About, RegistSets, Idea, Motivation, D_Company, Adoption, Interview
+from .models import (
+    Companies,
+    About,
+    RegistSets,
+    Idea,
+    Motivation,
+    D_Company,
+    Adoption,
+    Interview,
+    CustomSheet,
+)
 from authUser.models import CustomUser
-from .forms import CompaniesForm, AboutForm, IdeaForm, MotivationForm, D_CompanyForm, AdoptionForm, SearchForm_corpnum, InterviewForm
+from .forms import (
+    CompaniesForm,
+    AboutForm,
+    IdeaForm,
+    MotivationForm,
+    D_CompanyForm,
+    AdoptionForm,
+    SearchForm_corpnum,
+    InterviewForm,
+)
 import secrets, requests, csv, urllib, json
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.forms.models import model_to_dict
 from django.db.models import Max, Sum, Avg, Count
+from django.apps import apps
 
 
 # Functions
@@ -17,7 +37,7 @@ def collect_regnum():
     res = {
         "num_c": Companies.objects.count(),
         "num_a": RegistSets.objects.count(),
-        }
+    }
     return res
 
 
@@ -65,6 +85,8 @@ def index(request):
         del request.session["jsons"]
     if "Interviews" in request.session:
         del request.session["Interviews"]
+    if "result_data" in request.session:
+        del request.session["result_data"]
     contexts = collect_regnum()
     return render(request, "main/index.html", contexts)
 
@@ -84,7 +106,14 @@ def regist_all(request):
         M_Form = MotivationForm(request.POST)
         D_Form = D_CompanyForm(request.POST)
         AD_Form = AdoptionForm(request.POST)
-        if C_Form.is_valid() and A_Form.is_valid() and I_Form.is_valid() and M_Form.is_valid() and D_Form.is_valid() and AD_Form.is_valid():
+        if (
+            C_Form.is_valid()
+            and A_Form.is_valid()
+            and I_Form.is_valid()
+            and M_Form.is_valid()
+            and D_Form.is_valid()
+            and AD_Form.is_valid()
+        ):
             CompanyID = secrets.token_hex(64)
             n_CForm = C_Form.save(commit=False)
             n_CForm.CompanyID = CompanyID
@@ -128,7 +157,11 @@ def regist_all(request):
             if "Interviews" in request.session:  # Interviewの登録
                 n = 0
                 for i in request.session["Interviews"]["interviews"]:
-                    Interview.objects.create(**i, RegistID=RegistSets.objects.get(RegistID=R_ID), InterviewID=secrets.token_hex(64))
+                    Interview.objects.create(
+                        **i,
+                        RegistID=RegistSets.objects.get(RegistID=R_ID),
+                        InterviewID=secrets.token_hex(64),
+                    )
                     n += 1
                 contexts["In_counts"] = n
             return render(request, "main/regist_done.html", contexts)
@@ -148,9 +181,15 @@ def regist_all(request):
         D_Form = D_CompanyForm(request.session["jsons"]["D_Form"])
         AD_Form = AdoptionForm(request.session["jsons"]["AD_Form"])
         if request.session["Interviews"] != "None":
-            contexts["messages"] = {"color": "warning", "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>"}
+            contexts["messages"] = {
+                "color": "warning",
+                "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>",
+            }
         else:
-            contexts["messages"] = {"color": "success", "message": "<h5>インポートが完了しました。内容が正しいか確認し、登録を行ってください。</h5><h5>なお、面談録は情報に含まれていませんでした。</h5>"}
+            contexts["messages"] = {
+                "color": "success",
+                "message": "<h5>インポートが完了しました。内容が正しいか確認し、登録を行ってください。</h5><h5>なお、面談録は情報に含まれていませんでした。</h5>",
+            }
         del request.session["jsons"]
     else:
         C_Form = CompaniesForm()
@@ -228,7 +267,9 @@ def delete_posts(request, id):
             post.delete()
         elif "del_C_Form" in request.POST:
             try:
-                post = Companies.objects.get(CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID)
+                post = Companies.objects.get(
+                    CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID
+                )
                 post.delete()
                 RegistSets.objects.get(RegistID=id).delete()
             except Companies.DoesNotExist:
@@ -268,7 +309,11 @@ def create_company(request):
             n_CForm = C_Form.save(commit=False)
             n_CForm.CompanyID = CompanyID
             n_CForm.save()
-            Temp_regist = RegistSets.objects.create(RegistID=secrets.token_hex(64), by_U_ID=CustomUser.objects.get(username=request.user), company=Companies.objects.get(CompanyID=CompanyID))
+            Temp_regist = RegistSets.objects.create(
+                RegistID=secrets.token_hex(64),
+                by_U_ID=CustomUser.objects.get(username=request.user),
+                company=Companies.objects.get(CompanyID=CompanyID),
+            )
             request.session["RegistID"] = Temp_regist.RegistID
             print("new company created.")
             return redirect("create_about")
@@ -287,7 +332,11 @@ def import_company(request):
             CompanyID = request.POST["ID"]
             copy_company.CompanyID = CompanyID
             copy_company.save()
-            Temp_regist = RegistSets.objects.create(RegistID=secrets.token_hex(64), by_U_ID=CustomUser.objects.get(username=request.user), company=Companies.objects.get(CompanyID=CompanyID))
+            Temp_regist = RegistSets.objects.create(
+                RegistID=secrets.token_hex(64),
+                by_U_ID=CustomUser.objects.get(username=request.user),
+                company=Companies.objects.get(CompanyID=CompanyID),
+            )
             request.session["RegistID"] = Temp_regist.RegistID
             return redirect("create_about")
     companies = Companies.objects.all()
@@ -301,12 +350,16 @@ def create_about(request):
     if "forms" in request.session:
         A_Form = AboutForm(request.session["forms"]["A_Form"])
     contexts["A_Form"] = A_Form
-    contexts["C_Form"] = CompaniesForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).company)
+    contexts["C_Form"] = CompaniesForm(
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+    )
     if request.method == "POST":
         A_Form = AboutForm(request.POST)
         if A_Form.is_valid():
             n_AForm = A_Form.save(commit=False)
-            n_AForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            n_AForm.company_name = RegistSets.objects.get(
+                RegistID=request.session["RegistID"]
+            ).company
             AboutID = secrets.token_hex(64)
             n_AForm.AboutID = AboutID
             n_AForm.save()
@@ -320,14 +373,18 @@ def create_about(request):
 
 def create_idea(request):
     contexts = collect_regnum()
-    contexts["A_Form"] = AboutForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).about)
+    contexts["A_Form"] = AboutForm(
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).about
+    )
     I_Form = IdeaForm()
     contexts["I_Form"] = I_Form
     if request.method == "POST":
         I_Form = IdeaForm(request.POST)
         if I_Form.is_valid():
             n_IForm = I_Form.save(commit=False)
-            n_IForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            n_IForm.company_name = RegistSets.objects.get(
+                RegistID=request.session["RegistID"]
+            ).company
             IdeaID = secrets.token_hex(64)
             n_IForm.IdeaID = IdeaID
             n_IForm.save()
@@ -340,14 +397,18 @@ def create_idea(request):
 
 def create_motivation(request):
     contexts = collect_regnum()
-    contexts["I_Form"] = IdeaForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).idea)
+    contexts["I_Form"] = IdeaForm(
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).idea
+    )
     M_Form = MotivationForm()
     contexts["M_Form"] = M_Form
     if request.method == "POST":
         M_Form = MotivationForm(request.POST)
         if M_Form.is_valid():
             n_MForm = M_Form.save(commit=False)
-            n_MForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            n_MForm.company_name = RegistSets.objects.get(
+                RegistID=request.session["RegistID"]
+            ).company
             MotivationID = secrets.token_hex(64)
             n_MForm.MotivationID = MotivationID
             n_MForm.save()
@@ -360,7 +421,9 @@ def create_motivation(request):
 
 def create_d_company(request):
     contexts = collect_regnum()
-    contexts["M_Form"] = MotivationForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).motivation)
+    contexts["M_Form"] = MotivationForm(
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).motivation
+    )
     D_Form = D_CompanyForm()
     if "forms" in request.session:
         D_Form = D_CompanyForm(request.session["forms"]["D_Form"])
@@ -369,7 +432,9 @@ def create_d_company(request):
         D_Form = D_CompanyForm(request.POST)
         if D_Form.is_valid():
             n_DForm = D_Form.save(commit=False)
-            n_DForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            n_DForm.company_name = RegistSets.objects.get(
+                RegistID=request.session["RegistID"]
+            ).company
             D_CompanyID = secrets.token_hex(64)
             n_DForm.D_CompanyID = D_CompanyID
             n_DForm.save()
@@ -382,14 +447,18 @@ def create_d_company(request):
 
 def create_adoption(request):
     contexts = collect_regnum()
-    contexts["D_Form"] = D_CompanyForm(instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).d_company)
+    contexts["D_Form"] = D_CompanyForm(
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).d_company
+    )
     AD_Form = AdoptionForm()
     contexts["AD_Form"] = AD_Form
     if request.method == "POST":
         AD_Form = AdoptionForm(request.POST)
         if AD_Form.is_valid():
             n_ADForm = AD_Form.save(commit=False)
-            n_ADForm.company_name = RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+            n_ADForm.company_name = RegistSets.objects.get(
+                RegistID=request.session["RegistID"]
+            ).company
             AdoptionID = secrets.token_hex(64)
             n_ADForm.AdoptionID = AdoptionID
             n_ADForm.save()
@@ -464,7 +533,13 @@ def edit_posts(request, id):
         else:
             AD_Form = AdoptionForm(request.POST, instance=Temp_regist.adoption)
             AdoptionID = Temp_regist.adoption.AdoptionID
-        if A_Form.is_valid() and I_Form.is_valid() and M_Form.is_valid() and D_Form.is_valid() and AD_Form.is_valid():
+        if (
+            A_Form.is_valid()
+            and I_Form.is_valid()
+            and M_Form.is_valid()
+            and D_Form.is_valid()
+            and AD_Form.is_valid()
+        ):
             n_AForm = A_Form.save(commit=False)
             n_IForm = I_Form.save(commit=False)
             n_MForm = M_Form.save(commit=False)
@@ -492,7 +567,7 @@ def edit_posts(request, id):
             Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
             Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
             Temp_regist.save()
-            return redirect("mypage")
+            return HttpResponse("<script>window.opener.location.reload()</script>")
 
     return render(request, "main/edit_posts.html", contexts)
 
@@ -502,7 +577,9 @@ def search_company(request, return_to):
     contexts["return_to"] = return_to
     form = SearchForm_corpnum()
     if request.user.gBIZINFO_key == "default_key":
-        return HttpResponse(r"GBIZINFO_key is not set. Please set your key in your profile. <a href='/'>Profile</a>")
+        return HttpResponse(
+            r"GBIZINFO_key is not set. Please set your key in your profile. <a href='/'>Profile</a>"
+        )
     if request.method == "POST":
         if "search" in request.POST:
             form = SearchForm_corpnum(request.POST)
@@ -514,7 +591,10 @@ def search_company(request, return_to):
                     url += "&corporate_number" + form.cleaned_data["corporate_number"]
                 if form.cleaned_data["name"] != "":
                     url += "&name=" + quote(form.cleaned_data["name"])
-                headers = {"Accept": "application/json", "X-hojinInfo-api-token": request.user.gBIZINFO_key}
+                headers = {
+                    "Accept": "application/json",
+                    "X-hojinInfo-api-token": request.user.gBIZINFO_key,
+                }
                 if url != "https://info.gbiz.go.jp/hojin/v1/hojin?":
                     try:
                         r = requests.get(url, headers=headers)
@@ -522,7 +602,9 @@ def search_company(request, return_to):
                         contexts["results"] = r.json()["hojin-infos"]
                     except KeyError:
                         contexts["results"] = []
-                        contexts["message"] = f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})"
+                        contexts["message"] = (
+                            f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})"
+                        )
     contexts["form"] = form
     return render(request, "main/sets/search_company.html", contexts)
 
@@ -531,9 +613,14 @@ def get_more_compinfo(request, corporate_number, return_to):
     contexts = collect_regnum()
     contexts["return_to"] = return_to
     if request.user.gBIZINFO_key == "default_key":
-        return HttpResponse("GBIZINFO_key is not set. Please set your key in your profile. <a href='{{url 'mypage'}}'>Profile</a>")
-    headers = {"Accept": "application/json", "X-hojinInfo-api-token": request.user.gBIZINFO_key}
-    url = "https://info.gbiz.go.jp/hojin/v1/hojin/"+corporate_number
+        return HttpResponse(
+            "GBIZINFO_key is not set. Please set your key in your profile. <a href='{{url 'mypage'}}'>Profile</a>"
+        )
+    headers = {
+        "Accept": "application/json",
+        "X-hojinInfo-api-token": request.user.gBIZINFO_key,
+    }
+    url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
     contexts["result"] = requests.get(url, headers=headers).json()["hojin-infos"][0]
     return render(request, "main/sets/get_more_compinfo.html", contexts)
 
@@ -542,17 +629,27 @@ def set_searched_data(request):
     if request.method == "POST":
         return_to = request.POST["return_to"]
         corporate_number = request.POST["corporate_number"]
-        url = "https://info.gbiz.go.jp/hojin/v1/hojin/"+corporate_number
-        headers = {"Accept": "application/json", "X-hojinInfo-api-token": request.user.gBIZINFO_key}
+        url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
+        headers = {
+            "Accept": "application/json",
+            "X-hojinInfo-api-token": request.user.gBIZINFO_key,
+        }
         res = requests.get(url, headers=headers).json()["hojin-infos"][0]
         C = {
             "name": res["name"] if "name" in res else "None",
-            "industry": res["business_summary"] if "business_summary" in res else "None",
-            "president": (res["representative_position"] if "representative_position" in res else "") + (res["representative_name"] if "representative_name" in res else ""),
+            "industry": (
+                res["business_summary"] if "business_summary" in res else "None"
+            ),
+            "president": (
+                res["representative_position"]
+                if "representative_position" in res
+                else ""
+            )
+            + (res["representative_name"] if "representative_name" in res else ""),
             "a_year": "0",
             "contact": "-",
         }
-        
+
         A = {
             "product": res["business_summary"] if "business_summary" in res else "None",
             "customer_txt": "-",
@@ -560,14 +657,24 @@ def set_searched_data(request):
             "value_txt": "-",
             "value": "B to B",
             "originality": "-",
-            "f_value": "-"
+            "f_value": "-",
         }
 
         D = {
-            "founded": res["date_of_establishment"] if "date_of_establishment" in res else "0",
+            "founded": (
+                res["date_of_establishment"] if "date_of_establishment" in res else "0"
+            ),
             "founded_t": "more100",
-            "capital": res["capital_stock_summary_of_business_results"] if "capital_stock_summary_of_business_results" in res else 0,
-            "sales_n": res["net_sales_summary_of_business_results "] if "net_sales_summary_of_business_results " in res else 0,
+            "capital": (
+                res["capital_stock_summary_of_business_results"]
+                if "capital_stock_summary_of_business_results" in res
+                else 0
+            ),
+            "sales_n": (
+                res["net_sales_summary_of_business_results "]
+                if "net_sales_summary_of_business_results " in res
+                else 0
+            ),
             "employee_n": res["employee_number "] if "employee_number " in res else 0,
             "sales_y": res["update_date"] if "update_date" in res else 0,
             "sales_t": "None",
@@ -577,7 +684,9 @@ def set_searched_data(request):
             "avg_y": res["average_age "] if "average_age " in res else 0,
             "postal_code": res["postal_code"] if "postal_code" in res else 0,
             "location": res["location"] if "location" in res else "None",
-            "corporate_number": res["corporate_number"] if "corporate_number" in res else 0,
+            "corporate_number": (
+                res["corporate_number"] if "corporate_number" in res else 0
+            ),
             "url": res["company_url"] if "company_url" in res else "about:blank",
         }
 
@@ -608,7 +717,9 @@ def interview_create(request, id):
         form = InterviewForm(request.POST)
         if form.is_valid():
             print("ok")
-            form.save()
+            data = form.save(commit=False)
+            data.company_name = name
+            data.save()
             return redirect("interview_main", id)
         else:
             print("NG")
@@ -631,11 +742,14 @@ def view_interview(request, id):
     interview = InterviewForm(instance=Interview.objects.get(InterviewID=id))
     contexts["interview"] = interview
     if request.method == "POST":
-        form = InterviewForm(request.POST, instance=Interview.objects.get(InterviewID=id))
+        form = InterviewForm(
+            request.POST, instance=Interview.objects.get(InterviewID=id)
+        )
         if form.is_valid():
             form.save()
             return HttpResponse(
-                "<h4 id = 'main'>更新しました。画面を閉じてください</h4> <a onclick = 'window.close()'>閉じる</a>")
+                "<h4 id = 'main'>更新しました。画面を閉じてください</h4> <a onclick = 'window.close()'>閉じる</a>"
+            )
     return render(request, "main/interview/view_interview.html", contexts)
 
 
@@ -660,12 +774,22 @@ def export_sheet(request, id):
         del D["D_CompanyID"]
         AD = dict(**{"sheet_name": "Adoption"}, **model_to_dict(R_set.adoption))
         del AD["AdoptionID"]
-        sets = {"Company": C, "About": A, "Idea": Id, "Motivation": M, "D_Company": D, "Adoption": AD}
+        sets = {
+            "Company": C,
+            "About": A,
+            "Idea": Id,
+            "Motivation": M,
+            "D_Company": D,
+            "Adoption": AD,
+        }
         name = R_set.company.name
         if request.POST["data"] == "two":
             name += "_include_interview"
             interviews = Interview.objects.filter(RegistID=id)
-            sets["Interview"] = {"sheet_name": "Interviews", "interviews": [model_to_dict(interview) for interview in interviews]}
+            sets["Interview"] = {
+                "sheet_name": "Interviews",
+                "interviews": [model_to_dict(interview) for interview in interviews],
+            }
             for s in sets["Interview"]["interviews"]:
                 if isinstance(s["date"], datetime):
                     s["date"] = s["date"].isoformat()
@@ -679,24 +803,32 @@ def export_sheet(request, id):
                 del s["company_name"]
         name += "_exported_sheet"
         if request.POST["type"] == "csv":
-            response = HttpResponse(content_type='text/csv; charset=Shift-JIS')
+            response = HttpResponse(content_type="text/csv; charset=Shift-JIS")
             for s in sets.values():
                 csv_columns = list(s.keys())
                 writer = csv.DictWriter(response, csv_columns)
                 writer.writeheader()
                 writer.writerow(s)
                 writer.writerow({})
-            response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote((f"{name}.csv").encode("utf8")))
+            response["Content-Disposition"] = "attachment; filename*=UTF-8''{}".format(
+                urllib.parse.quote((f"{name}.csv").encode("utf8"))
+            )
             return response
         else:
+
             class DateTimeEncoder(json.JSONEncoder):
                 def default(self, obj):
                     if isinstance(obj, datetime):
                         return obj.isoformat()
                     return super(DateTimeEncoder, self).default(obj)
-            response = HttpResponse(content_type='application/json')
+
+            response = HttpResponse(content_type="application/json")
             if request.POST["type"] == "json_asF":
-                response['Content-Disposition'] = 'attachment; filename*=UTF-8\'\'{}'.format(urllib.parse.quote((f"{name}.json").encode("utf8")))
+                response["Content-Disposition"] = (
+                    "attachment; filename*=UTF-8''{}".format(
+                        urllib.parse.quote((f"{name}.json").encode("utf8"))
+                    )
+                )
             response.write(json.dumps(sets, cls=DateTimeEncoder, ensure_ascii=False))
             return response
     return render(request, "main/export_sheet.html", contexts)
@@ -707,7 +839,7 @@ def json_import(request):
     if request.method == "POST":
         file = request.FILES["json"]
         data = json.load(file)
-        request.session['jsons'] = {
+        request.session["jsons"] = {
             "C_Form": data["Company"],
             "A_Form": data["About"],
             "I_Form": data["Idea"],
@@ -715,7 +847,9 @@ def json_import(request):
             "D_Form": data["D_Company"],
             "AD_Form": data["Adoption"],
         }
-        request.session["Interviews"] = data["Interview"] if "Interview" in data else "None"
+        request.session["Interviews"] = (
+            data["Interview"] if "Interview" in data else "None"
+        )
         return HttpResponse("<script>window.opener.location.reload();</script>")
     return render(request, "main/json_import.html", contexts)
 
@@ -724,12 +858,39 @@ def view_main(request, control, option):
     contexts = collect_regnum()
     contexts["control"] = control
     menu = [
-            {"choice": "top", "desc": "トップページ", "th_all": []},
-            {"choice": "all", "desc": "全企業シート一覧", "th_all": ["企業名", "所属業界", "採用職種", "URL", "登録日", "詳細"]},
-            {"choice": "interview", "desc": "面談録一覧", "th_all": ["面談名", "面談日", "面談者", "志望度(%)", "詳細"]},
-            {"choice": "R_aspire", "desc": "志望度ランキング", "th_all": ["企業名", "面談回数", "志望度合計", "平均志望度", "詳細"]},
-            ]
-
+        {"choice": "top", "desc": "トップページ", "th_all": []},
+        {
+            "choice": "all",
+            "desc": "全企業シート一覧",
+            "th_all": {
+                "company": "企業名",
+                "company.industry": "所属業界",
+                "adoption.occupation": "採用職種",
+                "d_company.url": "URL",
+                "created": "登録日",
+                "": "詳細",
+            },
+        },
+        {
+            "choice": "interview",
+            "desc": "面談録一覧",
+            "th_all": ["企業名", "面談名", "面談日", "志望度(%)", "詳細"],
+        },
+        {
+            "choice": "cat_interview",
+            "desc": "カテゴリ別面談録",
+            "th_all": ["企業名", "面談名", "面談日", "志望度(%)", "詳細"],
+        },
+        {
+            "choice": "R_aspire",
+            "desc": "志望度ランキング",
+            "th_all": ["企業名", "面談回数", "志望度合計", "平均志望度", "詳細"],
+        },
+        {"choice": "create_custom_sheet", "desc": "カスタムシート作成", "th_all": []},
+    ]
+    if CustomSheet.objects.filter(by_U_ID=request.user.U_ID).count() > 0:
+        for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID):
+            menu.append({"choice": cs.sheet_name, "desc": cs.sheet_name, "th_all": []})
     for m in menu:
         if m["choice"] == control:
             current_menu = m
@@ -743,28 +904,46 @@ def view_main(request, control, option):
         contexts["results"] = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
         contexts["th_all"] = current_menu["th_all"]
 
-    if control == "interview":
+    elif control == "interview":
         options = [
-            {"color": "outline-primary", "n_option": "date", "desc": "面談日時", "reverse": ""},
-            {"color": "outline-primary", "n_option": "aspire", "desc": "志望度", "reverse": ""},
+            {
+                "color": "outline-primary",
+                "n_option": "date",
+                "desc": "面談日時",
+                "reverse": "",
+            },
+            {
+                "color": "outline-primary",
+                "n_option": "aspire",
+                "desc": "志望度",
+                "reverse": "",
+            },
         ]
         contexts["options"] = options
-        contexts["results"] = Interview.objects.filter(RegistID__by_U_ID=request.user.U_ID)
+        contexts["results"] = Interview.objects.filter(
+            RegistID__by_U_ID=request.user.U_ID
+        )
         for o in options:
             if o["n_option"] == option:
                 o["reverse"] = "_r"
                 o["active"] = "active"
-                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: getattr(x, o["n_option"]))
+                contexts["results"] = sorted(
+                    contexts["results"], key=lambda x, o=o: getattr(x, o["n_option"])
+                )
             elif o["n_option"] + "_r" == option:
                 o["reverse"] = ""
                 o["active"] = "active"
-                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: getattr(x, o["n_option"]), reverse=True)
+                contexts["results"] = sorted(
+                    contexts["results"],
+                    key=lambda x, o=o: getattr(x, o["n_option"]),
+                    reverse=True,
+                )
                 o["color"] = "warning"
             else:
                 o["active"] = ""
         contexts["th_all"] = current_menu["th_all"]
 
-    if control == "R_aspire":
+    elif control == "R_aspire":
         R_sets = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
         contexts["results"] = []
         for R in R_sets:
@@ -772,32 +951,277 @@ def view_main(request, control, option):
                 {
                     "R_sets": R,
                     "c_interview": Interview.objects.filter(RegistID=R).count(),
-                    "sum_aspire": Interview.objects.filter(RegistID=R).aggregate(Sum("aspire"))["aspire__sum"] if Interview.objects.filter(RegistID=R).aggregate(Sum("aspire"))["aspire__sum"] is not None else 0,
-                    "avg_aspire": Interview.objects.filter(RegistID=R).aggregate(Avg("aspire"))["aspire__avg"] if Interview.objects.filter(RegistID=R).aggregate(Avg("aspire"))["aspire__avg"] is not None else 0,
+                    "sum_aspire": (
+                        Interview.objects.filter(RegistID=R).aggregate(Sum("aspire"))[
+                            "aspire__sum"
+                        ]
+                        if Interview.objects.filter(RegistID=R).aggregate(
+                            Sum("aspire")
+                        )["aspire__sum"]
+                        is not None
+                        else 0
+                    ),
+                    "avg_aspire": (
+                        Interview.objects.filter(RegistID=R).aggregate(Avg("aspire"))[
+                            "aspire__avg"
+                        ]
+                        if Interview.objects.filter(RegistID=R).aggregate(
+                            Avg("aspire")
+                        )["aspire__avg"]
+                        is not None
+                        else 0
+                    ),
                 }
-                )
+            )
         options = [
-            {"color": "outline-primary", "n_option": "c_interview", "desc": "面談回数", "reverse": ""},
-            {"color": "outline-primary", "n_option": "sum_aspire", "desc": "合計志望度順", "reverse": ""},
-            {"color": "outline-primary", "n_option": "avg_aspire", "desc": "平均志望度順", "reverse": ""},
+            {
+                "color": "outline-primary",
+                "n_option": "c_interview",
+                "desc": "面談回数",
+                "reverse": "",
+            },
+            {
+                "color": "outline-primary",
+                "n_option": "sum_aspire",
+                "desc": "合計志望度順",
+                "reverse": "",
+            },
+            {
+                "color": "outline-primary",
+                "n_option": "avg_aspire",
+                "desc": "平均志望度順",
+                "reverse": "",
+            },
         ]
         for o in options:
             if o["n_option"] == option:
                 o["reverse"] = "_r"
                 o["active"] = "active"
-                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: x[o["n_option"]])
+                contexts["results"] = sorted(
+                    contexts["results"], key=lambda x, o=o: x[o["n_option"]]
+                )
             elif o["n_option"] + "_r" == option:
                 o["reverse"] = ""
                 o["active"] = "active"
-                contexts["results"] = sorted(contexts["results"], key=lambda x, o=o: x[o["n_option"]], reverse=True)
+                contexts["results"] = sorted(
+                    contexts["results"],
+                    key=lambda x, o=o: x[o["n_option"]],
+                    reverse=True,
+                )
                 o["color"] = "warning"
             else:
                 o["active"] = ""
         contexts["options"] = options
         contexts["th_all"] = current_menu["th_all"]
 
-    if control == "top":
-        contexts["message"] = {"type": "success", "message": "左のメニューから選択してください。"}
+    elif control == "cat_interview":
+        results = Interview.objects.filter(RegistID__by_U_ID=request.user.U_ID)
+        if option != "default":
+            if results.filter(tag=option).count() == 0:
+                contexts["message"] = {
+                    "type": "warning",
+                    "message": "条件に一致する面談録がありませんでした。",
+                }
+            else:
+                results = results.filter(tag=option)
+        contexts["results"] = results
+        choices = Interview.tags
+        contexts["choices"] = choices
+        contexts["th_all"] = current_menu["th_all"]
+
+    elif control == "top":
+        contexts["message"] = {
+            "type": "success",
+            "message": "左のメニューから選択してください。",
+        }
+    elif control == "create_custom_sheet":
+        return redirect("create_custom_sheet")
+    else:
+        if control in [
+            cs.sheet_name
+            for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID)
+        ]:
+            contexts["customsheet"] = "true"
+            cs = CustomSheet.objects.get(sheet_name=control)
+            results = apps.get_model("main", cs.model).objects.all()
+            if cs.search_settings != {}:
+                if cs.search_settings["how"] == "1":
+                    results = results.filter(
+                        **{cs.search_settings["where"]: cs.search_settings["what"]}
+                    )
+                elif cs.search_settings["how"] == "2":
+                    results = results.filter(
+                        **{
+                            f"{cs.search_settings['where']}__contains": cs.search_settings[
+                                "what"
+                            ]
+                        }
+                    )
+            if cs.view_settings != {}:
+                if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
+                    results = results.order_by(list(cs.view_settings.keys())[0])
+                elif cs.view_settings[list(cs.view_settings.keys())[0]] == "2":
+                    results = results.order_by(
+                        list(cs.view_settings.keys())[0]
+                    ).reverse()
+            if results.count() == 0:
+                contexts["message"] = {
+                    "type": "warning",
+                    "message": "条件に一致するデータが1つもありませんでした。",
+                }
+            contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings}
+            contexts["results"] = results
+            contexts["th_all"] = cs.selected_field
+        else:
+            contexts["message"] = {
+                "type": "danger",
+                "message": "不正なリクエストです。",
+            }
 
     contexts["menu"] = menu
     return render(request, "main/view/main.html", contexts)
+
+
+def create_custom_sheet(request):
+    contexts = collect_regnum()
+    contexts["model_names"] = [
+        model.__name__
+        for model in apps.get_models()
+        if model.__name__
+        not in [
+            "LogEntry",
+            "Permission",
+            "Group",
+            "User",
+            "CustomUser",
+            "Session",
+            "Site",
+            "ContentType",
+            "AdminLog",
+            "CustomSheet",
+        ]
+    ]
+    if "model" in request.GET:
+        if request.GET["model"] == "default":
+            return redirect("create_custom_sheet")
+        if request.GET["create_sheet_name"] == "":
+            contexts["message"] = {
+                "type": "danger",
+                "message": "シート名を入力してください",
+            }
+            return render(request, "main/view/customsheet/create.html", contexts)
+        else:
+            if (
+                CustomSheet.objects.filter(
+                    sheet_name=request.GET["create_sheet_name"]
+                ).count()
+                > 0
+            ):
+                contexts["message"] = {
+                    "type": "danger",
+                    "message": "そのシート名は既に使用されています。",
+                }
+                return render(request, "main/view/customsheet/create.html", contexts)
+            contexts["model_selected"] = request.GET["model"]
+            if request.GET["model"] not in contexts["model_names"]:
+                contexts["message"] = {
+                    "type": "danger",
+                    "message": "不正なリクエストです。",
+                }
+                return render(request, "main/view/customsheet/create.html", contexts)
+            model = apps.get_model("main", request.GET["model"])
+            contexts["model_fields"] = [
+                field.name
+                for field in model._meta.get_fields()
+                if field.name
+                not in [
+                    "id",
+                    "RegistID",
+                    "InterviewID",
+                    "regist_publish",
+                    "AdoptionID",
+                    "D_CompanyID",
+                    "MotivationID",
+                    "IdeaID",
+                    "AboutID",
+                    "CompanyID",
+                    "by_U_ID",
+                ]
+            ]
+            contexts["sheet_name_form"] = request.GET["create_sheet_name"]
+            contexts["message"] = {
+                "type": "success",
+                "message": "選択したモデルを確認し、抽出対象のフィールドと、必要であれば表示名を指定してください",
+            }
+
+    if request.method == "POST":
+        if request.POST["request_type"] == "select_model_and_field":
+            res = {}
+            for x, y in zip(
+                request.POST.getlist("selected_field"),
+                request.POST.getlist("selected_field_name"),
+            ):
+                res[x] = y
+            contexts["selected_field"] = res
+            contexts["model_fields"] = ""
+            contexts["message"] = {
+                "type": "success",
+                "message": "指定したフィールドと表示名を確認し、表示順の指定、検索対象と検索条件を指定してください",
+            }
+        if request.POST["request_type"] == "view_setting":
+            contexts["model_fields"] = ""
+            data = {
+                "create_sheet_name": request.POST.get("create_sheet_name"),
+                "select_model": request.POST.get("model"),
+                "selected_field": {
+                    x: y
+                    for x, y in zip(
+                        request.POST.getlist("selected_field"),
+                        request.POST.getlist("selected_field_name"),
+                    )
+                },
+                "view_setting": request.POST.get("view_setting"),
+                "view_setting_order": request.POST.get("view_setting_order"),
+                "view_setting_search_how": request.POST.get("view_setting_search_how"),
+                "view_setting_search": request.POST.get("view_setting_search"),
+                "view_setting_search_string": request.POST.get(
+                    "view_setting_search_string"
+                ),
+            }
+            request.session["result_data"] = data
+            contexts["result_data"] = data
+            contexts["message"] = {
+                "type": "success",
+                "message": "以下の内容で登録されます。内容を確認してください",
+            }
+        if request.POST["request_type"] == "create_sheet":
+            data = request.session["result_data"]
+            CustomSheet.objects.create(
+                sheet_id=secrets.token_hex(32),
+                sheet_name=data["create_sheet_name"],
+                model=data["select_model"],
+                selected_field=data["selected_field"],
+                view_settings=(
+                    {data["view_setting"]: data["view_setting_order"]}
+                    if data["view_setting"] != ""
+                    else {}
+                ),
+                by_U_ID=request.user.U_ID,
+                search_settings=(
+                    {
+                        "how": data["view_setting_search_how"],
+                        "where": data["view_setting_search"],
+                        "what": data["view_setting_search_string"],
+                    }
+                    if data["view_setting_search_how"] != ""
+                    else {}
+                ),
+            )
+            del request.session["result_data"]
+            return HttpResponse("登録が完了しました。<a href ='/'>戻る</a>")
+    return render(request, "main/view/customsheet/create.html", contexts)
+
+
+def delete_custom_sheet(request, id):
+    contexts = collect_regnum()
+    return render(request, "main/view/customsheet/delete.html", contexts)

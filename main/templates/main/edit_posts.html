@@ -22,7 +22,7 @@
                 </div>
             </div>
         </div>
-        <div class = "row text-center p-3"><div class = "col"><h3>一括登録を行います</h3></div><div class = "col"><a href="{% url "mypage" %}"><button class = "btn btn-outline-warning">マイページへ戻る</button></a></div></div>
+        <div class = "row text-center p-3"><div class = "col"><h3>登録内容を編集します</h3></div><div class = "col"><button class = "btn btn-outline-warning" onclick = "window.opener.location.reload()">マイページへ戻る</button></div></div>
         <form method = "post">
             {% csrf_token %}
             <div class = "container">

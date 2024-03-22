@@ -39,6 +39,26 @@
                             </div>
                         </div>
                         <div class  = "col-10 border">
+                            {% if sheet_config %}
+                            <button class="btn btn-primary m-2" type="button" data-bs-toggle="collapse" data-bs-target="#settings_info" aria-expanded="false" aria-controls="settings_info">
+                                検索条件を表示
+                            </button>
+                            <div class="collapse" id="settings_info">
+                                <div class="alert alert-info">
+                                    <h5>検索条件</h5>
+                                    <ul>
+                                        <li>検索対象モデル: {{sheet_config.model}}</li><br>
+                                        <li>表示対象フィールド<ul>{% for key,val in sheet_config.selected.items %} <li>{{val}} ({{key}}) </li> {% endfor %}</ul></li><br>
+                                        <li>表示順制御条件<ul>{% for key,val in sheet_config.view_settings.items %}<li>{{key}}: {% if val == "1" %}昇順{% elif val == "2" %}降順{% endif %}</li>{% endfor %}</ul></li><br>
+                                        <li>絞り込み条件設定<ul>
+                                            <li>検索方法: {% if sheet_config.search_settings.how == "1" %}完全一致{% elif sheet_config.search_settings.how == "2" %}部分一致{% endif %}</li>
+                                            <li>検索対象項目: {{sheet_config.search_settings.where}}</li>
+                                            <li>検索文字列: 「{{sheet_config.search_settings.what}}」</li>
+                                        </ul></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% endif %}
                             {% if message %}
                             <div class="alert alert-{{message.type}} m-3" role="alert">
                                 {{message.message}}
@@ -47,10 +67,15 @@
                                 <a class = " btn btn-primary" href="{% url "index" %}">ホームへ戻る</a>
                             </div>
                             {% endif %}
+                            
                             {% if results %}
-                                {% with "main/view/tables/"|add:control|add:".html" as template_name %}
+                            {% if customsheet %}
+                                {% include "main/view/customsheet/viewer.html" %}
+                            {% else %}
+                            {% with "main/view/tables/"|add:control|add:".html" as template_name %}
                                     {% include template_name %}
                                 {% endwith %}
+                            {% endif %}
                             {% endif %}
                         </div>
                         </div>

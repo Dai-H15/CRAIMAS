@@ -1,0 +1,287 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biz Intelli Scan</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の登録件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="container">
+                <div class="row">
+                    <h4 class="text-center">カスタムシートを作成します。条件を設定してください</h4>
+                    {% if message %}
+                            <div class="alert alert-{{message.type}} m-3" role="alert">
+                                {{message.message}}
+                            </div>
+                            {% endif %}
+                    <form method="get" class=" mx-auto border">
+                        <div class="m-3">
+                            <div class=" input-group mb-3">
+                                <span class="input-group-text">作成するシート名</span>
+                                <input type="text" class="form-control"  name="create_sheet_name" value = {% if sheet_name_form %}'{{sheet_name_form}}' readonly{% endif %}  >
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">抽出するシート情報</span>
+                                <select name="model" id="models" class="form-control" onchange="submit()" >
+                                    <option value="default">選択してください</option>
+                                    {% for model_name in model_names %}
+                                    <option value="{{ model_name }}"
+                                        {% if model_name == model_selected %}selected{% endif %}>{{ model_name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                {% if model_fields %}
+                                <div class="border">
+                                    {% for field in model_fields %}
+                                    <div class="input-group mb-3 ">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{field}}"
+                                                id="{{forloop.counter}}" name="selected_field"
+                                                onchange="change_input('{{forloop.counter}}')">
+                                            <label class="form-check-label" for="{{forloop.counter}}">{{field}}</label>
+                                            <div class="input-group ">
+                                                <input class="form-control" type="text" placeholder="表示名を入力"
+                                                    name="selected_field_name" id="{{forloop.counter}}_field_name"
+                                                    disabled >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% endfor %}
+                                    
+
+                                </div>
+
+                                
+                        </div><button class="btn btn-success m-3" type="button" onclick="submit_sheet_settings('select_model_and_field')">次へ進む</button>{% endif %}
+                                    
+                                    {% if selected_field %}
+                                    <div class="input-group mb-3">
+                                    <h3>抽出対象</h3>
+                                    {% for key, value in selected_field.items %}
+                                    <div class="input-group mb-3 ">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{key}}"
+                                                id="{{forloop.counter}}" name="selected_field"
+                                                checked readonly>
+                                            <label class="form-check-label" for="{{forloop.counter}}">{{key}}</label>
+                                            <div class="input-group ">
+                                                <input class="form-control" type="text" placeholder="表示名を入力"
+                                                    name="selected_field_name" id="{{forloop.counter}}_field_name" value = '{% if value != "" %}{{value}}{% else %}{{key}}{% endif %}'
+                                                    readonly >
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% endfor %}
+                                    <h4>条件設定</h4>
+                                </div>
+                                
+                                <div class="bg-secondary bg-opacity-25 rounded-4 m-3">
+                                        <div class="row  m-3">
+                                            <h4>表示順制御条件</h4>
+                                        <div class = "col">
+                                            <h5>項目を選択</h5>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="view_setting" id="0" value = "" checked>
+                                                <label class="form-check-label" for="0">
+                                                設定しない
+                                                </label>
+                                            </div>
+                                            {% for key, value in selected_field.items %}
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="view_setting" id="view_setting_{{forloop.counter}}" value = "{{key}}">
+                                                <label class="form-check-label" for="view_setting_{{forloop.counter}}">
+                                                {{value}}({{key}})
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        <div class = "col">
+                                            <h5>表示条件を指定</h5>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="view_setting_order" id="view_setting_order_0" value = "" checked>
+                                                <label class="form-check-label" for="view_setting_order_0">
+                                                    設定しない
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="view_setting_order" id="view_setting_order_1" value = "1" >
+                                                <label class="form-check-label" for="view_setting_order_1">
+                                                    昇順
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="view_setting_order" id="view_setting_order_2" value = "2">
+                                                <label class="form-check-label" for="view_setting_order_2">
+                                                    降順
+                                                </label>
+                                            </div>
+                                        </div>
+                                </div></div>
+                                <div class="bg-secondary bg-opacity-25 rounded-4 m-3">
+                                    <div class="row  m-3">
+                                        <h4>絞り込み設定</h4>
+                                    <div class = "col">
+                                        <h5>項目を選択</h5>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view_setting_search" id="0" value = "" checked>
+                                            <label class="form-check-label" for="0">
+                                            設定しない
+                                            </label>
+                                        </div>
+                                        {% for key, value in selected_field.items %}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view_setting_search" id="view_setting_search_{{forloop.counter}}" value = "{{key}}">
+                                            <label class="form-check-label" for="view_setting_search_{{forloop.counter}}">
+                                            {{value}}({{key}})
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class = "col">
+                                        <h5>絞り込み条件を指定</h5>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view_setting_search_how" id="view_setting_search_none" value = "" checked>
+                                            <label class="form-check-label" for="view_setting_search_none">
+                                                設定しない
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view_setting_search_how" id="view_setting_search_all" value = "1" >
+                                            <label class="form-check-label" for="view_setting_search_all">
+                                                完全一致
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view_setting_search_how" id="view_setting_search_include" value = "2">
+                                            <label class="form-check-label" for="view_setting_search_include">
+                                                部分一致
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class = "col">
+                                        <div class=" input-group mb-3">
+                                            <span class="input-group-text">検索文字列</span>
+                                            <input type="text" class="form-control"  name="view_setting_search_string">
+                                        </div>
+                                    </div>
+                            </div></div>
+                        </div><button class = "btn btn-success" type = "button" onclick = "submit_sheet_settings('view_setting')">次へ進む</button>
+                        {% endif %}
+                    </div>
+                    {% if result_data %}
+                    <div class = "border p-3">
+
+                    
+                        <h4>登録内容を確認してください</h4>
+                        <div class=" input-group mb-3">
+                            <span class="input-group-text">作成するシート名</span>
+                            <input type="text" class="form-control" name="create_sheet_name" value = '{{result_data.create_sheet_name}}' readonly>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">抽出するシート情報</span>
+                            <input type="text" class="form-control" name="model" value = '{{result_data.select_model}}' readonly>
+                        </div>
+                        <div class="input-group mb-3 border rounded">
+                            <span class="input-group-text">選択されたフィールド</span>
+                            <ul class = "list-unstyled p-2 ">
+                                {% for key,value in result_data.selected_field.items %}<li>{{key}} ({{value}})</li>{% endfor %}
+                            </ul>
+                        </div>
+                        <div class="input-group mb-3 ">
+                            <span class="input-group-text">表示順制御条件の対象項目</span>
+                            <input type="text" class="form-control" name="model" value = '{{result_data.view_setting}}' readonly>
+                        </div>
+                        <div class="input-group mb-3 ">
+                            <span class="input-group-text">昇順・降順</span>
+                            <select name="" id="" class = "form-control" readonly>
+                                {% if result_data.view_setting_order == "1" %}<option value="1" selected readonly>昇順</option>{% endif %}
+                                {% if result_data.view_setting_order == "2" %}<option value="2" selected readonly>降順</option>{% endif %}
+                            </select>
+                        </div>
+                        <div class="input-group mb-3 ">
+                            <span class="input-group-text">絞り込み条件</span>
+                            <select name="" id="" class = "form-control" readonly>
+                                {% if result_data.view_setting_search_how == "0" %}<option value="0" selected readonly>設定しない </option>{% endif %}
+                                {% if result_data.view_setting_search_how == "1" %}<option value="1" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' と 完全一致 </option>{% endif %}
+                                {% if result_data.view_setting_search_how == "2" %}<option value="2" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' と 部分一致</option>{% endif %}
+                            </select>
+                        </div>
+                        <button class = "btn btn-success" type = "button" onclick = "submit_sheet_settings('create_sheet')">登録する</button>
+                        {% endif %}
+
+                    </form>
+                    <a class = " btn btn-primary" href="{% url "view_main" control="top"  option="default" %}">一覧へ戻る</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    </div>
+    <script>
+        function change_input(number) {
+            let input = document.getElementById(number + '_field_name');
+            if (input.disabled) {
+                input.disabled = false;
+            } else {
+                input.disabled = true;
+            }
+        }
+    </script>
+    <script>
+        function submit_sheet_settings(set_name) {
+            let form = document.querySelector('form');
+            let csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = 'csrfmiddlewaretoken';
+            csrf.value = '{{csrf_token}}';
+            form.appendChild(csrf);
+            let type = document.createElement('input');
+            type.value = set_name
+            type.name = "request_type"
+            form.appendChild(type)
+            form.method = 'post';
+            form.submit();
+        }
+    </script>
+    <script>
+        let wind = [];
+
+        function open_as_window(url, name, width, height) {
+            wind.push(window.open(`${url}`, `${name}`,
+                `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
+            ))
+        };
+        window.addEventListener('beforeunload', function () {
+            if (wind.length != 0) {
+                for (let i = 0; i < wind.length; i++) {
+                    wind[i].close();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

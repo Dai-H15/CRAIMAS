@@ -30,7 +30,7 @@ class About(models.Model):
     f_value = models.TextField()
 
     def __str__(self):
-        return self.company_name.name
+        return self.company_name.name + " [About]"
 
 
 class Idea(models.Model):
@@ -40,6 +40,9 @@ class Idea(models.Model):
     valuable = models.TextField()
     statue = models.TextField()
 
+    def __str__(self):
+        return self.company_name.name + "[Idea]"
+
 
 class Motivation(models.Model):
     MotivationID = models.CharField(max_length=200, primary_key=True, unique=True)
@@ -48,6 +51,9 @@ class Motivation(models.Model):
     description = models.TextField()
     necessary = models.TextField()
     appeal = models.TextField()
+
+    def __str__(self):
+        return self.company_name.name + "[Motivation]"
 
 
 class D_Company(models.Model):
@@ -100,6 +106,9 @@ class D_Company(models.Model):
     t_p = models.IntegerField()
     avg_y = models.IntegerField()
 
+    def __str__(self):
+        return self.company_name.name + "[D_Company]"
+
 
 class Adoption(models.Model):
     AdoptionID = models.CharField(max_length=200, primary_key=True, unique=True)
@@ -110,6 +119,9 @@ class Adoption(models.Model):
     n_enrollment = models.IntegerField()
     a_year = models.IntegerField()
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.company_name.name + "[Adoption]"
 
 
 class RegistSets(models.Model):
@@ -141,12 +153,14 @@ class Interview(models.Model):
         ("l_interview", "最終面接"),
         ("internship", "インターンシップ"),
         ("group", "グループディスカッション"),
+        ("study", "勉強会／ビジネス体験"),
         ("offer", "内定"),
         ("test", "試験"),
         ("other", "その他")
     )
     RegistID = models.ForeignKey(RegistSets, on_delete=models.CASCADE)
     InterviewID = models.CharField(max_length=128)
+    company_name = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
     tag = models.CharField(max_length=50, choices=tags, default="briefing")
     date = models.DateTimeField()
@@ -160,4 +174,17 @@ class Interview(models.Model):
     review = models.TextField(default="")
 
     def __str__(self):
-        return self.title
+        return self.title + " [Interview]"
+
+
+class CustomSheet(models.Model):
+    sheet_id = models.CharField(max_length=100, primary_key=True, unique=True)
+    by_U_ID = models.CharField(max_length=100, default="default")
+    sheet_name = models.CharField(max_length=20)
+    model = models.CharField(max_length=20)
+    selected_field = models.JSONField()
+    view_settings = models.JSONField()
+    search_settings = models.JSONField()
+
+    def __str__(self):
+        return self.sheet_name

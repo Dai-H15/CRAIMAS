@@ -30,4 +30,6 @@ urlpatterns = [
     path("export_sheet/<str:id>", views.export_sheet, name="export_sheet"),
     path("json_import", views.json_import, name="json_import"),
     path("view/view_main/<str:control>/<str:option>", views.view_main, name="view_main"),
+    path("view/create_custom_sheet", views.create_custom_sheet, name="create_custom_sheet"),
+    path("view/delete_custom_sheet/<str:id>", views.delete_custom_sheet, name="delete_custom_sheet"),
 ]

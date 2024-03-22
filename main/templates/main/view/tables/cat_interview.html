@@ -1,8 +1,16 @@
-<div class = "row text-center">
-  <div class = "row "><p>白: 未選択 / 青: 昇順 / 黄色: 降順</p></div>
-  {% for option in options %}
-  <div class = "col"><a class = "btn btn-{{option.color}} {{option.active}}" href="{% url "view_main" control="interview" option=option.n_option|add:option.reverse %}" role = "button" >{{option.desc}}</a></div>
-  {% endfor %}
+<div class = "row">
+    <div class = "col-4 mx-auto">
+        <div class="mb-3">
+            <label for="choice" class="form-label">カテゴリ</label>
+            <select class="form-select form-select-lg" name="choice" id="choice">
+                <option selected>--</option>
+                {% for choice in choices %}
+                <option value="{{choice.0}}">{{choice.1}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+    </div>
 </div>
 <table class  = "table  table-hover">
     <thead>
@@ -21,6 +29,7 @@
             <td>{{result.RegistID}}</td>
             <td>{{result.title}}</td>
             <td>{{result.date}}</td>
+            <td>{{result.interviewer}}</td>
             <td>{{result.aspire}}</td>
             <td>
                 <div class="dropdown">
@@ -36,3 +45,9 @@
         {% endfor %}
 </tbody>
 </table>
+<script>
+    document.getElementById('choice').addEventListener('change', function() {
+        window.location.href = this.value;
+    });
+    
+</script>

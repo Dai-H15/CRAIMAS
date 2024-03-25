@@ -31,15 +31,17 @@ from django.apps import apps
 from django.urls import reverse
 
 
-
 # Functions
 
 
-def collect_regnum():
-    res = {
-        "num_c": Companies.objects.count(),
-        "num_a": RegistSets.objects.filter(isActive=True).count(),
-    }
+def collect_regnum(request):
+    if request.user.is_authenticated:
+        res = {
+            "num_c": Companies.objects.count(),
+            "num_a": RegistSets.objects.filter(isActive=True, by_U_ID=request.user.U_ID).count(),
+        }
+    else:
+        res = {}
     return res
 
 
@@ -89,18 +91,18 @@ def index(request):
         del request.session["Interviews"]
     if "result_data" in request.session:
         del request.session["result_data"]
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     return render(request, "main/index.html", contexts)
 
 
 @login_required
 def regist_base(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     return render(request, "main/regist/regist_base.html", contexts)
 
 
 def regist_all(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     if request.method == "POST":
         C_Form = CompaniesForm(request.POST)
         A_Form = AboutForm(request.POST)
@@ -231,7 +233,7 @@ def show_data(request):
 
 @login_required
 def mypage(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     user = CustomUser.objects.get(username=request.user)
     contexts["user"] = user
     n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
@@ -293,17 +295,19 @@ def delete_posts(request, id):
             if "del_AD_Form" in request.POST:
                 print("del_AD_Form")
                 post.adoption.delete()
-        return HttpResponse(f"削除しています...<script>window.opener.location.href='{request.POST.get('back_to')}'</script>")
+        return HttpResponse(
+            f"削除しています...<script>window.opener.location.href='{reverse('mypage')}'</script>"
+        )
     return render(request, "main/mypage/delete.html", contexts)
 
 
 def regist_sets(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     return render(request, "main/regist/sets/main.html", contexts)
 
 
 def create_company(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     if request.method == "POST":
         C_Form = CompaniesForm(request.POST)
         if C_Form.is_valid():
@@ -327,7 +331,7 @@ def create_company(request):
 
 
 def import_company(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     if request.method == "POST":
         if "import" in request.POST:
             copy_company = Companies.objects.get(CompanyID=request.POST["ID"])
@@ -347,7 +351,7 @@ def import_company(request):
 
 
 def create_about(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     A_Form = AboutForm()
     if "forms" in request.session:
         A_Form = AboutForm(request.session["forms"]["A_Form"])
@@ -374,7 +378,7 @@ def create_about(request):
 
 
 def create_idea(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["A_Form"] = AboutForm(
         instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).about
     )
@@ -398,7 +402,7 @@ def create_idea(request):
 
 
 def create_motivation(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["I_Form"] = IdeaForm(
         instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).idea
     )
@@ -422,7 +426,7 @@ def create_motivation(request):
 
 
 def create_d_company(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["M_Form"] = MotivationForm(
         instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).motivation
     )
@@ -448,7 +452,7 @@ def create_d_company(request):
 
 
 def create_adoption(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["D_Form"] = D_CompanyForm(
         instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).d_company
     )
@@ -472,7 +476,7 @@ def create_adoption(request):
 
 
 def create_complete(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
     del request.session["RegistID"]
     contexts["C_Form"] = CompaniesForm(instance=regist.company)
@@ -485,7 +489,7 @@ def create_complete(request):
 
 
 def edit_posts(request, id):
-    contexts = getRegistSets(id, collect_regnum())
+    contexts = getRegistSets(id, collect_regnum(request))
     NotFound = []
     if "A_Form" not in contexts:
         contexts["A_Form"] = AboutForm()
@@ -575,7 +579,7 @@ def edit_posts(request, id):
 
 
 def search_company(request, return_to):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["return_to"] = return_to
     form = SearchForm_corpnum()
     if request.user.gBIZINFO_key == "default_key":
@@ -612,7 +616,7 @@ def search_company(request, return_to):
 
 
 def get_more_compinfo(request, corporate_number, return_to):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["return_to"] = return_to
     if request.user.gBIZINFO_key == "default_key":
         return HttpResponse(
@@ -701,7 +705,7 @@ def set_searched_data(request):
 
 
 def interview_main(request, id):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     R_sets = RegistSets.objects.get(RegistID=id)
     interviews = Interview.objects.filter(RegistID=R_sets)
     contexts["R_sets"] = R_sets
@@ -710,7 +714,7 @@ def interview_main(request, id):
 
 
 def interview_create(request, id):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64)})
     name = RegistSets.objects.get(RegistID=id).company.name
     contexts["form"] = form
@@ -740,7 +744,7 @@ def get_address(request, zipcode):
 
 
 def view_interview(request, id):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     interview = InterviewForm(instance=Interview.objects.get(InterviewID=id))
     contexts["interview"] = interview
     if request.method == "POST":
@@ -857,7 +861,7 @@ def json_import(request):
 
 
 def view_main(request, control, option):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["control"] = control
     menu = [
         {"choice": "top", "desc": "トップページ", "th_all": []},
@@ -903,7 +907,15 @@ def view_main(request, control, option):
             m["active"] = ""
 
     if control == "all":
-        contexts["results"] = RegistSets.objects.filter(by_U_ID=request.user.U_ID, isActive=True)
+        results = RegistSets.objects.filter(
+            by_U_ID=request.user.U_ID, isActive=True
+        )
+        if results.count() == 0:
+            contexts["message"] = {
+                    "type": "warning",
+                    "message": "条件に一致するデータが1つもありませんでした。",
+                }
+        contexts["results"] = results
         contexts["th_all"] = current_menu["th_all"]
 
     elif control == "interview":
@@ -922,10 +934,15 @@ def view_main(request, control, option):
             },
         ]
         contexts["options"] = options
-        contexts["results"] = Interview.objects.filter(
-            RegistID__by_U_ID=request.user.U_ID,
-            RegistID__isActive=True
+        results = Interview.objects.filter(
+            RegistID__by_U_ID=request.user.U_ID, RegistID__isActive=True
         )
+        if results.count() == 0:
+            contexts["message"] = {
+                    "type": "warning",
+                    "message": "条件に一致するデータが1つもありませんでした。",
+                }
+        contexts["results"] = results
         for o in options:
             if o["n_option"] == option:
                 o["reverse"] = "_r"
@@ -948,6 +965,11 @@ def view_main(request, control, option):
 
     elif control == "R_aspire":
         R_sets = RegistSets.objects.filter(by_U_ID=request.user.U_ID, isActive=True)
+        if R_sets.count() == 0:
+            contexts["message"] = {
+                    "type": "warning",
+                    "message": "条件に一致するデータが1つもありませんでした。",
+                }
         contexts["results"] = []
         for R in R_sets:
             contexts["results"].append(
@@ -1018,7 +1040,14 @@ def view_main(request, control, option):
         contexts["th_all"] = current_menu["th_all"]
 
     elif control == "cat_interview":
-        results = Interview.objects.filter(RegistID__by_U_ID=request.user.U_ID, RegistID__isActive=True)
+        results = Interview.objects.filter(
+            RegistID__by_U_ID=request.user.U_ID, RegistID__isActive=True
+        )
+        if results.count() == 0:
+            contexts["message"] = {
+                    "type": "warning",
+                    "message": "条件に一致するデータが1つもありませんでした。",
+                }
         if option != "default":
             if results.filter(tag=option).count() == 0:
                 contexts["message"] = {
@@ -1035,7 +1064,7 @@ def view_main(request, control, option):
     elif control == "top":
         contexts["message"] = {
             "type": "success",
-            "message": "左のメニューから選択してください。",
+            "message": "左のメニューから選択してください。(カスタムシートで指定した場合を除き、活動中の企業のみ表示されます)",
         }
     elif control == "create_custom_sheet":
         return redirect("create_custom_sheet")
@@ -1072,7 +1101,13 @@ def view_main(request, control, option):
                     "type": "warning",
                     "message": "条件に一致するデータが1つもありませんでした。",
                 }
-            contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings, "sheet_id": cs.sheet_id}
+            contexts["sheet_config"] = {
+                "model": cs.model,
+                "selected": cs.selected_field,
+                "view_settings": cs.view_settings,
+                "search_settings": cs.search_settings,
+                "sheet_id": cs.sheet_id,
+            }
             contexts["results"] = results
             contexts["th_all"] = cs.selected_field
         else:
@@ -1086,7 +1121,7 @@ def view_main(request, control, option):
 
 
 def create_custom_sheet(request):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     contexts["model_names"] = [
         model.__name__
         for model in apps.get_models()
@@ -1221,21 +1256,33 @@ def create_custom_sheet(request):
                 ),
             )
             del request.session["result_data"]
-            return HttpResponse(f"登録が完了しました。<a href ='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'>戻る</a>")
+            return HttpResponse(
+                f"登録が完了しました。<a href ='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'>戻る</a>"
+            )
     return render(request, "main/view/customsheet/create.html", contexts)
 
 
 def delete_custom_sheet(request, id):
-    contexts = collect_regnum()
+    contexts = collect_regnum(request)
     cs = CustomSheet.objects.get(sheet_id=id)
-    contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings, "sheet_id": cs.sheet_id}
+    contexts["sheet_config"] = {
+        "model": cs.model,
+        "selected": cs.selected_field,
+        "view_settings": cs.view_settings,
+        "search_settings": cs.search_settings,
+        "sheet_id": cs.sheet_id,
+    }
     if request.method == "POST":
         CustomSheet.objects.filter(sheet_id=id).delete()
-        return HttpResponse(f"削除しています...<script>window.opener.location.href='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'</script>")
+        return HttpResponse(
+            f"削除しています...<script>window.opener.location.href='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'</script>"
+        )
     return render(request, "main/view/customsheet/delete.html", contexts)
 
 
 def change_active(request):
     if request.method == "POST":
-        RegistSets.objects.filter(RegistID=request.POST.get("RegistID")).update(isActive=(True if request.POST.get("current_status") != "True" else False))
+        RegistSets.objects.filter(RegistID=request.POST.get("RegistID")).update(
+            isActive=(True if request.POST.get("current_status") != "True" else False)
+        )
     return HttpResponse("<script>window.opener.location.reload()</script>")

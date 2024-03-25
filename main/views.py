@@ -1090,6 +1090,22 @@ def view_main(request, control, option):
                             ]
                         }
                     )
+                elif cs.search_settings["how"] == "3":
+                    results = results.filter(
+                        **{
+                            f"{cs.search_settings['where']}__gte": cs.search_settings[
+                                "what"
+                            ]
+                        }
+                    )
+                elif cs.search_settings["how"] == "4":
+                    results = results.filter(
+                        **{
+                            f"{cs.search_settings['where']}__lte": cs.search_settings[
+                                "what"
+                            ]
+                        }
+                    )
             if cs.view_settings != {}:
                 if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
                     results = results.order_by(list(cs.view_settings.keys())[0])
@@ -1123,8 +1139,8 @@ def view_main(request, control, option):
 
 def create_custom_sheet(request):
     contexts = collect_regnum(request)
-    contexts["model_names"] = [
-        model.__name__
+    contexts["model_names"] = {
+        model.__name__: model._meta.verbose_name
         for model in apps.get_models()
         if model.__name__
         not in [
@@ -1139,7 +1155,7 @@ def create_custom_sheet(request):
             "AdminLog",
             "CustomSheet",
         ]
-    ]
+    }
     if "model" in request.GET:
         if request.GET["model"] == "default":
             return redirect("create_custom_sheet")
@@ -1169,8 +1185,8 @@ def create_custom_sheet(request):
                 }
                 return render(request, "main/view/customsheet/create.html", contexts)
             model = apps.get_model("main", request.GET["model"])
-            contexts["model_fields"] = [
-                field.name
+            contexts["model_fields"] = {
+                field.name: field.verbose_name if hasattr(field, 'verbose_name') else field.name
                 for field in model._meta.get_fields()
                 if field.name
                 not in [
@@ -1186,7 +1202,7 @@ def create_custom_sheet(request):
                     "CompanyID",
                     "by_U_ID",
                 ]
-            ]
+            }
             contexts["sheet_name_form"] = request.GET["create_sheet_name"]
             contexts["message"] = {
                 "type": "success",
@@ -1196,10 +1212,7 @@ def create_custom_sheet(request):
     if request.method == "POST":
         if request.POST["request_type"] == "select_model_and_field":
             res = {}
-            for x, y in zip(
-                request.POST.getlist("selected_field"),
-                request.POST.getlist("selected_field_name"),
-            ):
+            for x, y in zip(request.POST.getlist("selected_field"), request.POST.getlist("selected_field_name")):
                 res[x] = y
             contexts["selected_field"] = res
             contexts["model_fields"] = ""

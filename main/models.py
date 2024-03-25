@@ -2,16 +2,20 @@ from django.db import models
 
 
 class Companies(models.Model):
-    name = models.CharField(max_length=200)
-    industry = models.CharField(max_length=200)
-    president = models.CharField(max_length=200)
-    contact = models.CharField(max_length=200)
-    a_year = models.IntegerField()
-    created = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(max_length=200, verbose_name='企業・団体名')
+    industry = models.CharField(max_length=200, verbose_name='所属業界')
+    president = models.CharField(max_length=200, verbose_name='代表者名')
+    contact = models.CharField(max_length=200, verbose_name='担当者名')
+    a_year = models.IntegerField(verbose_name='募集年度')
+    created = models.DateTimeField(auto_now_add=True, verbose_name='作成日時')
     CompanyID = models.CharField(max_length=200, primary_key=True, unique=True)
 
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = '企業シート'
+        verbose_name_plural = '企業シート'
+
 
 
 class About(models.Model):
@@ -31,6 +35,9 @@ class About(models.Model):
 
     def __str__(self):
         return self.company_name.name + " [About]"
+    class Meta:
+        verbose_name = '事業内容シート'
+        verbose_name_plural = '事業内容シート'
 
 
 class Idea(models.Model):
@@ -42,6 +49,9 @@ class Idea(models.Model):
 
     def __str__(self):
         return self.company_name.name + "[Idea]"
+    class Meta:
+        verbose_name = '経営理念シート'
+        verbose_name_plural = '経営理念シート'
 
 
 class Motivation(models.Model):
@@ -54,6 +64,9 @@ class Motivation(models.Model):
 
     def __str__(self):
         return self.company_name.name + "[Motivation]"
+    class Meta:
+        verbose_name = '志望動機シート'
+        verbose_name_plural = '志望動機シート'
 
 
 class D_Company(models.Model):
@@ -108,6 +121,9 @@ class D_Company(models.Model):
 
     def __str__(self):
         return self.company_name.name + "[D_Company]"
+    class Meta:
+        verbose_name = '企業データシート'
+        verbose_name_plural = '企業データシート'
 
 
 class Adoption(models.Model):
@@ -122,6 +138,9 @@ class Adoption(models.Model):
 
     def __str__(self):
         return self.company_name.name + "[Adoption]"
+    class Meta:
+        verbose_name = '採用情報シート'
+        verbose_name_plural = '採用情報シート'
 
 
 class RegistSets(models.Model):
@@ -176,6 +195,9 @@ class Interview(models.Model):
 
     def __str__(self):
         return self.title + " [Interview]"
+    class Meta:
+        verbose_name = '面談録シート'
+        verbose_name_plural = '面談録シート'
 
 
 class CustomSheet(models.Model):
@@ -189,3 +211,6 @@ class CustomSheet(models.Model):
 
     def __str__(self):
         return self.sheet_name
+    class Meta:
+        verbose_name = 'カスタムシート'
+        verbose_name_plural = 'カスタムシート'

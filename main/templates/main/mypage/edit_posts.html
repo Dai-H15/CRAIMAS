@@ -18,46 +18,26 @@
                     <h4>現在の登録社数: {{num_c}}社</h4>
                 </div>
                 <div class="col">
-                    <h4>現在の登録件数: {{num_a}}件</h4>
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
                 </div>
             </div>
         </div>
-        <div class = "row text-center p-3">
-            <div class = "col">
-                <h3>一括登録を行います</h3>
-            </div>
-            <div class = "col">
-                <div class = "btn-group">
-                    <button button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        引用する
-                    </button>
-                    <ul class = "dropdown-menu">
-                        <li><a href="{% url "search_company" "regist_all" %}" class="btn dropdown-item  btn-outline-success" >gBizINFOから引用</a></li>
-                        <li><a type = "button"  onclick = "open_as_window('{% url "json_import" %}', 400, 200)" class = "btn dropdown-item  btn-outline-info">JSONから引用</a></li>
-                    </ul>
-                    
-                    <a href="{% url "index" %}" class = "btn btn-outline-warning" >ホームへ戻る</a>
-                </div>
-            </div>
-            
-        </div>
-        {% if messages %}
-        <div class = "row">
-            <div class = "col text-center">
-                <div class="alert alert-{{messages.color}}" role="alert">
-                    {{messages.message|safe}}
-                </div>
-            </div>
-        </div>
-        {% endif %}
+        <div class = "row text-center p-3"><div class = "col"><h3>登録内容を編集します</h3></div><div class = "col"><button class = "btn btn-outline-warning" onclick = "window.opener.location.reload()">マイページへ戻る</button></div></div>
         <form method = "post">
             {% csrf_token %}
             <div class = "container">
 
-            <div class = "row text-center border">
-                <h5>企業情報</h5>
-                <table class  = "table  table-hover">{{C_Form.as_table}}</table>
-            </div>
+                <div class = "row text-center border">
+                    <h5>企業情報</h5>
+                    <table class = "table col">
+                        {% for field in C_Form %}
+                            <tr>
+                                <td>{{ field.label }}:</td>
+                                <td>{{ field.value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
             <div class ="row border mt-4 px-2">
                 <div class = "col border-end">
                 <h5>事業内容</h5>
@@ -82,7 +62,7 @@
         <div class = "col">
             <div class = "row ">
                 <div class = "col border-top">
-                <h5 class = "col">企業データ</h5>
+                <h5>企業データ</h5>
                 <button type="button" class="btn btn-outline-warning my-3" onclick = "open_as_window('{% url "calc" %}',600,300)">金額入力ツール</button>
                     <table class  = "table  table-hover">{{D_Form.as_table}}</table>
                 </div>
@@ -108,7 +88,8 @@
     <script>
         let wind;
         function open_as_window(url,width,height){
-            wind = window.open(`${url}`, "view_post", `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no`);
+            wind = window.open(`${url}`, "view_post", `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`);
+            console.log(wind);
     };
     window.addEventListener('beforeunload', function(){
         if (wind){

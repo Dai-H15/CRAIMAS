@@ -22,7 +22,7 @@
                     <h4>現在の登録社数: {{num_c}}社</h4>
                 </div>
                 <div class="col">
-                    <h4>現在の登録件数: {{num_a}}件</h4>
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                                 </ul></li>
                             </ul>
                         </div>
-                        <form method = "post"><input type="hidden" name="back_to" value = "{% url "view_main" control="top" option="default" %}">{% csrf_token %}<button class = "btn btn-danger ">消去</button></form>
+                        <form method = "post">{% csrf_token %}<button class = "btn btn-danger ">消去</button></form>
                 </div>
             </div>
         </div>

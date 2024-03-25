@@ -28,6 +28,8 @@ from datetime import datetime
 from django.forms.models import model_to_dict
 from django.db.models import Max, Sum, Avg, Count
 from django.apps import apps
+from django.urls import reverse
+
 
 
 # Functions
@@ -36,7 +38,7 @@ from django.apps import apps
 def collect_regnum():
     res = {
         "num_c": Companies.objects.count(),
-        "num_a": RegistSets.objects.count(),
+        "num_a": RegistSets.objects.filter(isActive=True).count(),
     }
     return res
 
@@ -94,7 +96,7 @@ def index(request):
 @login_required
 def regist_base(request):
     contexts = collect_regnum()
-    return render(request, "main/regist_base.html", contexts)
+    return render(request, "main/regist/regist_base.html", contexts)
 
 
 def regist_all(request):
@@ -164,7 +166,7 @@ def regist_all(request):
                     )
                     n += 1
                 contexts["In_counts"] = n
-            return render(request, "main/regist_done.html", contexts)
+            return render(request, "main/regist/regist_done.html", contexts)
     if "forms" in request.session:
         C_Form = CompaniesForm(request.session["forms"]["C_Form"])
         A_Form = AboutForm(request.session["forms"]["A_Form"])
@@ -216,7 +218,7 @@ def regist_all(request):
     contexts["M_Form"] = M_Form
 
     contexts["AD_Form"] = AD_Form
-    return render(request, "main/regist_all.html", contexts)
+    return render(request, "main/regist/regist_all.html", contexts)
 
 
 def show_data(request):
@@ -235,9 +237,9 @@ def mypage(request):
     n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
     contexts["n_regist"] = n_regist
     contexts["regsets"] = collect_regsets(user)
-    posts = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
+    posts = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")
     contexts["posts"] = posts
-    return render(request, "main/mypage.html", contexts)
+    return render(request, "main/mypage/mypage.html", contexts)
 
 
 def view_my_post(request, id):
@@ -246,7 +248,7 @@ def view_my_post(request, id):
         contexts = getRegistSets(id, contexts)
     except RegistSets.DoesNotExist:
         return redirect(to="mypage")
-    return render(request, "main/view_my_post.html", contexts)
+    return render(request, "main/mypage/view_my_post.html", contexts)
 
 
 def delete_posts(request, id):
@@ -291,13 +293,13 @@ def delete_posts(request, id):
             if "del_AD_Form" in request.POST:
                 print("del_AD_Form")
                 post.adoption.delete()
-        return redirect(to="mypage")
-    return render(request, "main/delete.html", contexts)
+        return HttpResponse(f"削除しています...<script>window.opener.location.href='{request.POST.get('back_to')}'</script>")
+    return render(request, "main/mypage/delete.html", contexts)
 
 
 def regist_sets(request):
     contexts = collect_regnum()
-    return render(request, "main/sets/main.html", contexts)
+    return render(request, "main/regist/sets/main.html", contexts)
 
 
 def create_company(request):
@@ -321,7 +323,7 @@ def create_company(request):
     if "forms" in request.session:
         C_Form = CompaniesForm(request.session["forms"]["C_Form"])
     contexts["C_Form"] = C_Form
-    return render(request, "main/sets/create_company.html", contexts)
+    return render(request, "main/regist/sets/create_company.html", contexts)
 
 
 def import_company(request):
@@ -341,7 +343,7 @@ def import_company(request):
             return redirect("create_about")
     companies = Companies.objects.all()
     contexts["posts"] = companies
-    return render(request, "main/sets/import_company.html", contexts)
+    return render(request, "main/regist/sets/import_company.html", contexts)
 
 
 def create_about(request):
@@ -368,7 +370,7 @@ def create_about(request):
             Temp_regist.save()
             return redirect("create_idea")
 
-    return render(request, "main/sets/create_about.html", contexts)
+    return render(request, "main/regist/sets/create_about.html", contexts)
 
 
 def create_idea(request):
@@ -392,7 +394,7 @@ def create_idea(request):
             Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID)
             Temp_regist.save()
             return redirect("create_motivation")
-    return render(request, "main/sets/create_idea.html", contexts)
+    return render(request, "main/regist/sets/create_idea.html", contexts)
 
 
 def create_motivation(request):
@@ -416,7 +418,7 @@ def create_motivation(request):
             Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID)
             Temp_regist.save()
             return redirect("create_d_company")
-    return render(request, "main/sets/create_motivation.html", contexts)
+    return render(request, "main/regist/sets/create_motivation.html", contexts)
 
 
 def create_d_company(request):
@@ -442,7 +444,7 @@ def create_d_company(request):
             Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
             Temp_regist.save()
             return redirect("create_adoption")
-    return render(request, "main/sets/create_d_company.html", contexts)
+    return render(request, "main/regist/sets/create_d_company.html", contexts)
 
 
 def create_adoption(request):
@@ -466,7 +468,7 @@ def create_adoption(request):
             Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
             Temp_regist.save()
             return redirect("create_complete")
-    return render(request, "main/sets/create_adoption.html", contexts)
+    return render(request, "main/regist/sets/create_adoption.html", contexts)
 
 
 def create_complete(request):
@@ -479,7 +481,7 @@ def create_complete(request):
     contexts["M_Form"] = MotivationForm(instance=regist.motivation)
     contexts["D_Form"] = D_CompanyForm(instance=regist.d_company)
     contexts["AD_Form"] = AdoptionForm(instance=regist.adoption)
-    return render(request, "main/sets/create_complete.html", contexts)
+    return render(request, "main/regist/sets/create_complete.html", contexts)
 
 
 def edit_posts(request, id):
@@ -569,7 +571,7 @@ def edit_posts(request, id):
             Temp_regist.save()
             return HttpResponse("<script>window.opener.location.reload()</script>")
 
-    return render(request, "main/edit_posts.html", contexts)
+    return render(request, "main/mypage/edit_posts.html", contexts)
 
 
 def search_company(request, return_to):
@@ -606,7 +608,7 @@ def search_company(request, return_to):
                             f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})"
                         )
     contexts["form"] = form
-    return render(request, "main/sets/search_company.html", contexts)
+    return render(request, "main/regist/sets/search_company.html", contexts)
 
 
 def get_more_compinfo(request, corporate_number, return_to):
@@ -622,7 +624,7 @@ def get_more_compinfo(request, corporate_number, return_to):
     }
     url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
     contexts["result"] = requests.get(url, headers=headers).json()["hojin-infos"][0]
-    return render(request, "main/sets/get_more_compinfo.html", contexts)
+    return render(request, "main/regist/sets/get_more_compinfo.html", contexts)
 
 
 def set_searched_data(request):
@@ -755,7 +757,7 @@ def view_interview(request, id):
 
 def calc(request):
     contexts = {}
-    return render(request, "main/calc.html", contexts)
+    return render(request, "main/regist/calc.html", contexts)
 
 
 def export_sheet(request, id):
@@ -831,7 +833,7 @@ def export_sheet(request, id):
                 )
             response.write(json.dumps(sets, cls=DateTimeEncoder, ensure_ascii=False))
             return response
-    return render(request, "main/export_sheet.html", contexts)
+    return render(request, "main/mypage/export_sheet.html", contexts)
 
 
 def json_import(request):
@@ -851,7 +853,7 @@ def json_import(request):
             data["Interview"] if "Interview" in data else "None"
         )
         return HttpResponse("<script>window.opener.location.reload();</script>")
-    return render(request, "main/json_import.html", contexts)
+    return render(request, "main/regist/sets/json_import.html", contexts)
 
 
 def view_main(request, control, option):
@@ -901,7 +903,7 @@ def view_main(request, control, option):
             m["active"] = ""
 
     if control == "all":
-        contexts["results"] = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
+        contexts["results"] = RegistSets.objects.filter(by_U_ID=request.user.U_ID, isActive=True)
         contexts["th_all"] = current_menu["th_all"]
 
     elif control == "interview":
@@ -921,7 +923,8 @@ def view_main(request, control, option):
         ]
         contexts["options"] = options
         contexts["results"] = Interview.objects.filter(
-            RegistID__by_U_ID=request.user.U_ID
+            RegistID__by_U_ID=request.user.U_ID,
+            RegistID__isActive=True
         )
         for o in options:
             if o["n_option"] == option:
@@ -944,7 +947,7 @@ def view_main(request, control, option):
         contexts["th_all"] = current_menu["th_all"]
 
     elif control == "R_aspire":
-        R_sets = RegistSets.objects.filter(by_U_ID=request.user.U_ID)
+        R_sets = RegistSets.objects.filter(by_U_ID=request.user.U_ID, isActive=True)
         contexts["results"] = []
         for R in R_sets:
             contexts["results"].append(
@@ -1015,7 +1018,7 @@ def view_main(request, control, option):
         contexts["th_all"] = current_menu["th_all"]
 
     elif control == "cat_interview":
-        results = Interview.objects.filter(RegistID__by_U_ID=request.user.U_ID)
+        results = Interview.objects.filter(RegistID__by_U_ID=request.user.U_ID, RegistID__isActive=True)
         if option != "default":
             if results.filter(tag=option).count() == 0:
                 contexts["message"] = {
@@ -1218,7 +1221,7 @@ def create_custom_sheet(request):
                 ),
             )
             del request.session["result_data"]
-            return HttpResponse("登録が完了しました。<a href ='/'>戻る</a>")
+            return HttpResponse(f"登録が完了しました。<a href ='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'>戻る</a>")
     return render(request, "main/view/customsheet/create.html", contexts)
 
 
@@ -1228,7 +1231,7 @@ def delete_custom_sheet(request, id):
     contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings, "sheet_id": cs.sheet_id}
     if request.method == "POST":
         CustomSheet.objects.filter(sheet_id=id).delete()
-        return HttpResponse(f"削除しています...<script>window.opener.location.href='{request.POST.get('back_to')}'</script>")
+        return HttpResponse(f"削除しています...<script>window.opener.location.href='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'</script>")
     return render(request, "main/view/customsheet/delete.html", contexts)
 
 

@@ -20,7 +20,7 @@
                     <h4>現在の登録社数: {{num_c}}社</h4>
                 </div>
                 <div class="col">
-                    <h4>現在の登録件数: {{num_a}}件</h4>
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
                 </div>
             </div>
         </div>
@@ -81,9 +81,10 @@
                                             <li><button class="dropdown-item text-bg-info p-2"
                                                     onclick="open_as_window('{% url "edit_posts" post.RegistID %}','edit_posts',800,900)">編集</button></li>
                                             <li><button class="dropdown-item text-bg-warning p-2"
-                                                    onclick="open_as_window('{% url "export_sheet" post.RegistID %}','export_sheet',600,600)">保存</button></li>
-                                            <li><a class="dropdown-item text-bg-danger p-2"
-                                                    href="{% url "delete_posts" post.RegistID %}">削除</a></li>
+                                                    onclick="open_as_window('{% url "export_sheet" post.RegistID %}','export_sheet',400,600)">保存</button></li>
+                                            <li><button class="dropdown-item text-bg-danger p-2"
+                                                onclick="open_as_window('{% url "delete_posts" post.RegistID %}','export_sheet',800,900)">削除</button>
+                                            </li>
                                         </ul>
                                     </div>
 

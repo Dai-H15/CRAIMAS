@@ -1069,7 +1069,7 @@ def view_main(request, control, option):
                     "type": "warning",
                     "message": "条件に一致するデータが1つもありませんでした。",
                 }
-            contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings}
+            contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings, "sheet_id": cs.sheet_id}
             contexts["results"] = results
             contexts["th_all"] = cs.selected_field
         else:
@@ -1224,4 +1224,15 @@ def create_custom_sheet(request):
 
 def delete_custom_sheet(request, id):
     contexts = collect_regnum()
+    cs = CustomSheet.objects.get(sheet_id=id)
+    contexts["sheet_config"] = {"model": cs.model, "selected": cs.selected_field, "view_settings": cs.view_settings, "search_settings": cs.search_settings, "sheet_id": cs.sheet_id}
+    if request.method == "POST":
+        CustomSheet.objects.filter(sheet_id=id).delete()
+        return HttpResponse(f"削除しています...<script>window.opener.location.href='{request.POST.get('back_to')}'</script>")
     return render(request, "main/view/customsheet/delete.html", contexts)
+
+
+def change_active(request):
+    if request.method == "POST":
+        RegistSets.objects.filter(RegistID=request.POST.get("RegistID")).update(isActive=(True if request.POST.get("current_status") != "True" else False))
+    return HttpResponse("<script>window.opener.location.reload()</script>")

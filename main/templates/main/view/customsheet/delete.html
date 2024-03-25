@@ -28,27 +28,48 @@
         </div>
         <div class="row m-2">
             <div class="container">
-                <div class = "row">
-                        delete
+                <div class="row">
+                    <div class="alert alert-danger text-center">
+                        <b>以下の条件のカスタムシートを削除します。</b><br>
+                        <b>内容を確認してください</b>
+                    </div>
+                        <div class="alert alert-info">
+                            <h5>検索条件</h5>
+                            <ul>
+                                <li>検索対象モデル: {{sheet_config.model}}</li><br>
+                                <li>表示対象フィールド<ul>{% for key,val in sheet_config.selected.items %} <li>{{val}} ({{key}}) </li> {% endfor %}</ul></li><br>
+                                <li>表示順制御条件<ul>{% for key,val in sheet_config.view_settings.items %}<li>{{key}}: {% if val == "1" %}昇順{% elif val == "2" %}降順{% endif %}</li>{% endfor %}</ul></li><br>
+                                <li>絞り込み条件設定<ul>
+                                    <li>検索方法: {% if sheet_config.search_settings.how == "1" %}完全一致{% elif sheet_config.search_settings.how == "2" %}部分一致{% endif %}</li>
+                                    <li>検索対象項目: {{sheet_config.search_settings.where}}</li>
+                                    <li>検索文字列: 「{{sheet_config.search_settings.what}}」</li>
+                                </ul></li>
+                            </ul>
                         </div>
+                        <form method = "post"><input type="hidden" name="back_to" value = "{% url "view_main" control="top" option="default" %}">{% csrf_token %}<button class = "btn btn-danger ">消去</button></form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     </div>
     <script>
         let wind = [];
-        function open_as_window(url,name,width,height){
-            wind.push(window.open(`${url}`, `${name}`, `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`))
-    };
-    window.addEventListener('beforeunload', function(){
-        if (wind.length !=0){
-            for(let i = 0; i < wind.length; i++){
-                wind[i].close();
+
+        function open_as_window(url, name, width, height) {
+            wind.push(window.open(`${url}`, `${name}`,
+                `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
+                ))
+        };
+        window.addEventListener('beforeunload', function () {
+            if (wind.length != 0) {
+                for (let i = 0; i < wind.length; i++) {
+                    wind[i].close();
+                }
             }
-        }
-    });
-</script>
+        });
+    </script>
 </body>
+
 </html>

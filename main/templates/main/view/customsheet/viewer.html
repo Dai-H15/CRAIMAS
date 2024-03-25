@@ -19,4 +19,4 @@
     {% endfor %}
   </tbody>
 </table>
-<button class = "btn btn-outline-danger" onclick = "open_as_window('{% url "delete_custom_sheet" 1 %}','interview{{forloop.counter}}',400,600)">カスタムシートを削除する</button>
+<button class = "btn btn-outline-danger" onclick = "open_as_window('{% url "delete_custom_sheet" sheet_config.sheet_id %}','interview{{forloop.counter}}',400,600)">カスタムシートを削除する</button>

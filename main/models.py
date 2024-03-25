@@ -135,6 +135,7 @@ class RegistSets(models.Model):
     adoption = models.ForeignKey(Adoption, on_delete=models.SET_NULL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     regist_publish = models.BooleanField(default=False)
+    isActive = models.BooleanField(default=True)
 
     def __str__(self):
         if self.company is not None:

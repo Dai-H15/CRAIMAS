@@ -860,6 +860,7 @@ def json_import(request):
     return render(request, "main/regist/sets/json_import.html", contexts)
 
 
+@login_required
 def view_main(request, control, option):
     contexts = collect_regnum(request)
     contexts["control"] = control

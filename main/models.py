@@ -172,6 +172,7 @@ class Interview(models.Model):
         ("3_interview", "三次面接"),
         ("l_interview", "最終面接"),
         ("internship", "インターンシップ"),
+        ("engineer", "エンジニア面接"),
         ("group", "グループディスカッション"),
         ("study", "勉強会／ビジネス体験"),
         ("offer", "内定"),

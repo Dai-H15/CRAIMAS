@@ -886,7 +886,7 @@ def view_main(request, control, option):
         {
             "choice": "cat_interview",
             "desc": "カテゴリ別面談録",
-            "th_all": ["企業名", "面談名", "面談日", "志望度(%)", "詳細"],
+            "th_all": ["企業名", "面談名", "面談日", "担当者", "志望度(%)",  "詳細"],
         },
         {
             "choice": "R_aspire",

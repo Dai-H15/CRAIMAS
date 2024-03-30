@@ -1,0 +1,6 @@
+textarea{
+    field-sizing: content;
+    resize: none;
+    max-width:100%;
+    min-width: 100%;
+  }

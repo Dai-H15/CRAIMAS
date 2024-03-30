@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="jp">
     <head>
@@ -64,25 +65,25 @@
                 </tr>
             {% endfor %}</table>
             <div class = "border-top">
-                <div class = "row p-4 "> <button onclick = "open_as_window2('{% url "interview_main" post.RegistID %}')"  class = " btn btn-success">面談録</button></div>
-                <div class = "row p-4 "> <button class = "btn btn-outline-warning " onclick= "open_as_window2('{% url "export_sheet" post.RegistID %}')">シートをエクスポートする</button></div>
+                <div class = "row p-4 "> <button onclick = "open_as_window('{% url "interview_main" post.RegistID %}', 'interview_main', 400,600)"  class = " btn btn-success">面談録</button></div>
+                <div class = "row p-4 "> <button class = "btn btn-outline-warning " onclick= "open_as_window('{% url "export_sheet" post.RegistID %}', 'export_sheet', 400,600)">シートをエクスポートする</button></div>
                 <div class = "row p-4 "> <button class = "btn btn-outline-info " onclick= "change_active('{{post.RegistID}}', '{{post.isActive}}')">活動状況を切り替える</button></div>
-                
             </div>
-            
         </div>
-        
-            
-        
         <div class = "col">
             <div class = "row ">
                 <div class = "col border-top">
                 <h5>企業データ</h5>
                     <table class  = "table  table-hover">{% for field in D_Form %}
                         <tr>
-                            <td>{{ field.label }}: </td>
+                            <td>{{ field.label }}:</td>
+                        {% if field.label == "URL" %}
+                            <td>{{ field.value }}<br><button class = "btn btn-outline-info" onclick="open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
+                        {% else %}
                             <td>{{ field.value }}</td>
-                        </tr>
+                        {% endif %}
+                    </tr>
+
                     {% endfor %}</table>
                 </div>
             </div>
@@ -107,17 +108,7 @@
         
     </div>
     </div>
-        <script>
-            let wind2;
-            function open_as_window2(url){
-                    wind2 = window.open(`${url}`, "view_interview", "width=500,height=700,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
-            };
-            window.addEventListener('beforeunload', function(){
-                if (wind2){
-                    wind2.close();
-                }
-            });
-        </script>
+    <script src="{% static "js/open_as_window.js" %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
 </script>

@@ -29,6 +29,8 @@ from django.forms.models import model_to_dict
 from django.db.models import Max, Sum, Avg, Count
 from django.apps import apps
 from django.urls import reverse
+from django.http import JsonResponse
+
 
 
 # Functions
@@ -719,6 +721,7 @@ def interview_create(request, id):
     name = RegistSets.objects.get(RegistID=id).company.name
     contexts["form"] = form
     contexts["name"] = name
+    contexts["R_id"] = id
     if request.method == "POST":
         form = InterviewForm(request.POST)
         if form.is_valid():
@@ -728,7 +731,6 @@ def interview_create(request, id):
             data.save()
             return redirect("interview_main", id)
         else:
-            print("NG")
             print(form.errors.as_text())
             contexts["errors"] = form.errors.as_text()
             contexts["form"] = form
@@ -1300,3 +1302,7 @@ def change_active(request):
             isActive=(True if request.POST.get("current_status") != "True" else False)
         )
     return HttpResponse("<script>window.opener.location.reload()</script>")
+
+
+def get_interviewer(request, id):
+    return JsonResponse({"interviewer": RegistSets.objects.get(RegistID=id).company.contact})

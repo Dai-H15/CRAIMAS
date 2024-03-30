@@ -1,0 +1,9 @@
+textarea {
+    field-sizing: content;
+    resize: none;
+    max-height: 10cm;
+    max-width:8cm;
+    min-width: 5cm;
+    min-height: 2cm;
+  }
+

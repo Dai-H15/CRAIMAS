@@ -1,5 +1,5 @@
 {% load django_bootstrap5 %}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -9,6 +9,7 @@
     <title>Biz Intelli Scan</title>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    <link rel="stylesheet" href="{% static 'css/textarea-interview.css' %}">
 </head>
 
 <body>

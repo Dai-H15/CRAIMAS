@@ -493,6 +493,7 @@ def create_complete(request):
 def edit_posts(request, id):
     contexts = getRegistSets(id, collect_regnum(request))
     NotFound = []
+    contexts["R_id"] = id
     if "A_Form" not in contexts:
         contexts["A_Form"] = AboutForm()
         NotFound.append("A_Form")
@@ -575,7 +576,6 @@ def edit_posts(request, id):
             Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
             Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
             Temp_regist.save()
-            return HttpResponse("<script>window.opener.location.reload()</script>")
 
     return render(request, "main/mypage/edit_posts.html", contexts)
 

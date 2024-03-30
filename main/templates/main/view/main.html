@@ -51,6 +51,8 @@
                             <button class="btn btn-primary m-2" type="button" data-bs-toggle="collapse" data-bs-target="#settings_info" aria-expanded="false" aria-controls="settings_info">
                                 検索条件を表示
                             </button>
+                            <button class = "btn btn-outline-danger" onclick = "open_as_window('{% url "delete_custom_sheet" sheet_config.sheet_id %}','interview{{forloop.counter}}',400,600)">カスタムシートを削除する</button>
+
                             <div class="collapse" id="settings_info">
                                 <div class="alert alert-info">
                                     <h5>検索条件</h5>
@@ -66,7 +68,6 @@
                                     </ul>
                                 </div>
                             </div>
-                            <button class = "btn btn-outline-danger" onclick = "open_as_window('{% url "delete_custom_sheet" sheet_config.sheet_id %}','interview{{forloop.counter}}',400,600)">カスタムシートを削除する</button>
                             {% endif %}
 
                             {% if results %}

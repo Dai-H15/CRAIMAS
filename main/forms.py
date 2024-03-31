@@ -1,5 +1,5 @@
 from django import forms
-from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Interview, RegistSets
+from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Interview, RegistSets, Interviewer
 
 
 class CompaniesForm(forms.ModelForm):
@@ -171,4 +171,17 @@ class InterviewForm(forms.ModelForm):
             "aspire": forms.NumberInput(attrs={ "min": "0", "max": "100", "step": "1"}),
             "InterviewID": forms.HiddenInput()
 
+        }
+
+
+class Form_Prof_Interviewer(forms.ModelForm):
+    class Meta:
+        model = Interviewer
+        fields = ("position", "mail", "phone", "introduction", "memo")
+        labels = {
+            "position": "役職",
+            "mail": "メールアドレス",
+            "phone": "電話番号",
+            "introduction": "自己紹介",
+            "memo": "メモ"
         }

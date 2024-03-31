@@ -9,6 +9,7 @@ from .models import (
     Adoption,
     Interview,
     CustomSheet,
+    Interviewer,
 )
 from authUser.models import CustomUser
 from .forms import (
@@ -20,6 +21,7 @@ from .forms import (
     AdoptionForm,
     SearchForm_corpnum,
     InterviewForm,
+    Form_Prof_Interviewer
 )
 import secrets, requests, csv, urllib, json
 from urllib.parse import quote
@@ -32,14 +34,13 @@ from django.urls import reverse
 from django.http import JsonResponse
 
 
-
 # Functions
 
 
 def collect_regnum(request):
     if request.user.is_authenticated:
         res = {
-            "num_c": Companies.objects.count(),
+            "num_c": Companies.objects.filter(by_U_ID=request.user.U_ID).count(),
             "num_a": RegistSets.objects.filter(isActive=True, by_U_ID=request.user.U_ID).count(),
         }
     else:
@@ -52,8 +53,8 @@ def collect_regsets(user):
     return res
 
 
-def getRegistSets(RegistID, contexts):
-    post = RegistSets.objects.get(RegistID=RegistID)
+def getRegistForms(RegistID, contexts, request):
+    post = RegistSets.objects.get(RegistID=RegistID, by_U_ID=request.user.U_ID)
     contexts["post"] = post
     if post.company is not None:
         C_Form = CompaniesForm(instance=post.company)
@@ -123,24 +124,30 @@ def regist_all(request):
             CompanyID = secrets.token_hex(64)
             n_CForm = C_Form.save(commit=False)
             n_CForm.CompanyID = CompanyID
+            n_CForm.by_U_ID = request.user.U_ID
             n_CForm.save()
 
             C_Data = Companies.objects.get(CompanyID=CompanyID)
             n_AForm = A_Form.save(commit=False)
             n_AForm.company_name = C_Data
+            n_AForm.by_U_ID = request.user.U_ID
             n_AForm.AboutID = secrets.token_hex(64)
             n_IForm = I_Form.save(commit=False)
             n_IForm.company_name = C_Data
             n_IForm.IdeaID = secrets.token_hex(64)
+            n_IForm.by_U_ID = request.user.U_ID
             n_MForm = M_Form.save(commit=False)
             n_MForm.company_name = C_Data
+            n_MForm.by_U_ID = request.user.U_ID
             n_MForm.MotivationID = secrets.token_hex(64)
             n_DForm = D_Form.save(commit=False)
             n_DForm.company_name = C_Data
             n_DForm.D_CompanyID = secrets.token_hex(64)
+            n_DForm.by_U_ID = request.user.U_ID
             n_ADForm = AD_Form.save(commit=False)
             n_ADForm.company_name = C_Data
             n_ADForm.AdoptionID = secrets.token_hex(64)
+            n_ADForm.by_U_ID = request.user.U_ID
 
             n_AForm.save()
             n_IForm.save()
@@ -150,7 +157,7 @@ def regist_all(request):
             R_ID = secrets.token_hex(64)
             n_RegistSets = RegistSets.objects.create(
                 RegistID=R_ID,
-                by_U_ID=CustomUser.objects.get(username=request.user).U_ID,
+                by_U_ID=request.user.U_ID,
                 company=C_Data,
                 about=About.objects.get(company_name=C_Data),
                 idea=Idea.objects.get(company_name=C_Data),
@@ -162,13 +169,15 @@ def regist_all(request):
             contexts["C_Data"] = C_Data
             if "Interviews" in request.session:  # Interviewの登録
                 n = 0
-                for i in request.session["Interviews"]["interviews"]:
-                    Interview.objects.create(
-                        **i,
-                        RegistID=RegistSets.objects.get(RegistID=R_ID),
-                        InterviewID=secrets.token_hex(64),
-                    )
-                    n += 1
+                if request.session["Interviews"] != "None":
+                    for i in request.session["Interviews"]["interviews"]:
+                        Interview.objects.create(
+                            **i,
+                            by_U_ID=request.user.U_ID,
+                            RegistID=RegistSets.objects.get(RegistID=R_ID),
+                            InterviewID=secrets.token_hex(64),
+                        )
+                        n += 1
                 contexts["In_counts"] = n
             return render(request, "main/regist/regist_done.html", contexts)
     if "forms" in request.session:
@@ -225,14 +234,6 @@ def regist_all(request):
     return render(request, "main/regist/regist_all.html", contexts)
 
 
-def show_data(request):
-    companies = Companies.objects.all()
-    contexts = {
-        "companies": companies,
-    }
-    return render(request, "main/show.html", contexts)
-
-
 @login_required
 def mypage(request):
     contexts = collect_regnum(request)
@@ -249,14 +250,14 @@ def mypage(request):
 def view_my_post(request, id):
     contexts = {}
     try:
-        contexts = getRegistSets(id, contexts)
+        contexts = getRegistForms(id, contexts, request)
     except RegistSets.DoesNotExist:
         return redirect(to="mypage")
     return render(request, "main/mypage/view_my_post.html", contexts)
 
 
 def delete_posts(request, id):
-    contexts = getRegistSets(id, {})
+    contexts = getRegistForms(id, {}, request)
     if request.method == "POST":
         if "del_R_Set" in request.POST:
             post = RegistSets.objects.get(RegistID=id)
@@ -316,6 +317,7 @@ def create_company(request):
             CompanyID = secrets.token_hex(64)
             n_CForm = C_Form.save(commit=False)
             n_CForm.CompanyID = CompanyID
+            n_CForm.by_U_ID = request.user.U_ID
             n_CForm.save()
             Temp_regist = RegistSets.objects.create(
                 RegistID=secrets.token_hex(64),
@@ -339,15 +341,16 @@ def import_company(request):
             copy_company = Companies.objects.get(CompanyID=request.POST["ID"])
             CompanyID = request.POST["ID"]
             copy_company.CompanyID = CompanyID
+            copy_company.by_U_ID = request.user.U_ID
             copy_company.save()
             Temp_regist = RegistSets.objects.create(
                 RegistID=secrets.token_hex(64),
-                by_U_ID=CustomUser.objects.get(username=request.user),
+                by_U_ID=request.user.U_ID,
                 company=Companies.objects.get(CompanyID=CompanyID),
             )
             request.session["RegistID"] = Temp_regist.RegistID
             return redirect("create_about")
-    companies = Companies.objects.all()
+    companies = Companies.objects.filter(by_U_ID=request.user.U_ID).all()
     contexts["posts"] = companies
     return render(request, "main/regist/sets/import_company.html", contexts)
 
@@ -359,20 +362,21 @@ def create_about(request):
         A_Form = AboutForm(request.session["forms"]["A_Form"])
     contexts["A_Form"] = A_Form
     contexts["C_Form"] = CompaniesForm(
-        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).company
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID).company
     )
     if request.method == "POST":
         A_Form = AboutForm(request.POST)
         if A_Form.is_valid():
             n_AForm = A_Form.save(commit=False)
             n_AForm.company_name = RegistSets.objects.get(
-                RegistID=request.session["RegistID"]
+                RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID
             ).company
             AboutID = secrets.token_hex(64)
             n_AForm.AboutID = AboutID
+            n_AForm.by_U_ID = request.user.U_ID
             n_AForm.save()
-            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
-            Temp_regist.about = About.objects.get(AboutID=AboutID)
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID)
+            Temp_regist.about = About.objects.get(AboutID=AboutID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
             return redirect("create_idea")
 
@@ -382,7 +386,7 @@ def create_about(request):
 def create_idea(request):
     contexts = collect_regnum(request)
     contexts["A_Form"] = AboutForm(
-        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).about
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID).about
     )
     I_Form = IdeaForm()
     contexts["I_Form"] = I_Form
@@ -391,13 +395,14 @@ def create_idea(request):
         if I_Form.is_valid():
             n_IForm = I_Form.save(commit=False)
             n_IForm.company_name = RegistSets.objects.get(
-                RegistID=request.session["RegistID"]
+                RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID
             ).company
             IdeaID = secrets.token_hex(64)
             n_IForm.IdeaID = IdeaID
+            n_IForm.by_U_ID = request.user.U_ID
             n_IForm.save()
-            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
-            Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID)
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID)
+            Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
             return redirect("create_motivation")
     return render(request, "main/regist/sets/create_idea.html", contexts)
@@ -406,7 +411,7 @@ def create_idea(request):
 def create_motivation(request):
     contexts = collect_regnum(request)
     contexts["I_Form"] = IdeaForm(
-        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).idea
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID).idea
     )
     M_Form = MotivationForm()
     contexts["M_Form"] = M_Form
@@ -415,13 +420,14 @@ def create_motivation(request):
         if M_Form.is_valid():
             n_MForm = M_Form.save(commit=False)
             n_MForm.company_name = RegistSets.objects.get(
-                RegistID=request.session["RegistID"]
+                RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID
             ).company
             MotivationID = secrets.token_hex(64)
             n_MForm.MotivationID = MotivationID
+            n_MForm.by_U_ID = request.user.U_ID
             n_MForm.save()
-            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
-            Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID)
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID)
+            Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
             return redirect("create_d_company")
     return render(request, "main/regist/sets/create_motivation.html", contexts)
@@ -430,7 +436,7 @@ def create_motivation(request):
 def create_d_company(request):
     contexts = collect_regnum(request)
     contexts["M_Form"] = MotivationForm(
-        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).motivation
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID).motivation
     )
     D_Form = D_CompanyForm()
     if "forms" in request.session:
@@ -441,13 +447,14 @@ def create_d_company(request):
         if D_Form.is_valid():
             n_DForm = D_Form.save(commit=False)
             n_DForm.company_name = RegistSets.objects.get(
-                RegistID=request.session["RegistID"]
+                RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID
             ).company
             D_CompanyID = secrets.token_hex(64)
             n_DForm.D_CompanyID = D_CompanyID
+            n_DForm.by_U_ID = request.user.U_ID
             n_DForm.save()
-            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
-            Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID)
+            Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
             return redirect("create_adoption")
     return render(request, "main/regist/sets/create_d_company.html", contexts)
@@ -456,7 +463,7 @@ def create_d_company(request):
 def create_adoption(request):
     contexts = collect_regnum(request)
     contexts["D_Form"] = D_CompanyForm(
-        instance=RegistSets.objects.get(RegistID=request.session["RegistID"]).d_company
+        instance=RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID).d_company
     )
     AD_Form = AdoptionForm()
     contexts["AD_Form"] = AD_Form
@@ -465,13 +472,14 @@ def create_adoption(request):
         if AD_Form.is_valid():
             n_ADForm = AD_Form.save(commit=False)
             n_ADForm.company_name = RegistSets.objects.get(
-                RegistID=request.session["RegistID"]
+                RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID
             ).company
             AdoptionID = secrets.token_hex(64)
             n_ADForm.AdoptionID = AdoptionID
+            n_ADForm.by_U_ID = request.user.U_ID
             n_ADForm.save()
-            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
-            Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
+            Temp_regist = RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID)
+            Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
             return redirect("create_complete")
     return render(request, "main/regist/sets/create_adoption.html", contexts)
@@ -491,7 +499,7 @@ def create_complete(request):
 
 
 def edit_posts(request, id):
-    contexts = getRegistSets(id, collect_regnum(request))
+    contexts = getRegistForms(id, collect_regnum(request), request)
     NotFound = []
     contexts["R_id"] = id
     if "A_Form" not in contexts:
@@ -511,7 +519,7 @@ def edit_posts(request, id):
         NotFound.append("AD_Form")
     request.session["NotFound"] = NotFound
     if request.method == "POST":
-        Temp_regist = RegistSets.objects.get(RegistID=id)
+        Temp_regist = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
         if "A_Form" in request.session["NotFound"]:
             AboutID = secrets.token_hex(64)
             A_Form = AboutForm(request.POST)
@@ -565,16 +573,21 @@ def edit_posts(request, id):
             n_MForm.company_name = Temp_regist.company
             n_DForm.company_name = Temp_regist.company
             n_ADForm.company_name = Temp_regist.company
+            n_AForm.by_U_ID = request.user.U_ID
+            n_IForm.by_U_ID = request.user.U_ID
+            n_MForm.by_U_ID = request.user.U_ID
+            n_DForm.by_U_ID = request.user.U_ID
+            n_ADForm.by_U_ID = request.user.U_ID
             n_AForm.save()
             n_IForm.save()
             n_MForm.save()
             n_DForm.save()
             n_ADForm.save()
-            Temp_regist.about = About.objects.get(AboutID=AboutID)
-            Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID)
-            Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID)
-            Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID)
-            Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID)
+            Temp_regist.about = About.objects.get(AboutID=AboutID, by_U_ID=request.user.U_ID)
+            Temp_regist.idea = Idea.objects.get(IdeaID=IdeaID, by_U_ID=request.user.U_ID)
+            Temp_regist.motivation = Motivation.objects.get(MotivationID=MotivationID, by_U_ID=request.user.U_ID)
+            Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID, by_U_ID=request.user.U_ID)
+            Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
 
     return render(request, "main/mypage/edit_posts.html", contexts)
@@ -708,8 +721,8 @@ def set_searched_data(request):
 
 def interview_main(request, id):
     contexts = collect_regnum(request)
-    R_sets = RegistSets.objects.get(RegistID=id)
-    interviews = Interview.objects.filter(RegistID=R_sets)
+    R_sets = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
+    interviews = Interview.objects.filter(RegistID=R_sets, by_U_ID=request.user.U_ID)
     contexts["R_sets"] = R_sets
     contexts["interviews"] = interviews
     return render(request, "main/interview/interview_main.html", contexts)
@@ -718,16 +731,16 @@ def interview_main(request, id):
 def interview_create(request, id):
     contexts = collect_regnum(request)
     form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64)})
-    name = RegistSets.objects.get(RegistID=id).company.name
+    name = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.name
     contexts["form"] = form
     contexts["name"] = name
     contexts["R_id"] = id
     if request.method == "POST":
         form = InterviewForm(request.POST)
         if form.is_valid():
-            print("ok")
             data = form.save(commit=False)
             data.company_name = name
+            data.by_U_ID = request.user.U_ID
             data.save()
             return redirect("interview_main", id)
         else:
@@ -747,11 +760,11 @@ def get_address(request, zipcode):
 
 def view_interview(request, id):
     contexts = collect_regnum(request)
-    interview = InterviewForm(instance=Interview.objects.get(InterviewID=id))
+    interview = InterviewForm(instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID))
     contexts["interview"] = interview
     if request.method == "POST":
         form = InterviewForm(
-            request.POST, instance=Interview.objects.get(InterviewID=id)
+            request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
         )
         if form.is_valid():
             form.save()
@@ -769,7 +782,7 @@ def calc(request):
 def export_sheet(request, id):
     contexts = {}
     if request.method == "POST":
-        R_set = RegistSets.objects.get(RegistID=id)
+        R_set = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
         C = dict(**{"sheet_name": "Company"}, **model_to_dict(R_set.company))
         del C["CompanyID"]
         A = dict(**{"sheet_name": "About"}, **model_to_dict(R_set.about))
@@ -793,7 +806,7 @@ def export_sheet(request, id):
         name = R_set.company.name
         if request.POST["data"] == "two":
             name += "_include_interview"
-            interviews = Interview.objects.filter(RegistID=id)
+            interviews = Interview.objects.filter(RegistID=id, by_U_ID=request.user.U_ID)
             sets["Interview"] = {
                 "sheet_name": "Interviews",
                 "interviews": [model_to_dict(interview) for interview in interviews],
@@ -978,22 +991,22 @@ def view_main(request, control, option):
             contexts["results"].append(
                 {
                     "R_sets": R,
-                    "c_interview": Interview.objects.filter(RegistID=R).count(),
+                    "c_interview": Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).count(),
                     "sum_aspire": (
-                        Interview.objects.filter(RegistID=R).aggregate(Sum("aspire"))[
+                        Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(Sum("aspire"))[
                             "aspire__sum"
                         ]
-                        if Interview.objects.filter(RegistID=R).aggregate(
+                        if Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(
                             Sum("aspire")
                         )["aspire__sum"]
                         is not None
                         else 0
                     ),
                     "avg_aspire": (
-                        Interview.objects.filter(RegistID=R).aggregate(Avg("aspire"))[
+                        Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(Avg("aspire"))[
                             "aspire__avg"
                         ]
-                        if Interview.objects.filter(RegistID=R).aggregate(
+                        if Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(
                             Avg("aspire")
                         )["aspire__avg"]
                         is not None
@@ -1044,7 +1057,7 @@ def view_main(request, control, option):
 
     elif control == "cat_interview":
         results = Interview.objects.filter(
-            RegistID__by_U_ID=request.user.U_ID, RegistID__isActive=True
+            RegistID__by_U_ID=request.user.U_ID, RegistID__isActive=True, by_U_ID=request.user.U_ID
         )
         if results.count() == 0:
             contexts["message"] = {
@@ -1077,8 +1090,8 @@ def view_main(request, control, option):
             for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID)
         ]:
             contexts["customsheet"] = "true"
-            cs = CustomSheet.objects.get(sheet_name=control)
-            results = apps.get_model("main", cs.model).objects.all()
+            cs = CustomSheet.objects.get(sheet_name=control, by_U_ID=request.user.U_ID)
+            results = apps.get_model("main", cs.model).objects.filter(by_U_ID=request.user.U_ID).all()
             if cs.search_settings != {}:
                 if cs.search_settings["how"] == "1":
                     results = results.filter(
@@ -1280,7 +1293,7 @@ def create_custom_sheet(request):
 
 def delete_custom_sheet(request, id):
     contexts = collect_regnum(request)
-    cs = CustomSheet.objects.get(sheet_id=id)
+    cs = CustomSheet.objects.get(sheet_id=id, by_U_ID=request.user.U_ID)
     contexts["sheet_config"] = {
         "model": cs.model,
         "selected": cs.selected_field,
@@ -1289,7 +1302,7 @@ def delete_custom_sheet(request, id):
         "sheet_id": cs.sheet_id,
     }
     if request.method == "POST":
-        CustomSheet.objects.filter(sheet_id=id).delete()
+        CustomSheet.objects.filter(sheet_id=id, by_U_ID=request.user.U_ID).delete()
         return HttpResponse(
             f"削除しています...<script>window.opener.location.href='{reverse('view_main', kwargs=dict(control='top',option='default' ))}'</script>"
         )
@@ -1298,11 +1311,60 @@ def delete_custom_sheet(request, id):
 
 def change_active(request):
     if request.method == "POST":
-        RegistSets.objects.filter(RegistID=request.POST.get("RegistID")).update(
+        RegistSets.objects.filter(RegistID=request.POST.get("RegistID"), by_U_ID=request.user.U_ID).update(
             isActive=(True if request.POST.get("current_status") != "True" else False)
         )
     return HttpResponse("<script>window.opener.location.reload()</script>")
 
 
 def get_interviewer(request, id):
-    return JsonResponse({"interviewer": RegistSets.objects.get(RegistID=id).company.contact})
+    return JsonResponse({"interviewer": RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.contact})
+
+
+def prof_interviewer(request, company_id, i_name):
+    contexts = collect_regnum(request)
+    try:
+        company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
+    except (RegistSets.DoesNotExist, AttributeError):
+        return HttpResponse("不正なリクエストです")
+    if company.contact != i_name:
+        return HttpResponse("不正なリクエストです")
+    contexts["company"] = company.name
+    contexts["company_id"] = company_id
+    contexts["i_name"] = i_name
+    try:
+        instance_data = Interviewer.objects.get(
+            by_U_ID=request.user.U_ID,
+            company_name=company,
+            name=i_name,
+        )
+        init_form = Form_Prof_Interviewer(instance=instance_data)
+        contexts["message"] = {"type": "success", "texts": ["一致した担当者情報があります", "編集して保存することができます"]}
+    except Interviewer.DoesNotExist:
+        init_form = Form_Prof_Interviewer(initial={"company_name": Companies.objects.get(CompanyID=company_id, by_U_ID=request.user.U_ID), "interviewer_name": i_name})
+        contexts["message"] = {"type": "warning", "texts": ["一致する担当者情報が見つかりませんでした。", "新規作成を行います。名前と企業を確認し、項目を埋めてください"]}
+
+    if request.method == "POST":
+        try:
+            data = Interviewer.objects.get(
+                by_U_ID=request.user.U_ID,
+                company_name=company,
+                name=i_name,
+            )
+            form = Form_Prof_Interviewer(request.POST, instance=data)
+            reason = "上書き保存を行いました"
+        except Interviewer.DoesNotExist:
+            form = Form_Prof_Interviewer(request.POST)
+            reason = "新規登録を行いました。"
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.by_U_ID = request.user.U_ID
+            data.company_name = company
+            data.name = i_name
+            data.save()
+            return JsonResponse({"status": "OK", "reason": reason})
+        else:
+            return JsonResponse({"status": "NG", "reason": "無効なフォームです", "error_list": str(form.errors)})
+
+    contexts["form"] = init_form
+    return render(request, "main/regist/interviewer.html", contexts)

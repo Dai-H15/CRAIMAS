@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Companies(models.Model):
+    by_U_ID = models.CharField(max_length=100, default="default")
     name = models.CharField(max_length=200, verbose_name='企業・団体名')
     industry = models.CharField(max_length=200, verbose_name='所属業界')
     president = models.CharField(max_length=200, verbose_name='代表者名')
@@ -24,6 +25,7 @@ class About(models.Model):
         ("B to C", "B to C"),
     )
     AboutID = models.CharField(max_length=200, primary_key=True, unique=True)
+    by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name='企業・団体名')
     product = models.TextField(verbose_name='取り扱い製品')
     customer_txt = models.TextField(verbose_name='対象顧客')
@@ -42,6 +44,7 @@ class About(models.Model):
 
 class Idea(models.Model):
     IdeaID = models.CharField(max_length=200, primary_key=True, unique=True)
+    by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
     prospects = models.TextField(verbose_name="今後の事業展開")
     valuable = models.TextField(verbose_name="企業が大切にしていること")
@@ -56,6 +59,7 @@ class Idea(models.Model):
 
 class Motivation(models.Model):
     MotivationID = models.CharField(max_length=200, primary_key=True, unique=True)
+    by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
     attraction = models.TextField(verbose_name="企業の魅力")
     description = models.TextField(verbose_name="企業の説明")
@@ -71,6 +75,7 @@ class Motivation(models.Model):
 
 class D_Company(models.Model):
     D_CompanyID = models.CharField(max_length=200, primary_key=True, unique=True)
+    by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
     C_Tags = {
         "founded_t": (
@@ -129,6 +134,7 @@ class D_Company(models.Model):
 
 class Adoption(models.Model):
     AdoptionID = models.CharField(max_length=200, primary_key=True, unique=True)
+    by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
     occupation = models.CharField(max_length=200, verbose_name="採用職種")
     place = models.CharField(max_length=200, verbose_name="勤務予定地")
@@ -189,6 +195,7 @@ class Interview(models.Model):
     )
     RegistID = models.ForeignKey(RegistSets, on_delete=models.CASCADE)
     InterviewID = models.CharField(max_length=128)
+    by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.CharField(max_length=200, verbose_name="企業名")
     title = models.CharField(max_length=200, verbose_name="面談録タイトル")
     tag = models.CharField(max_length=50, choices=tags, default="briefing", verbose_name="タグ")
@@ -225,3 +232,22 @@ class CustomSheet(models.Model):
     class Meta:
         verbose_name = 'カスタムシート'
         verbose_name_plural = 'カスタムシート'
+
+
+class Interviewer(models.Model):
+    by_U_ID = models.CharField(max_length=100, default="default")
+    company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名", blank=True)
+    name = models.CharField(max_length=200, verbose_name="面接官名", blank=True)
+    position = models.CharField(max_length=200, verbose_name="役職")
+    mail = models.EmailField(max_length=200, verbose_name="メールアドレス", blank=False)
+    phone = models.CharField(max_length=200, verbose_name="電話番号", blank=False)
+    introduction = models.TextField(verbose_name="自己紹介")
+    memo = models.TextField(verbose_name="メモ")
+    created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
+
+    def __str__(self):
+        return self.name + "[Interviewer]"
+
+    class Meta:
+        verbose_name = '面接官シート'
+        verbose_name_plural = '面接官シート'

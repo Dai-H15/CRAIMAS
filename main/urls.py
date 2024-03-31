@@ -5,7 +5,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("regist_base/", views.regist_base, name="regist_base"),
     path("regist_base/regist_all/", views.regist_all, name="regist_all"),
-    path("show/", views.show_data, name="show"),
     path("mypage/", views.mypage, name="mypage"),
     path("view_my_post/<str:id>", views.view_my_post, name="view_my_post"),
     path("delete_posts/<str:id>", views.delete_posts, name="delete_posts"),
@@ -34,4 +33,5 @@ urlpatterns = [
     path("view/delete_custom_sheet/<str:id>", views.delete_custom_sheet, name="delete_custom_sheet"),
     path("changeActive", views.change_active, name="change_active"),
     path("get_interviewer/<str:id>", views.get_interviewer, name="get_interviewer"),
+    path("prof_interviewer/<str:company_id>/<str:i_name>", views.prof_interviewer, name="prof_interviewer"),
 ]

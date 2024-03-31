@@ -18,9 +18,10 @@
                 <h5>企業情報</h5>
                 <table class = "col table ">
                     {% for field in C_Form %}
+                    
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{{ field.value }}</td>
+                            <td>{{ field.value }}{% if field.name == "contact" %}<button class = "btn btn-outline-primary mx-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_as_window('{% url "prof_interviewer" company_id=post.company.CompanyID i_name=field.value %}', 'prof_interviewer', 530,600)"> 担当者プロフィールを検索</button>{% endif %}</td>
                         </tr>
                     {% endfor %}
                 </table>

@@ -1,0 +1,88 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 ">
+    <title>Biz Intelli Scan</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            {% if message %}<div class="alert alert-{{message.type}} text-center" role="alert">{% for text in message.texts %} <b>{{text}}</b><br> {% endfor %}</div>{% endif %}
+            <div class  = "text-center"><h4>{{company}}</h4></div>
+            <div class  = "text-center"><h4 class = "border-bottom p-3">{{i_name}}</h4></div>
+            <div class="container">
+                <div class="row p-3">
+                    <form method = "post">
+                    {% csrf_token %}
+                    {% for f in form %}
+                    {% bootstrap_field f %}
+                    {% endfor %}
+                    <button type="button" onclick="p_save()" class = "btn btn-success">登録</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script>
+        async function p_save(){
+            const s = document.querySelector('form');
+            const url = "{% url 'prof_interviewer' company_id=company_id i_name=i_name %}";
+            const formData = new FormData(s);
+            let toastBootstrap;
+            const init = {
+                method: "POST",
+                body: formData
+            }
+            const res = await fetch(url,init);
+            const data = await res.json();
+            console.log(res);
+            if (res.ok) {
+                const toast = document.getElementById('status-toast');
+                if (data.status =="OK"){
+                toast.className = "toast bg-info";
+                 toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+                document.getElementById('toast-status').innerHTML = `保存しました 情報: ${data.reason}`;}
+                else{
+                    toast.className = "toast bg-danger";
+                     toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+                    document.getElementById('toast-status').innerHTML = `保存に失敗しました。  理由:  ${data.reason}  <br>エラー項目: ${data.error_list}` ;
+                };
+            }else{
+                const toast = document.getElementById('status-toast');
+                toast.className = "toast bg-danger";
+                 toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+                document.getElementById('toast-status').innerHTML = `保存に失敗しました。  理由:  ${res.statusText}` ;
+            };
+            toastBootstrap.show();
+            };
+    </script>
+    <div class="toast-container position-fixed top-0 start-0 p-3">
+        <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-body text-white " id = "toast-status"></div>
+        </div>
+      </div>
+    </body>
+
+</html>

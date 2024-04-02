@@ -30,7 +30,7 @@
             <div class="container">
                 <div class = "row">
                         <h4>シート一覧</h4>
-                        <div class = "col-2 border p-3" style="height: 100vh">
+                        <div class = "col-2 border p-3" style="height: 100%%">
                             <div class="list-group">
                                 {% for m in menu %}
                                     <a href="{% url 'view_main' control=m.choice option="default" %}" class="list-group-item list-group-item-action {{m.active}}" aria-current="true">{{m.desc}}</a>
@@ -72,9 +72,9 @@
 
                             {% if results %}
                             {% if customsheet %}
-                                {% include "main/view/customsheet/viewer.html" %}
+                                {% include "view/customsheet/viewer.html" %}
                             {% else %}
-                            {% with "main/view/tables/"|add:control|add:".html" as template_name %}
+                            {% with "view/tables/"|add:control|add:".html" as template_name %}
                                     {% include template_name %}
                                 {% endwith %}
                             {% endif %}

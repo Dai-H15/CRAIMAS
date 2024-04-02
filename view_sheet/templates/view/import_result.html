@@ -1,0 +1,58 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biz Intelli Scan</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="container">
+                <div class = "row"><h4 class = "text-center">インポートが完了しました</h4><h5 class = "text-center"></h5></div>
+                <div class = "row text-center"><h5 class = "col">データ内に含まれていたシート数: {{num_data}}</h5><h5 class = "col">インポートされたデータ数{{ok_data}}</h5></div>
+                <div class = "row text-center"><h5 class = "col">インポートできたシート名</h5><h5 class = "col">インポートできなかったシート名</h5></div>
+                <div class = "row text-center"><ul class = "col">{% for i in name_ok_data %} <li>{{i}}</li>{% endfor %}</ul><ul class = "col">{% for n in name_ng_data %} <li>{{n}}</li> {% endfor %}</ul></div>
+                        <div class = "col text-center my-4"><a class = "btn btn-primary" href="{% url "view_main" control='top' option='default' %}" >シート管理へ戻る</a></div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script>
+        let wind = [];
+        function open_as_window(url,name,width,height){
+            wind.push(window.open(`${url}`, `${name}`, `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`))
+    };
+    window.addEventListener('beforeunload', function(){
+        if (wind.length !=0){
+            for(let i = 0; i < wind.length; i++){
+                wind[i].close();
+            }
+        }
+    });
+</script>
+</body>
+</html>

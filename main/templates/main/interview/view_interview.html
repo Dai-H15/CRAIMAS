@@ -34,6 +34,9 @@
                 {% if f.name == "zipcode" %}
                 {% bootstrap_field f %}
                 <button type="button" class = "btn btn-warning" onclick="search_zipcode()">住所を検索</button>
+                {% elif f.name == "interviewer" %}
+                {% bootstrap_field f %}
+                <button type = "button" class = "btn btn-outline-primary mx-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_as_window('{% url "prof_interviewer" company_id=c_id i_name=f.value %}', 'prof_interviewer', 530,600)"> 担当者プロフィールを検索</button>
                 {% else %}
                 {% bootstrap_field f %}
                 {% endif %}
@@ -63,6 +66,7 @@
     });
 
 </script>
+<script src="{% static "js/open_as_window.js" %}"></script>
 </body>
 
 </html>

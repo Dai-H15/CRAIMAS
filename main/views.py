@@ -11,8 +11,6 @@ from .models import (
     Interviewer,
 )
 
-from view_sheet.models import CustomSheet
-
 from authUser.models import CustomUser
 from .forms import (
     CompaniesForm,
@@ -30,8 +28,6 @@ from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.forms.models import model_to_dict
-from django.db.models import Max, Sum, Avg, Count
-from django.apps import apps
 from django.urls import reverse
 from django.http import JsonResponse
 
@@ -762,8 +758,10 @@ def get_address(request, zipcode):
 
 def view_interview(request, id):
     contexts = collect_regnum(request)
-    interview = InterviewForm(instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID))
+    inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
+    interview = InterviewForm(instance=inst)
     contexts["interview"] = interview
+    contexts["c_id"] = inst.RegistID.company.CompanyID
     if request.method == "POST":
         form = InterviewForm(
             request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
@@ -894,8 +892,6 @@ def prof_interviewer(request, company_id, i_name):
     try:
         company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
     except (RegistSets.DoesNotExist, AttributeError):
-        return HttpResponse("不正なリクエストです")
-    if company.contact != i_name:
         return HttpResponse("不正なリクエストです")
     contexts["company"] = company.name
     contexts["company_id"] = company_id

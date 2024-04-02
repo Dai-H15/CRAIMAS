@@ -218,12 +218,12 @@ class Interview(models.Model):
 
 
 class Interviewer(models.Model):
-    by_U_ID = models.CharField(max_length=100, default="default")
-    company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名", blank=True)
+    by_U_ID = models.CharField(max_length=100, default="default", blank=False)
+    company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名", blank=False)
     name = models.CharField(max_length=200, verbose_name="面接官名", blank=True)
-    position = models.CharField(max_length=200, verbose_name="役職")
-    mail = models.EmailField(max_length=200, verbose_name="メールアドレス", blank=False)
-    phone = models.CharField(max_length=200, verbose_name="電話番号", blank=False)
+    position = models.CharField(max_length=200, verbose_name="役職・所属部署等")
+    mail = models.EmailField(max_length=200, verbose_name="メールアドレス", blank=True)
+    phone = models.CharField(max_length=200, verbose_name="電話番号", blank=True)
     introduction = models.TextField(verbose_name="自己紹介")
     memo = models.TextField(verbose_name="メモ")
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")

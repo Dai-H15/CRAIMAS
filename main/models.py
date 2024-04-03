@@ -7,16 +7,16 @@ class Companies(models.Model):
     industry = models.CharField(max_length=200, verbose_name='所属業界')
     president = models.CharField(max_length=200, verbose_name='代表者名')
     contact = models.CharField(max_length=200, verbose_name='担当者名')
-    a_year = models.IntegerField(verbose_name='募集年度')
+    Ca_year = models.IntegerField(verbose_name='募集年度')
     created = models.DateTimeField(auto_now_add=True, verbose_name='作成日時')
     CompanyID = models.CharField(max_length=200, primary_key=True, unique=True)
 
     def __str__(self):
         return self.name
+
     class Meta:
         verbose_name = '企業シート'
         verbose_name_plural = '企業シート'
-
 
 
 class About(models.Model):
@@ -27,13 +27,13 @@ class About(models.Model):
     AboutID = models.CharField(max_length=200, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name='企業・団体名')
-    product = models.TextField(verbose_name='取り扱い製品')
-    customer_txt = models.TextField(verbose_name='対象顧客')
-    customer = models.CharField(max_length=50, choices=CHOICES, default="B to B", verbose_name='顧客のタイプ')
-    value_txt = models.TextField(verbose_name='提供価値の詳細')
-    value = models.CharField(max_length=50, choices=CHOICES, default="B to B", verbose_name='価値のタイプ')
-    originality = models.TextField(verbose_name='独自性')
-    f_value = models.TextField(verbose_name='価値・やりがいを感じるか')
+    product = models.TextField(verbose_name='取り扱い製品', blank=True)
+    customer_txt = models.TextField(verbose_name='対象顧客', blank=True)
+    customer = models.CharField(max_length=50, choices=CHOICES, default="B to B", verbose_name='顧客のタイプ', blank=True)
+    value_txt = models.TextField(verbose_name='提供価値の詳細', blank=True)
+    value = models.CharField(max_length=50, choices=CHOICES, default="B to B", verbose_name='価値のタイプ', blank=True)
+    originality = models.TextField(verbose_name='独自性', blank=True)
+    f_value = models.TextField(verbose_name='価値・やりがいを感じるか', blank=True)
 
     def __str__(self):
         return self.company_name.name + " [About]"
@@ -46,12 +46,13 @@ class Idea(models.Model):
     IdeaID = models.CharField(max_length=200, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
-    prospects = models.TextField(verbose_name="今後の事業展開")
-    valuable = models.TextField(verbose_name="企業が大切にしていること")
-    statue = models.TextField(verbose_name="企業が求める人物像")
+    prospects = models.TextField(verbose_name="今後の事業展開", blank=True)
+    valuable = models.TextField(verbose_name="企業が大切にしていること", blank=True)
+    statue = models.TextField(verbose_name="企業が求める人物像", blank=True)
 
     def __str__(self):
         return self.company_name.name + "[Idea]"
+
     class Meta:
         verbose_name = '経営理念シート'
         verbose_name_plural = '経営理念シート'
@@ -61,13 +62,14 @@ class Motivation(models.Model):
     MotivationID = models.CharField(max_length=200, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
-    attraction = models.TextField(verbose_name="企業の魅力")
-    description = models.TextField(verbose_name="企業の説明")
-    necessary = models.TextField(verbose_name="求める人物像")
-    appeal = models.TextField(verbose_name="企業のアピール")
+    attraction = models.TextField(verbose_name="企業の魅力", blank=True)
+    description = models.TextField(verbose_name="企業の説明", blank=True)
+    necessary = models.TextField(verbose_name="求める人物像", blank=True)
+    appeal = models.TextField(verbose_name="企業のアピール", blank=True)
 
     def __str__(self):
         return self.company_name.name + "[Motivation]"
+
     class Meta:
         verbose_name = '志望動機シート'
         verbose_name_plural = '志望動機シート'
@@ -102,27 +104,27 @@ class D_Company(models.Model):
             ("なし", "なし"),
         ),
     }
-    founded = models.CharField(max_length=50, verbose_name="設立・創立年")
+    founded = models.CharField(max_length=50, verbose_name="設立・創立年", blank=True)
     fonded_t = models.CharField(
         max_length=50, choices=C_Tags["founded_t"], default="null", verbose_name="設立・創立年タグ"
     )
 
-    capital = models.IntegerField(verbose_name="資本金")
-    sales_n = models.IntegerField(verbose_name="売上高")
-    sales_y = models.IntegerField(verbose_name="実績年度")
+    capital = models.IntegerField(verbose_name="資本金", default=0, blank=True)
+    sales_n = models.IntegerField(verbose_name="売上高", default=0, blank=True)
+    sales_y = models.IntegerField(verbose_name="実績年度", default=0, blank=True)
     sales_t = models.CharField(max_length=50, choices=C_Tags["sales_t"], default="None", verbose_name="売上高タグ")
 
-    employee_n = models.IntegerField(verbose_name="従業員数")
+    employee_n = models.IntegerField(verbose_name="従業員数", default=0, blank=True)
     employee_t = models.CharField(
         max_length=50, choices=C_Tags["employee_t"], default="None", verbose_name="従業員数タグ"
     )
-    location = models.CharField(max_length=200, verbose_name="所在地")
-    postal_code = models.CharField(max_length=200, verbose_name="郵便番号")
-    corporate_number = models.CharField(max_length=20, verbose_name="法人番号")
-    url = models.CharField(max_length=200, verbose_name="URL")
+    location = models.CharField(max_length=200, verbose_name="所在地", blank=True)
+    postal_code = models.CharField(max_length=200, verbose_name="郵便番号", blank=True)
+    corporate_number = models.CharField(max_length=20, verbose_name="法人番号", blank=True)
+    url = models.CharField(max_length=200, verbose_name="URL", blank=True)
     stock_t = models.CharField(max_length=50, choices=C_Tags["stock_t"], default="None", verbose_name="株式タグ")
-    t_p = models.IntegerField(verbose_name="離職率")
-    avg_y = models.IntegerField(verbose_name="平均年齢")
+    t_p = models.IntegerField(verbose_name="離職率", default=0, blank=True)
+    avg_y = models.IntegerField(verbose_name="平均年齢", default=0, blank=True)
 
     def __str__(self):
         return self.company_name.name + "[D_Company]"
@@ -136,11 +138,11 @@ class Adoption(models.Model):
     AdoptionID = models.CharField(max_length=200, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
-    occupation = models.CharField(max_length=200, verbose_name="採用職種")
-    place = models.CharField(max_length=200, verbose_name="勤務予定地")
-    n_adopters = models.IntegerField(verbose_name="採用予定人数")
-    n_enrollment = models.IntegerField(verbose_name="OB・OG在籍数")
-    a_year = models.IntegerField(verbose_name="募集年度")
+    occupation = models.CharField(max_length=200, verbose_name="採用職種", blank=True)
+    place = models.CharField(max_length=200, verbose_name="勤務予定地", blank=True)
+    n_adopters = models.IntegerField(verbose_name="採用予定人数", default=0, blank=True)
+    n_enrollment = models.IntegerField(verbose_name="OB・OG在籍数", default=0, blank=True)
+    a_year = models.IntegerField(verbose_name="募集年度", default=0, blank=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
 
     def __str__(self):
@@ -197,17 +199,17 @@ class Interview(models.Model):
     InterviewID = models.CharField(max_length=128)
     by_U_ID = models.CharField(max_length=100, default="default")
     company_name = models.CharField(max_length=200, verbose_name="企業名")
-    title = models.CharField(max_length=200, verbose_name="面談録タイトル")
+    title = models.CharField(max_length=200, verbose_name="面談録タイトル", blank=False)
     tag = models.CharField(max_length=50, choices=tags, default="briefing", verbose_name="タグ")
-    date = models.DateTimeField(verbose_name="面談日時")
-    interviewer = models.CharField(max_length=200, verbose_name="面接官名")
-    zipcode = models.CharField(max_length=8, verbose_name="郵便番号")
-    place = models.CharField(max_length=200, verbose_name="面接住所")
-    aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%")
-    reason = models.TextField(default="", verbose_name="志望理由")
-    want_to = models.TextField(default="", verbose_name="やりたいこと")
-    note = models.TextField(default="", verbose_name="面談メモ")
-    review = models.TextField(default="", verbose_name="面談感想")
+    date = models.DateTimeField(verbose_name="面談日時", blank=True)
+    interviewer = models.CharField(max_length=200, verbose_name="面接官名", blank=True)
+    zipcode = models.CharField(max_length=8, verbose_name="郵便番号", blank=True)
+    place = models.CharField(max_length=200, verbose_name="面接住所", blank=True)
+    aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%", blank=True)
+    reason = models.TextField(default="", verbose_name="志望理由", blank=True)
+    want_to = models.TextField(default="", verbose_name="やりたいこと", blank=True)
+    note = models.TextField(default="", verbose_name="面談メモ", blank=True)
+    review = models.TextField(default="", verbose_name="面談感想", blank=True)
 
     def __str__(self):
         return self.title + " [Interview]"
@@ -224,8 +226,8 @@ class Interviewer(models.Model):
     position = models.CharField(max_length=200, verbose_name="役職・所属部署等")
     mail = models.EmailField(max_length=200, verbose_name="メールアドレス", blank=True)
     phone = models.CharField(max_length=200, verbose_name="電話番号", blank=True)
-    introduction = models.TextField(verbose_name="自己紹介")
-    memo = models.TextField(verbose_name="メモ")
+    introduction = models.TextField(verbose_name="自己紹介", blank=True)
+    memo = models.TextField(verbose_name="メモ", blank=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
 
     def __str__(self):

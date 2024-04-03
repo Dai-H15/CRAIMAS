@@ -104,6 +104,46 @@ def regist_base(request):
 
 def regist_all(request):
     contexts = collect_regnum(request)
+    if request.method == "GET":
+        if "forms" in request.session:
+            C_Form = CompaniesForm(request.session["forms"]["C_Form"])
+            A_Form = AboutForm(request.session["forms"]["A_Form"])
+            D_Form = D_CompanyForm(request.session["forms"]["D_Form"])
+            I_Form = IdeaForm()
+            M_Form = MotivationForm()
+            AD_Form = AdoptionForm()
+            del request.session["forms"]
+        elif "jsons" in request.session:
+            C_Form = CompaniesForm(request.session["jsons"]["C_Form"])
+            A_Form = AboutForm(request.session["jsons"]["A_Form"])
+            I_Form = IdeaForm(request.session["jsons"]["I_Form"])
+            M_Form = MotivationForm(request.session["jsons"]["M_Form"])
+            D_Form = D_CompanyForm(request.session["jsons"]["D_Form"])
+            AD_Form = AdoptionForm(request.session["jsons"]["AD_Form"])
+            if request.session["Interviews"] != "None":
+                contexts["messages"] = {
+                    "color": "warning",
+                    "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>",
+                }
+            else:
+                contexts["messages"] = {
+                    "color": "success",
+                    "message": "<h5>インポートが完了しました。内容が正しいか確認し、登録を行ってください。</h5><h5>なお、面談録は情報に含まれていませんでした。</h5>",
+                }
+            del request.session["jsons"]
+        else:
+            C_Form = CompaniesForm()
+            A_Form = AboutForm()
+            D_Form = D_CompanyForm()
+            I_Form = IdeaForm()
+            M_Form = MotivationForm()
+            AD_Form = AdoptionForm()
+            if "jsons" in request.session:
+                del request.session["jsons"]
+            if "Interviews" in request.session:
+                del request.session["Interviews"]
+            if "forms" in request.session:
+                del request.session["forms"]
     if request.method == "POST":
         C_Form = CompaniesForm(request.POST)
         A_Form = AboutForm(request.POST)
@@ -178,45 +218,9 @@ def regist_all(request):
                         n += 1
                 contexts["In_counts"] = n
             return render(request, "main/regist/regist_done.html", contexts)
-    if "forms" in request.session:
-        C_Form = CompaniesForm(request.session["forms"]["C_Form"])
-        A_Form = AboutForm(request.session["forms"]["A_Form"])
-        D_Form = D_CompanyForm(request.session["forms"]["D_Form"])
-        I_Form = IdeaForm()
-        M_Form = MotivationForm()
-        AD_Form = AdoptionForm()
-        del request.session["forms"]
-    elif "jsons" in request.session:
-        C_Form = CompaniesForm(request.session["jsons"]["C_Form"])
-        A_Form = AboutForm(request.session["jsons"]["A_Form"])
-        I_Form = IdeaForm(request.session["jsons"]["I_Form"])
-        M_Form = MotivationForm(request.session["jsons"]["M_Form"])
-        D_Form = D_CompanyForm(request.session["jsons"]["D_Form"])
-        AD_Form = AdoptionForm(request.session["jsons"]["AD_Form"])
-        if request.session["Interviews"] != "None":
-            contexts["messages"] = {
-                "color": "warning",
-                "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>",
-            }
         else:
-            contexts["messages"] = {
-                "color": "success",
-                "message": "<h5>インポートが完了しました。内容が正しいか確認し、登録を行ってください。</h5><h5>なお、面談録は情報に含まれていませんでした。</h5>",
-            }
-        del request.session["jsons"]
-    else:
-        C_Form = CompaniesForm()
-        A_Form = AboutForm()
-        D_Form = D_CompanyForm()
-        I_Form = IdeaForm()
-        M_Form = MotivationForm()
-        AD_Form = AdoptionForm()
-        if "jsons" in request.session:
-            del request.session["jsons"]
-        if "Interviews" in request.session:
-            del request.session["Interviews"]
-        if "forms" in request.session:
-            del request.session["forms"]
+            print(C_Form.errors.as_text(), A_Form.errors.as_text(), I_Form.errors.as_text(), M_Form.errors.as_text(), D_Form.errors.as_text(), AD_Form.errors.as_text())
+    
 
     contexts["C_Form"] = C_Form
 
@@ -665,7 +669,7 @@ def set_searched_data(request):
                 else ""
             )
             + (res["representative_name"] if "representative_name" in res else ""),
-            "a_year": "0",
+            "Ca_year": "0",
             "contact": "-",
         }
 

@@ -45,7 +45,7 @@
                             <td>{{post.name}}</td>
                             <td>{{post.industry}}</td>
                             <td>{{post.contact}}</td>
-                            <td>{{post.a_year}}</td>
+                            <td>{{post.Ca_year}}</td>
                             <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"><button class = "btn btn-info" type="submit">引用</button></form></td>
                         </tr>
                         {% endfor %}

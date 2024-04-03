@@ -5,13 +5,13 @@ from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Int
 class CompaniesForm(forms.ModelForm):
     class Meta:
         model = Companies
-        fields = ("name", "industry", "president", "contact", "a_year")
+        fields = ("name", "industry", "president", "contact", "Ca_year")
         labels = {
             "name": "企業・団体名",
             "industry": "所属業界",
             "president": "代表者名",
             "contact": "担当者名",
-            "a_year": "募集年度"
+            "Ca_year": "募集年度"
         }
 
 
@@ -179,7 +179,7 @@ class Form_Prof_Interviewer(forms.ModelForm):
         model = Interviewer
         fields = ("position", "mail", "phone", "introduction", "memo")
         labels = {
-            "position": "役職",
+            "position": "役職・所属部署等",
             "mail": "メールアドレス",
             "phone": "電話番号",
             "introduction": "自己紹介",

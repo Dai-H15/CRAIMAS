@@ -32,4 +32,5 @@ urlpatterns = [
     path("changeActive", views.change_active, name="change_active"),
     path("get_interviewer/<str:id>", views.get_interviewer, name="get_interviewer"),
     path("prof_interviewer/<str:company_id>/<str:i_name>", views.prof_interviewer, name="prof_interviewer"),
+    path("search_post/<str:sheet_from>/<str:where>", views.search_post, name="search_post"),
 ]

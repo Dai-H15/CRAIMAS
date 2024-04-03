@@ -31,7 +31,6 @@ from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.http import JsonResponse
 
-
 # Functions
 
 
@@ -220,7 +219,6 @@ def regist_all(request):
             return render(request, "main/regist/regist_done.html", contexts)
         else:
             print(C_Form.errors.as_text(), A_Form.errors.as_text(), I_Form.errors.as_text(), M_Form.errors.as_text(), D_Form.errors.as_text(), AD_Form.errors.as_text())
-    
 
     contexts["C_Form"] = C_Form
 
@@ -936,3 +934,19 @@ def prof_interviewer(request, company_id, i_name):
 
     contexts["form"] = init_form
     return render(request, "main/regist/interviewer.html", contexts)
+
+
+def search_post(request, sheet_from, where):
+    contexts = {}
+    res = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")
+    if sheet_from == "企業名":
+        print(where)
+        res = res.filter(company__name__contains=where)
+    if sheet_from == "所属業界名":
+        res = res.filter(company__industry__contains=where)
+    if sheet_from == "所在地":
+        res = res.filter(d_company__location__contains=where)
+    if sheet_from == "担当者名":
+        res = res.filter(company__contact__contains=where)
+    contexts["posts"] = res
+    return render(request, "main/mypage/search_result.html", contexts)

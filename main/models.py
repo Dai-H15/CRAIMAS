@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Companies(models.Model):
@@ -37,6 +38,7 @@ class About(models.Model):
 
     def __str__(self):
         return self.company_name.name + " [About]"
+
     class Meta:
         verbose_name = '事業内容シート'
         verbose_name_plural = '事業内容シート'
@@ -201,7 +203,7 @@ class Interview(models.Model):
     company_name = models.CharField(max_length=200, verbose_name="企業名")
     title = models.CharField(max_length=200, verbose_name="面談録タイトル", blank=False)
     tag = models.CharField(max_length=50, choices=tags, default="briefing", verbose_name="タグ")
-    date = models.DateTimeField(verbose_name="面談日時", blank=True)
+    date = models.DateTimeField(verbose_name="面談日時", blank=True, default=timezone.now)
     interviewer = models.CharField(max_length=200, verbose_name="面接官名", blank=True)
     zipcode = models.CharField(max_length=8, verbose_name="郵便番号", blank=True)
     place = models.CharField(max_length=200, verbose_name="面接住所", blank=True)

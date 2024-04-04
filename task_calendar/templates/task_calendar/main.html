@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biz Intelli Scan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <div class="row border ">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center ">
+                {% if user.is_authenticated %}
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row m-2">
+            <div class="container">
+                <div class = "row">
+                    <h3 class = "m-2 border-bottom"> カレンダー</h3>
+                </div>
+                <div class = "row m-3">
+                    <table class="table border border-3 ">
+                        <thead>
+                            <th scope = "col" style = "color:#FF0000">日</th>
+                            <th scope = "col">月</th>
+                            <th scope = "col">火</th>
+                            <th scope = "col">水</th>
+                            <th scope = "col">木</th>
+                            <th scope = "col">金</th>
+                            <th scope = "col" style = "color:#0000FF" >土</th>
+                        </thead>
+                        <tbody>
+                            {% for week in list_calendar %}
+                            <tr style="height: 100px;">
+                            {% for day in week %}
+                            <td class = "border">
+                                {% if day != 0 %}<p class = "">{{day}}</p>{% endif %}
+                            </td>
+                            {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>

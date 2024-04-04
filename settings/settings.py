@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "authUser",
     "main",
     "view_sheet",
+    "task_calendar",
 ]
 
 MIDDLEWARE = [

@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("main.urls")),
     path("auth/", include("authUser.urls")),
+    path("task_calendar/", include("task_calendar.urls")),
 ]
 urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
 

@@ -1,0 +1,29 @@
+<table class="table border border-3 ">
+    <thead>
+        <th scope = "col" style = "color:#FF0000">日</th>
+        <th scope = "col">月</th>
+        <th scope = "col">火</th>
+        <th scope = "col">水</th>
+        <th scope = "col">木</th>
+        <th scope = "col">金</th>
+        <th scope = "col" style = "color:#0000FF" >土</th>
+    </thead>
+    <tbody>
+        {% for week in list_calendar %}
+        <tr style="height: 100px;">
+        {% for day in week %}
+        {% if day == today %}
+        <td class = "border bg-success-subtle">
+            {% if day != 0 %}<p class = "">{{day}}</p>{% endif %}
+        </td>
+        {% else %}
+        <td class = "border">
+            {% if day != 0 %}<p class = "">{{day}}</p>{% endif %}
+        </td>
+        {% endif %}
+        
+        {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

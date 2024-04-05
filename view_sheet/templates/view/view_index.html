@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="jp">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    </head>
+    
+<body>
+    <div class = "container-fluid">
+        <div class="row border">
+            <!-- ヘッダー -->
+            <h2 class="text-center">Biz Intelli Scan </h2>
+            <div class="row text-center">
+                <div class="col">
+                    <h4>現在の登録社数: {{num_c}}社</h4>
+                </div>
+                <div class="col">
+                    <h4>現在の活動中件数: {{num_a}}件</h4>
+                </div>
+            </div>
+        </div>
+        <div class = "row p-3 text-center">
+            <h3>シート管理</h3>
+            <div class = "row ">
+
+            <a href="{% url "view_main" control='top' option='default' %}"><div class = "col border my-3 p-3 "><h5>シート一覧</h5></div></a>
+            <a href="{% url "create_custom_sheet" %}"><div class = "col border my-3 p-3"><h5>シートを作成</h5></div></a>
+            <a href="{% url "import_customsheet" %}"><div class = "col border my-3 p-3"><h5>シートをインポート</h5></div></a>
+            <a href="{% url "export_customsheet" %}"><div class = "col border my-3 p-3"><h5>シートをエクスポート</h5></div></a>
+        </div>
+    </div>
+    
+    <div class = "text-center"><a href="{% url "index" %}"><button class = "btn btn-primary">ホームに戻る</button></a></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+</script>
+
+</body>
+</html>

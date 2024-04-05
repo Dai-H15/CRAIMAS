@@ -30,7 +30,7 @@
             <div class="container">
                 <div class = "row"><h4 class = "text-center">カスタムシートをエクスポートします</h4></div>
                     <div class = "row text-center my-4">
-                        <div class = "col"><a class = "btn btn-primary" href="{% url "view_main" control='top' option='default' %}" >シート管理へ戻る</a></div>
+                        <div class = "col"><a class = "btn btn-primary" href="{% url "view_index" %}" >シート管理へ戻る</a></div>
                         <div class = "col"><form method="post">{% csrf_token %}<button class = "btn btn-success" >エクスポート</button></form></div>
                     </div>
                 </div>

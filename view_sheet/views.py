@@ -25,6 +25,12 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 @login_required
+def view_index(request):
+    contexts = collect_regnum(request)
+    return render(request, "view/view_index.html", contexts)
+
+
+@login_required
 def view_main(request, control, option):
     contexts = collect_regnum(request)
     contexts["control"] = control
@@ -57,9 +63,6 @@ def view_main(request, control, option):
             "desc": "志望度ランキング",
             "th_all": ["企業名", "面談回数", "志望度合計", "平均志望度", "詳細"],
         },
-        {"choice": "create_custom_sheet", "desc": "カスタムシート作成", "th_all": []},
-        {"choice": "export_custom_sheet", "desc": "カスタムシートエクスポート", "th_all": []},
-        {"choice": "import_custom_sheet", "desc": "カスタムシートインポート", "th_all": []},
     ]
     if CustomSheet.objects.filter(by_U_ID=request.user.U_ID).count() > 0:
         for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID):
@@ -233,12 +236,6 @@ def view_main(request, control, option):
             "type": "success",
             "message": "左のメニューから選択してください。(カスタムシートで指定した場合を除き、活動中の企業のみ表示されます)",
         }
-    elif control == "export_custom_sheet":
-        return redirect("export_customsheet")
-    elif control == "create_custom_sheet":
-        return redirect("create_custom_sheet")
-    elif control == "import_custom_sheet":
-        return redirect("import_customsheet")
     else:
         if control in [
             cs.sheet_name

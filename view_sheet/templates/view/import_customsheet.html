@@ -30,7 +30,7 @@
             <div class="container">
                 <div class = "row"><h4 class = "text-center">カスタムシートをインポートします</h4><h5 class = "text-center">名前が重複しているシートはインポートされません。詳細は結果画面を確認してください</h5></div>
                     <form method="post" enctype="multipart/form-data" class = "row mx-auto my-4">{% csrf_token %} <div class = "col-auto"> <input class="form-control" type="file" id="file" name="file" required></div><div class = "col-auto"> <button class = "btn btn-primary mb-3" >インポート</button></div></form>
-                        <div class = "col text-center my-4"><a class = "btn btn-primary" href="{% url "view_main" control='top' option='default' %}" >シート管理へ戻る</a></div>
+                        <div class = "col text-center my-4"><a class = "btn btn-primary" href="{% url "view_index" %}" >シート管理へ戻る</a></div>
                         
                     </div>
                 </div>

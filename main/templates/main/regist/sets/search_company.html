@@ -23,19 +23,22 @@
             </div>
         </div>
         <div class= "row">
-            <div class = "container m-3">
-                <div class = "row">
+            
+            <div class = "container ">
+                <div class = "row m-3 border-bottom">
                 <form method = "post">
                     <input type="hidden" name = "search" value = "T">
                     {% csrf_token %}
                     <table class = "col mx-auto">{{form}}</table>
-                    <div class="text-center">
+                    <div class="text-center my-3">
                         <button class = "btn btn-primary" type = "submit">検索</button>
                     </div>
                 </form>
                 </div>
             </div>
+            {% if results %}
             <div class = "container border">
+                
                 <div class = "row">
                     <h3>検索結果一覧</h3>
                     <div class = "col-6 bg-warning-subtle mx-auto">
@@ -46,8 +49,8 @@
                 </div>
 
                 </div>
-                <div class = "row"><!--投稿一覧-->
-                    <table class = "table  table table-striped-columns m-3 table-hover border ">
+                <div class = "row m-4"><!--投稿一覧-->
+                    <table class = "table  table table-striped-columns  table-hover border ">
                         <thead>
                         <tr>
                             <th></th>
@@ -65,8 +68,6 @@
                             <td >{{result.name}}</td>
                             <td>{{result.update_date}}</td>
                             <td>{% if result.status == "-" %} 営業中 {% else %} {{result.status}}{% endif %}</td>
-                            <td>{{result.a_year}}</td>
-                            <td><form method = "post">{% csrf_token %}<input type="hidden" value = "ok" name = "import"><input type="hidden" value = "{{post.CompanyID}}" name = "ID"></form></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -74,7 +75,8 @@
                 </div>
                 
             </div>
-            <div class = " col mx-auto">
+            {% endif %}
+            <div class = " col my-2 text-center">
                 <a class = "btn btn-primary" href="{% url return_to %}">手入力に戻る</a>
             </div>
 

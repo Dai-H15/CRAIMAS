@@ -612,6 +612,7 @@ def search_company(request, return_to):
                     url += "&corporate_number" + form.cleaned_data["corporate_number"]
                 if form.cleaned_data["name"] != "":
                     url += "&name=" + quote(form.cleaned_data["name"])
+                
                 headers = {
                     "Accept": "application/json",
                     "X-hojinInfo-api-token": request.user.gBIZINFO_key,
@@ -656,6 +657,7 @@ def set_searched_data(request):
             "X-hojinInfo-api-token": request.user.gBIZINFO_key,
         }
         res = requests.get(url, headers=headers).json()["hojin-infos"][0]
+        print(res)
         C = {
             "name": res["name"] if "name" in res else "None",
             "industry": (
@@ -685,7 +687,7 @@ def set_searched_data(request):
             "founded": (
                 res["date_of_establishment"] if "date_of_establishment" in res else "0"
             ),
-            "founded_t": "more100",
+            "founded_t": "なし",
             "capital": (
                 res["capital_stock_summary_of_business_results"]
                 if "capital_stock_summary_of_business_results" in res
@@ -697,14 +699,14 @@ def set_searched_data(request):
                 else 0
             ),
             "employee_n": res["employee_number "] if "employee_number " in res else 0,
-            "sales_y": res["update_date"] if "update_date" in res else 0,
-            "sales_t": "None",
-            "employee_t": "None",
-            "stock_t": "None",
+            "sales_y": datetime.strptime(res["update_date"][:9:], r"%Y-%m-%d").year if "update_date" in res else 0,
+            "sales_t": "なし",
+            "employee_t": "なし",
+            "stock_t": "なし",
             "t_p": 0,
             "avg_y": res["average_age "] if "average_age " in res else 0,
             "postal_code": res["postal_code"] if "postal_code" in res else 0,
-            "location": res["location"] if "location" in res else "None",
+            "location": res["location"] if "location" in res else "なし",
             "corporate_number": (
                 res["corporate_number"] if "corporate_number" in res else 0
             ),

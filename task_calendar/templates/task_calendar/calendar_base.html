@@ -10,20 +10,20 @@
     </thead>
     <tbody>
         {% for week in list_calendar %}
-        <tr style="height: 100px;">
-        {% for day in week %}
-        {% if day == today %}
-        <td class = "border bg-success-subtle">
-            {% if day != 0 %}<p class = "">{{day}}</p>{% endif %}
-        </td>
-        {% else %}
-        <td class = "border">
-            {% if day != 0 %}<p class = "">{{day}}</p>{% endif %}
-        </td>
-        {% endif %}
-        
-        {% endfor %}
-        </tr>
+            <tr style="height: 100px;">
+            {% for day in week %}
+                <td class = "border {% if day == today %}bg-success-subtle{% endif %}">
+                    {% if day != 0 %}
+                        <p class = "">{{day}}</p>
+                        {% for interview in list_interview %}
+                                {% if day == interview.date %}
+                                <button class = "btn btn-outline-secondary" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview', '400', '600' )">面談録有り: {{interview.Interview.company_name}}</button><br>
+                                {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </td>
+            {% endfor %}
+            </tr>
         {% endfor %}
     </tbody>
 </table>

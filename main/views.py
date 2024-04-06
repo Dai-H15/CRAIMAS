@@ -765,7 +765,7 @@ def view_interview(request, id):
     inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
     interview = InterviewForm(instance=inst)
     contexts["interview"] = interview
-    contexts["c_id"] = inst.RegistID.company.CompanyID
+    contexts["inst"] = inst
     if request.method == "POST":
         form = InterviewForm(
             request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)

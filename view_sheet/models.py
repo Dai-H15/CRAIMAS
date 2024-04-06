@@ -16,4 +16,3 @@ class CustomSheet(models.Model):
     class Meta:
         verbose_name = 'カスタムシート'
         verbose_name_plural = 'カスタムシート'
-

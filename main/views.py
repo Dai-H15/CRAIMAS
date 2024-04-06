@@ -772,9 +772,6 @@ def view_interview(request, id):
         )
         if form.is_valid():
             form.save()
-            return HttpResponse(
-                "<h4 id = 'main'>更新しました。画面を閉じてください</h4> <a onclick = 'window.close()'>閉じる</a>"
-            )
     return render(request, "main/interview/view_interview.html", contexts)
 
 

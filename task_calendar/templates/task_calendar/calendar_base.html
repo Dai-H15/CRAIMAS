@@ -12,7 +12,7 @@
         {% for week in list_calendar %}
             <tr style="height: 100px;">
             {% for day in week %}
-                <td class = "border {% if day == today %}bg-success-subtle{% endif %}">
+                <td class = " border {% if day == today %}bg-success-subtle{% endif %}">
                     {% if day != 0 %}
                         <p class = "">{{day}}</p>
                         {% for interview in list_interview %}

@@ -126,13 +126,15 @@ def regist_all(request):
                     "color": "warning",
                     "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>",
                 }
-            if request.session["Interviewers"] != "None":
-                contexts["messages"]["message"] += "<h5>面接官情報が含まれていました。同時にインポートを行います</h5>"
+                if request.session["Interviewers"] != "None":
+                    contexts["messages"]["message"] += "<h5>面接官情報が含まれていました。同時にインポートを行います</h5>"
             else:
                 contexts["messages"] = {
                     "color": "success",
                     "message": "<h5>インポートが完了しました。内容が正しいか確認し、登録を行ってください。</h5><h5>なお、面談録は情報に含まれていませんでした。</h5>",
                 }
+                if request.session["Interviewers"] != "None":
+                    contexts["messages"]["message"] += "<h5>面接官情報が含まれていました。同時にインポートを行います</h5>"
             del request.session["jsons"]
         else:
             C_Form = CompaniesForm()
@@ -883,6 +885,7 @@ def export_sheet(request, id):
                 )
             response.write(json.dumps(sets, cls=DateTimeEncoder, ensure_ascii=False))
             return response
+    contexts["conpany_name"] = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.name
     return render(request, "main/mypage/export_sheet.html", contexts)
 
 

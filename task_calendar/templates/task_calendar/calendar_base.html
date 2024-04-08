@@ -1,4 +1,3 @@
-<table class="table border border-3 ">
     <thead>
         <th scope = "col" style = "color:#FF0000">日</th>
         <th scope = "col">月</th>
@@ -17,7 +16,7 @@
                         <p class = "">{{day}}</p>
                         {% for interview in list_interview %}
                                 {% if day == interview.date %}
-                                <button class = "btn btn-outline-secondary" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview', '400', '600' )">面談録有り: {{interview.Interview.company_name}}</button><br>
+                                <button class = "btn btn-outline-secondary" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '600' )">面談録有り: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
                                 {% endif %}
                         {% endfor %}
                     {% endif %}
@@ -26,4 +25,3 @@
             </tr>
         {% endfor %}
     </tbody>
-</table>

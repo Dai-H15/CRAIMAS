@@ -91,6 +91,8 @@ def index(request):
         del request.session["Interviews"]
     if "result_data" in request.session:
         del request.session["result_data"]
+    if "Interviewers" in request.session:
+        del request.session["Interviewers"]
     contexts = collect_regnum(request)
     return render(request, "main/index.html", contexts)
 
@@ -124,6 +126,8 @@ def regist_all(request):
                     "color": "warning",
                     "message": "<h5>インポートされたJSON内に面談録が含まれています。</h5><h5>シートの登録完了後、面談録が登録されます。登録完了後に確認を行ってください</h5>",
                 }
+            if request.session["Interviewers"] != "None":
+                contexts["messages"]["message"] += "<h5>面接官情報が含まれていました。同時にインポートを行います</h5>"
             else:
                 contexts["messages"] = {
                     "color": "success",
@@ -216,6 +220,17 @@ def regist_all(request):
                         )
                         n += 1
                 contexts["In_counts"] = n
+            if "Interviewers" in request.session:
+                n = 0
+                if request.session["Interviewers"] != "None":
+                    for i in request.session["Interviewers"]["interviewers"]:
+                        Interviewer.objects.create(
+                            **i,
+                            company_name=RegistSets.objects.get(RegistID=R_ID).company,
+                            by_U_ID=request.user.U_ID,
+                        )
+                        n += 1
+                    contexts["Interviewers_count"] = n
             return render(request, "main/regist/regist_done.html", contexts)
         else:
             print(C_Form.errors.as_text(), A_Form.errors.as_text(), I_Form.errors.as_text(), M_Form.errors.as_text(), D_Form.errors.as_text(), AD_Form.errors.as_text())
@@ -805,7 +820,7 @@ def export_sheet(request, id):
             "Adoption": AD,
         }
         name = R_set.company.name
-        if request.POST["data"] == "two":
+        if request.POST["data"] == "two" or request.POST["data"] == "three":
             name += "_include_interview"
             interviews = Interview.objects.filter(RegistID=id, by_U_ID=request.user.U_ID)
             sets["Interview"] = {
@@ -818,11 +833,26 @@ def export_sheet(request, id):
                 del s["id"]
                 del s["RegistID"]
                 del s["InterviewID"]
+                del s["by_U_ID"]
+            if request.POST["data"] == "three":
+                name += "_include_interviewer"
+                interviewers = Interviewer.objects.filter(by_U_ID=request.user.U_ID, company_name=R_set.company)
+                if interviewers.count() > 0:
+                    sets["Interviewer"] = {
+                        "sheet_name": "Interviewers",
+                        "interviewers": [model_to_dict(interviewer) for interviewer in interviewers],
+                    }
+                    for s in sets["Interviewer"]["interviewers"]:
+                        del s["id"]
+                        del s["by_U_ID"]
+                        del s["company_name"]
         for s in sets.values():
             if "_state" in s:
                 del s["_state"]
             if "company_name" in s:
                 del s["company_name"]
+            if "by_U_ID" in s:
+                del s["by_U_ID"]
         name += "_exported_sheet"
         if request.POST["type"] == "csv":
             response = HttpResponse(content_type="text/csv; charset=Shift-JIS")
@@ -871,6 +901,9 @@ def json_import(request):
         }
         request.session["Interviews"] = (
             data["Interview"] if "Interview" in data else "None"
+        )
+        request.session["Interviewers"] = (
+            data["Interviewer"] if "Interviewer" in data else "None"
         )
         return HttpResponse("<script>window.opener.location.reload();</script>")
     return render(request, "main/regist/sets/json_import.html", contexts)

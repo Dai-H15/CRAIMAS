@@ -111,12 +111,12 @@ class D_Company(models.Model):
         max_length=50, choices=C_Tags["founded_t"], default="null", verbose_name="設立・創立年タグ"
     )
 
-    capital = models.IntegerField(verbose_name="資本金", default=0, blank=True)
-    sales_n = models.IntegerField(verbose_name="売上高", default=0, blank=True)
-    sales_y = models.IntegerField(verbose_name="実績年度", default=0, blank=True)
+    capital = models.IntegerField(verbose_name="資本金", default=0)
+    sales_n = models.IntegerField(verbose_name="売上高", default=0)
+    sales_y = models.IntegerField(verbose_name="実績年度", default=0)
     sales_t = models.CharField(max_length=50, choices=C_Tags["sales_t"], default="None", verbose_name="売上高タグ")
 
-    employee_n = models.IntegerField(verbose_name="従業員数", default=0, blank=True)
+    employee_n = models.IntegerField(verbose_name="従業員数", default=0)
     employee_t = models.CharField(
         max_length=50, choices=C_Tags["employee_t"], default="None", verbose_name="従業員数タグ"
     )
@@ -125,8 +125,8 @@ class D_Company(models.Model):
     corporate_number = models.CharField(max_length=20, verbose_name="法人番号", blank=True)
     url = models.CharField(max_length=200, verbose_name="URL", blank=True)
     stock_t = models.CharField(max_length=50, choices=C_Tags["stock_t"], default="None", verbose_name="株式タグ")
-    t_p = models.IntegerField(verbose_name="離職率", default=0, blank=True)
-    avg_y = models.IntegerField(verbose_name="平均年齢", default=0, blank=True)
+    t_p = models.IntegerField(verbose_name="離職率", default=0)
+    avg_y = models.IntegerField(verbose_name="平均年齢", default=0)
 
     def __str__(self):
         return self.company_name.name + "[D_Company]"
@@ -142,9 +142,9 @@ class Adoption(models.Model):
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名")
     occupation = models.CharField(max_length=200, verbose_name="採用職種", blank=True)
     place = models.CharField(max_length=200, verbose_name="勤務予定地", blank=True)
-    n_adopters = models.IntegerField(verbose_name="採用予定人数", default=0, blank=True)
-    n_enrollment = models.IntegerField(verbose_name="OB・OG在籍数", default=0, blank=True)
-    a_year = models.IntegerField(verbose_name="募集年度", default=0, blank=True)
+    n_adopters = models.IntegerField(verbose_name="採用予定人数", default=0)
+    n_enrollment = models.IntegerField(verbose_name="OB・OG在籍数", default=0)
+    a_year = models.IntegerField(verbose_name="募集年度", default=0)
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
 
     def __str__(self):
@@ -207,7 +207,7 @@ class Interview(models.Model):
     interviewer = models.CharField(max_length=200, verbose_name="面接官名")
     zipcode = models.CharField(max_length=8, verbose_name="郵便番号", blank=True)
     place = models.CharField(max_length=200, verbose_name="面接住所", blank=True)
-    aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%", blank=True)
+    aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%")
     reason = models.TextField(default="", verbose_name="志望理由", blank=True)
     want_to = models.TextField(default="", verbose_name="やりたいこと", blank=True)
     note = models.TextField(default="", verbose_name="面談メモ", blank=True)

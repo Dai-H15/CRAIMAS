@@ -30,7 +30,7 @@ from datetime import datetime
 from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.http import JsonResponse
-
+from django.utils import timezone
 
 # Functions
 
@@ -770,6 +770,11 @@ def interview_create(request, id):
     return render(request, "main/interview/interview_create.html", contexts)
 
 
+def delete_interview(request, id):
+    Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID).delete()
+    return HttpResponse("削除しました この画面を閉じてください")
+
+
 def get_address(request, zipcode):
     contexts = {}
     url = r"https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + zipcode
@@ -785,18 +790,21 @@ def get_address(request, zipcode):
 
 
 def view_interview(request, id):
-    contexts = collect_regnum(request)
-    inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
-    interview = InterviewForm(instance=inst)
-    contexts["interview"] = interview
-    contexts["inst"] = inst
-    if request.method == "POST":
-        form = InterviewForm(
-            request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
-        )
-        if form.is_valid():
-            form.save()
-    return render(request, "main/interview/view_interview.html", contexts)
+    try:
+        contexts = collect_regnum(request)
+        inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
+        interview = InterviewForm(instance=inst)
+        contexts["interview"] = interview
+        contexts["inst"] = inst
+        if request.method == "POST":
+            form = InterviewForm(
+                request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
+            )
+            if form.is_valid():
+                form.save()
+        return render(request, "main/interview/view_interview.html", contexts)
+    except Interview.DoesNotExist:
+        return HttpResponse(" <script>window.close()</script> ")
 
 
 def calc(request):

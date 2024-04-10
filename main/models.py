@@ -203,7 +203,7 @@ class Interview(models.Model):
     company_name = models.CharField(max_length=200, verbose_name="企業名")
     title = models.CharField(max_length=200, verbose_name="面談録タイトル", blank=False)
     tag = models.CharField(max_length=50, choices=tags, default="briefing", verbose_name="タグ")
-    date = models.DateTimeField(verbose_name="面談日時", default=timezone.now)
+    date = models.DateTimeField(verbose_name="面談日時", default=timezone.now().strftime('%Y-%m-%d %H:%M'))
     interviewer = models.CharField(max_length=200, verbose_name="面接官名")
     zipcode = models.CharField(max_length=8, verbose_name="郵便番号", blank=True)
     place = models.CharField(max_length=200, verbose_name="面接住所", blank=True)

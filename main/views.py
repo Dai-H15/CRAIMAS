@@ -638,13 +638,13 @@ def search_company(request, return_to):
                 if url != "https://info.gbiz.go.jp/hojin/v1/hojin?":
                     try:
                         r = requests.get(url, headers=headers)
-                        print(r.status_code)
                         contexts["results"] = r.json()["hojin-infos"]
+                    except requests.exceptions.ConnectionError:
+                        contexts["results"] = []
+                        contexts["message"] = (f"情報を取得できませんでした。ネットワーク接続、ファイアウォールの設定を確認し、再度お試しください。")
                     except KeyError:
                         contexts["results"] = []
-                        contexts["message"] = (
-                            f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})"
-                        )
+                        contexts["message"] = (f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})")
     contexts["form"] = form
     return render(request, "main/regist/sets/search_company.html", contexts)
 
@@ -717,7 +717,7 @@ def set_searched_data(request):
                 else 0
             ),
             "employee_n": res["employee_number "] if "employee_number " in res else 0,
-            "sales_y": datetime.strptime(res["update_date"][:9:], r"%Y-%m-%d").year if "update_date" in res else 0,
+            "sales_y": datetime.strptime(res["update_date"][:10:], r"%Y-%m-%d").year if "update_date" in res else 0,
             "sales_t": "なし",
             "employee_t": "なし",
             "stock_t": "なし",

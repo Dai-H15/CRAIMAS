@@ -3,11 +3,12 @@ from main.views import collect_regnum
 import calendar
 from django.utils import timezone
 
-from main.models import Interview
+from main.models import Interview, RegistSets
 # Create your views here.
 
 
 def get_listInterview(request, year, month):
+
     return [{"Interview": i, "date": timezone.make_naive(i.date).day} for i in Interview.objects.filter(by_U_ID=request.user.U_ID).filter(date__year=year).filter(date__month=month)]
 
 

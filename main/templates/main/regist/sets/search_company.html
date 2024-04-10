@@ -35,6 +35,11 @@
                     </div>
                 </form>
                 </div>
+                {% if message %}
+                <div class = "row alert alert-danger m-3">
+                <h5 class = "">{{message}}</h5>
+                </div>
+                    {% endif %}
             </div>
             {% if results %}
             <div class = "container border">
@@ -43,9 +48,6 @@
                     <h3>検索結果一覧</h3>
                     <div class = "col-6 bg-warning-subtle mx-auto">
                     <p>紐づけ元企業が削除された際、すべての登録において紐づけが解除されます。</p>
-                    {% if message %}
-                    <h5 class = "text-danger-emphasis">{{message}}</h5>
-                    {% endif %}
                 </div>
 
                 </div>

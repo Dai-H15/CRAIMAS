@@ -29,10 +29,11 @@
         </div>
             {% endfor %}
             {% else %}
-                <div class="alert alert-danger" role="alert">
-                    <h5>結果が存在しません。再度確認してください</h5>
+            {% if message %}
+                <div class="alert alert-{{message.color}}" role="alert">
+                    <h5>{{message.message}}</h5>
                 </div>
-            {% endif %}
+            {% endif %}{% endif %}
             <button class = "btn btn-primary" onclick= "window.close()">閉じる</button>
     </div>
 </div>

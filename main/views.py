@@ -773,8 +773,14 @@ def interview_create(request, id):
 def get_address(request, zipcode):
     contexts = {}
     url = r"https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + zipcode
-    res = requests.get(url).json()["results"]
-    contexts["res"] = res
+    try:
+        res = requests.get(url).json()
+        print(res)
+        if res["status"] != 200 or res["results"] is None:
+            contexts["message"] = {"color": "warning", "message": f"結果が存在しません。再度確認してください   (レスポンス: {res['message'] if res['message'] is not None else 'NotFound'})"}
+    except ConnectionError:
+        contexts["message"] = {"color": "danger", "message": "ネットワークエラーが発生しました。接続とファイアウォールの設定を確認してください"}
+    contexts["res"] = res["results"]
     return render(request, "main/interview/get_address.html", contexts)
 
 
@@ -893,23 +899,26 @@ def export_sheet(request, id):
 def json_import(request):
     contexts = {}
     if request.method == "POST":
-        file = request.FILES["json"]
-        data = json.load(file)
-        request.session["jsons"] = {
-            "C_Form": data["Company"],
-            "A_Form": data["About"],
-            "I_Form": data["Idea"],
-            "M_Form": data["Motivation"],
-            "D_Form": data["D_Company"],
-            "AD_Form": data["Adoption"],
-        }
-        request.session["Interviews"] = (
-            data["Interview"] if "Interview" in data else "None"
-        )
-        request.session["Interviewers"] = (
-            data["Interviewer"] if "Interviewer" in data else "None"
-        )
-        return HttpResponse("<script>window.opener.location.reload();</script>")
+        try:
+            file = request.FILES["json"]
+            data = json.load(file)
+            request.session["jsons"] = {
+                "C_Form": data["Company"],
+                "A_Form": data["About"],
+                "I_Form": data["Idea"],
+                "M_Form": data["Motivation"],
+                "D_Form": data["D_Company"],
+                "AD_Form": data["Adoption"],
+            }
+            request.session["Interviews"] = (
+                data["Interview"] if "Interview" in data else "None"
+            )
+            request.session["Interviewers"] = (
+                data["Interviewer"] if "Interviewer" in data else "None"
+            )
+            return HttpResponse("<script>window.opener.location.reload();</script>")
+        except KeyError:
+            contexts["message"] = "インポートに失敗しました。ファイルを確かめて再度実行するか、手入力にて登録してください"
     return render(request, "main/regist/sets/json_import.html", contexts)
 
 

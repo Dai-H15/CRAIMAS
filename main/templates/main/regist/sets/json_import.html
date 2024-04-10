@@ -17,6 +17,9 @@
             <div class="col text-center">
                 <h5>JSONファイルから引用します。</h5>
                 <h5>ファイルをアップロードしてください</h5>
+                {% if message %}
+                <div class = "alert alert-danger"><p>{{message}}</p></div>
+                {% endif %}
             </div>
         </div>
         <div class="row">
@@ -31,7 +34,6 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </body>

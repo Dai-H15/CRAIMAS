@@ -5,7 +5,7 @@ from django.utils import timezone
 class Companies(models.Model):
     by_U_ID = models.CharField(max_length=100, default="default")
     name = models.CharField(max_length=200, verbose_name='企業・団体名')
-    industry = models.CharField(max_length=200, verbose_name='所属業界')
+    industry = models.CharField(max_length=300, verbose_name='所属業界')
     president = models.CharField(max_length=200, verbose_name='代表者名')
     contact = models.CharField(max_length=200, verbose_name='担当者名')
     Ca_year = models.IntegerField(verbose_name='募集年度')

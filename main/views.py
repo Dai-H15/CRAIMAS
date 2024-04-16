@@ -661,7 +661,10 @@ def get_more_compinfo(request, corporate_number, return_to):
         "X-hojinInfo-api-token": request.user.gBIZINFO_key,
     }
     url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
-    contexts["result"] = requests.get(url, headers=headers).json()["hojin-infos"][0]
+    try:
+        contexts["result"] = requests.get(url, headers=headers).json()["hojin-infos"][0]
+    except requests.ConnectionError:
+        return HttpResponse("データの取得に失敗しました。ネットワークの接続を確認してください")
     return render(request, "main/regist/sets/get_more_compinfo.html", contexts)
 
 
@@ -674,8 +677,10 @@ def set_searched_data(request):
             "Accept": "application/json",
             "X-hojinInfo-api-token": request.user.gBIZINFO_key,
         }
-        res = requests.get(url, headers=headers).json()["hojin-infos"][0]
-        print(res)
+        try:
+            res = requests.get(url, headers=headers).json()["hojin-infos"][0]
+        except requests.ConnectionError:
+            return HttpResponse("データの取得に失敗しました。ネットワークの接続を確認してください")
         C = {
             "name": res["name"] if "name" in res else "None",
             "industry": (

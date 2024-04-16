@@ -9,8 +9,8 @@ class CompaniesForm(forms.ModelForm):
         labels = {
             "name": "企業・団体名",
             "industry": "所属業界",
-            "president": "代表者名",
-            "contact": "担当者名",
+            "president": "代表者",
+            "contact": "担当者",
             "Ca_year": "募集年度"
         }
 

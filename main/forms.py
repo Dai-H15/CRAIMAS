@@ -177,11 +177,13 @@ class InterviewForm(forms.ModelForm):
 class Form_Prof_Interviewer(forms.ModelForm):
     class Meta:
         model = Interviewer
-        fields = ("position", "mail", "phone", "introduction", "memo")
+        fields = ("position", "mail", "phone", "prof_url", "chance", "introduction", "memo")
         labels = {
             "position": "役職・所属部署等",
             "mail": "メールアドレス",
             "phone": "電話番号",
+            "prof_url": "プロフィールへのURL",
+            "chance": "知ったきっかけ",
             "introduction": "自己紹介",
             "memo": "メモ"
         }

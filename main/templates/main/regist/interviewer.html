@@ -1,5 +1,5 @@
 {% load django_bootstrap5 %}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -36,6 +36,7 @@
                     {% csrf_token %}
                     {% for f in form %}
                     {% bootstrap_field f %}
+                    {% if f.name == "prof_url" %}<button type ="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .90rem;" class = "btn btn-outline-info" onclick="open_as_window( get_prof_url(), 'prof_url', 1000,800)"> このURLを開く</button>{% endif %}
                     {% endfor %}
                     <button type="button" onclick="p_save()" class = "btn btn-success">登録</button>
                 </form>
@@ -77,7 +78,11 @@
             };
             toastBootstrap.show();
             };
+            function get_prof_url(){
+                return document.getElementById("id_prof_url").value
+            }
     </script>
+    <script src = {% static "js/open_as_window.js" %}></script>
     <div class="toast-container position-fixed top-0 start-0 p-3">
         <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
           <div class="toast-body text-white " id = "toast-status"></div>

@@ -228,6 +228,8 @@ class Interviewer(models.Model):
     position = models.CharField(max_length=200, verbose_name="役職・所属部署等")
     mail = models.EmailField(max_length=200, verbose_name="メールアドレス", blank=True)
     phone = models.CharField(max_length=200, verbose_name="電話番号", blank=True)
+    prof_url = models.URLField(verbose_name="プロフィールへのURL", blank=True)
+    chance = models.CharField(max_length=200, verbose_name="きっかけ", blank=True)
     introduction = models.TextField(verbose_name="自己紹介", blank=True)
     memo = models.TextField(verbose_name="メモ", blank=True)
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")

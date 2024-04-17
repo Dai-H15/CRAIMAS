@@ -19,13 +19,14 @@
 
                                 {% if day == interview.date %}
                                 
-                                {% if interview.date|is_bigger:today %}
+                                {% if feature is True or interview.date|is_bigger:today%}
                                 <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '600' )">未来の予定 (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                {% elif interview.date == today %}
+                                <button class = "btn btn-outline-danger" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '600' )">本日の面談録（予定） (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
                                 {% else %}
                                 <button class = "btn btn-outline-secondary" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '600' )">面談録有り: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
                                 {% endif %}
                                 {% endif %}
-                                
                         {% endfor %}
                     {% endif %}
                 </td>

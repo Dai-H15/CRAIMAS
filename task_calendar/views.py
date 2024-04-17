@@ -3,7 +3,7 @@ from main.views import collect_regnum
 import calendar
 from django.utils import timezone
 
-from main.models import Interview, RegistSets
+from main.models import Interview
 # Create your views here.
 
 
@@ -31,6 +31,9 @@ def get_calendar(request, year, month):
     contexts["list_interview"] = get_listInterview(request, year, month)
     if year == str(timezone.make_naive(timezone.now()).year) and month == str(timezone.make_naive(timezone.now()).month):
         contexts["today"] = timezone.make_naive(timezone.now()).day
+        contexts["feature"] = False
+    elif year >= str(timezone.make_naive(timezone.now()).year) and month > str(timezone.make_naive(timezone.now()).month):
+        contexts["feature"] = True
     return render(request, "task_calendar/calendar_base.html", contexts)
 
 

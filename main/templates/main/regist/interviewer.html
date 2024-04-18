@@ -36,7 +36,7 @@
                     {% csrf_token %}
                     {% for f in form %}
                     {% bootstrap_field f %}
-                    {% if f.name == "prof_url" %}<button type ="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .90rem;" class = "btn btn-outline-info" onclick="open_as_window( get_prof_url(), 'prof_url', 1000,800)"> このURLを開く</button>{% endif %}
+                    {% if f.name == "prof_url" %}<button type ="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .90rem;" class = "btn btn-outline-info" onclick="open_url('prof_url', 1000,800)"> このURLを開く</button>{% endif %}
                     {% endfor %}
                     <button type="button" onclick="p_save()" class = "btn btn-success">登録</button>
                 </form>
@@ -78,9 +78,21 @@
             };
             toastBootstrap.show();
             };
-            function get_prof_url(){
-                return document.getElementById("id_prof_url").value
-            }
+    </script>
+    <script>
+        function open_url(name,width,height){
+            let url = document.getElementById("id_prof_url").value;
+            let toastBootstrap;
+            if (!(URL.canParse(url))){
+                const toast = document.getElementById('status-toast');
+                toast.className = "toast bg-danger";
+                toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+                document.getElementById('toast-status').innerHTML = `表示に失敗しました<br>http または https から始まるURLを入力してください` ;
+                toastBootstrap.show();
+            }else{
+                open_as_window(document.getElementById("id_prof_url").value,name,width,height);
+            };
+        };
     </script>
     <script src = {% static "js/open_as_window.js" %}></script>
     <div class="toast-container position-fixed top-0 start-0 p-3">

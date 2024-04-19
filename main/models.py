@@ -144,6 +144,7 @@ class Adoption(models.Model):
     place = models.CharField(max_length=200, verbose_name="勤務予定地", blank=True)
     n_adopters = models.IntegerField(verbose_name="採用予定人数", default=0)
     n_enrollment = models.IntegerField(verbose_name="OB・OG在籍数", default=0)
+    from_url = models.URLField(verbose_name="採用情報URL", blank=True)
     a_year = models.IntegerField(verbose_name="募集年度", default=0)
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
 

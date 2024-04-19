@@ -79,12 +79,13 @@ class D_CompanyForm(forms.ModelForm):
 class AdoptionForm(forms.ModelForm):
     class Meta:
         model = Adoption
-        fields = ("occupation", "place", "n_adopters", "n_enrollment", "a_year")
+        fields = ("occupation", "place", "n_adopters", "n_enrollment", "from_url", "a_year")
         labels = {
             "occupation": "採用職種",
             "place": "勤務予定地",
             "n_adopters": "採用予定人数",
             "n_enrollment": "OB・OG在籍数",
+            "from_url": "採用情報URL",
             "a_year": "募集年度",
         }
 

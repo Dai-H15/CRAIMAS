@@ -50,8 +50,6 @@
             </form>
             
         </div>
-        
-        
     </div>
     <div class = "row m-3"><button class = "btn btn-success" onclick = "window.close()">閉じる</button></div>
     </div>
@@ -59,11 +57,10 @@
         let wind3;
         function search_zipcode(){
             let zipcode = document.getElementById('id_zipcode').value;
-            
             let d_url = "{% url 'get_address' 'placeholder' %}"
             let url = d_url.replace('placeholder', zipcode);
             wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
-            
+
     };
     window.addEventListener('beforeunload', function(){
         if (wind3){

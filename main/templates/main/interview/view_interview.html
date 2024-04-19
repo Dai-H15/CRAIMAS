@@ -30,6 +30,7 @@
         <div class="row m-2">
             <div class = "row text-center">
                 <h5>企業名：{{inst.RegistID.company.name}}</h5>
+                <div class = "col text-center"><button type="button" class = "btn btn-outline-info" onclick="open_as_window('{% url "view_my_post" RegistID %}','my_post',800,1000)" >企業情報シート</button></div>
             </div>
             <form method = "post">
                 {% csrf_token %}

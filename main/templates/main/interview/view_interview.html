@@ -30,7 +30,10 @@
         <div class="row m-2">
             <div class = "row text-center">
                 <h5>企業名：{{inst.RegistID.company.name}}</h5>
+            </div>
+            <div class ="row">
                 <div class = "col text-center"><button type="button" class = "btn btn-outline-info" onclick="open_as_window('{% url "view_my_post" RegistID %}','my_post',800,1000)" >企業情報シート</button></div>
+                {% if from_url %}<div class = "col text-center"><button type="button" class = "btn btn-outline-success" onclick="open_as_window('{{from_url}}','my_post',1000,1000)" >応募元サイト</button></div>{% endif %}
             </div>
             <form method = "post">
                 {% csrf_token %}

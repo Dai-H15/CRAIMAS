@@ -262,6 +262,11 @@ def mypage(request):
     contexts["regsets"] = collect_regsets(user)
     posts = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")
     contexts["posts"] = posts
+    post_interviews = {}
+    for post in posts:
+        i = Interview.objects.filter(RegistID=post).order_by("-date").first()
+        post_interviews[post.RegistID] = i.InterviewID if i is not None else None
+    contexts["post_interviews"] = post_interviews
     return render(request, "main/mypage/mypage.html", contexts)
 
 

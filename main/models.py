@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.validators import URLValidator
 
 
 class Companies(models.Model):
@@ -208,6 +209,7 @@ class Interview(models.Model):
     interviewer = models.CharField(max_length=200, verbose_name="面接官名")
     zipcode = models.CharField(max_length=8, verbose_name="郵便番号", blank=True)
     place = models.CharField(max_length=200, verbose_name="面接住所", blank=True)
+    Event_URL = models.URLField(verbose_name="イベントURL", blank=True, validators=[URLValidator])
     aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%")
     reason = models.TextField(default="", verbose_name="志望理由", blank=True)
     want_to = models.TextField(default="", verbose_name="やりたいこと", blank=True)

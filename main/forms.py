@@ -152,7 +152,7 @@ class InterviewForm(forms.ModelForm):
 
     class Meta:
         model = Interview
-        fields = ("RegistID", "InterviewID", "title", "tag", "date", "interviewer", "zipcode", "place", "aspire", "reason", "want_to", "note", "review")
+        fields = ("RegistID", "InterviewID", "title", "tag", "date", "interviewer", "zipcode", "place", "Event_URL", "aspire", "reason", "want_to", "note", "review")
         labels = {
                     "RegistID": "登録セットキー",
                     "InterviewID": "インタビューキー",
@@ -162,6 +162,7 @@ class InterviewForm(forms.ModelForm):
                     "interviewer": "面談者",
                     "zipcode": "郵便番号",
                     "place": "住所",
+                    "Event_URL": "イベントへのURL",
                     "aspire": "志望度(0~100)%",
                     "reason": "志望理由",
                     "want_to": "やりたいこと",

@@ -31,6 +31,7 @@ from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.http import JsonResponse
 from django.utils import timezone
+import csv
 
 # Functions
 
@@ -635,6 +636,8 @@ def search_company(request, return_to):
                     url += "&corporate_number" + form.cleaned_data["corporate_number"]
                 if form.cleaned_data["name"] != "":
                     url += "&name=" + quote(form.cleaned_data["name"])
+                if form.cleaned_data["city"] != "":
+                    url += "&city=" + form.cleaned_data["city"]
                 
                 headers = {
                     "Accept": "application/json",
@@ -654,6 +657,16 @@ def search_company(request, return_to):
     return render(request, "main/regist/sets/search_company.html", contexts)
 
 
+def get_city(request, prefecture):
+    res = {}
+    with open("static/assets/address_code.csv", "r", encoding="utf-8-sig") as f:
+        lst = csv.DictReader(f)
+        for row in lst:
+            if row["code"][:2:] == prefecture:
+                res[row["city"]] = row["code"][2:5:]
+    return JsonResponse(res)
+
+
 def get_more_compinfo(request, corporate_number, return_to):
     contexts = collect_regnum(request)
     contexts["return_to"] = return_to
@@ -671,6 +684,9 @@ def get_more_compinfo(request, corporate_number, return_to):
     except requests.ConnectionError:
         return HttpResponse("データの取得に失敗しました。ネットワークの接続を確認してください")
     return render(request, "main/regist/sets/get_more_compinfo.html", contexts)
+
+
+
 
 
 def set_searched_data(request):

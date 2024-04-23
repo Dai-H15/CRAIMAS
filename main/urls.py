@@ -13,6 +13,7 @@ urlpatterns = [
     path("regist_base/regist_sets/create_company/", views.create_company, name="create_company"),
     path("regist_base/regist_sets/import_company/", views.import_company, name="import_company"),
     path("regit_base/regit_sets/search_company/return_to=<str:return_to>", views.search_company, name="search_company"),
+    path("get_city/<str:prefecture>", views.get_city, name="get_city"),
     path(r"regist_base/regist_sets/get_more_compinfo/?corporate_number=<str:corporate_number>&return_to=<str:return_to>", views.get_more_compinfo, name="get_more_compinfo"),
     path("regist_base/regist_sets/create_about", views.create_about, name="create_about"),
     path("regist_base/regist_sets/create_idea", views.create_idea, name="create_idea"),

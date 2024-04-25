@@ -636,9 +636,11 @@ def search_company(request, return_to):
                     url += "&corporate_number" + form.cleaned_data["corporate_number"]
                 if form.cleaned_data["name"] != "":
                     url += "&name=" + quote(form.cleaned_data["name"])
-                if form.cleaned_data["city"] != "":
+                if (form.cleaned_data["city"] != "000"):
                     url += "&city=" + form.cleaned_data["city"]
-                
+                if form.cleaned_data["founded_year"] is not None:
+                    url += "&founded_year=" + str(form.cleaned_data["founded_year"])
+                print(url)
                 headers = {
                     "Accept": "application/json",
                     "X-hojinInfo-api-token": request.user.gBIZINFO_key,
@@ -663,7 +665,8 @@ def get_city(request, prefecture):
         lst = csv.DictReader(f)
         for row in lst:
             if row["code"][:2:] == prefecture:
-                res[row["city"]] = row["code"][2:5:]
+                res[row['city']] = {"code": row["code"][2:5:], "yomi": row["city_y"]}
+        res = dict(sorted(res.items(), key=lambda x: x[1]["yomi"]))
     return JsonResponse(res)
 
 

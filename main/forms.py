@@ -145,6 +145,7 @@ class SearchForm_corpnum(forms.Form):
     corporate_number = forms.CharField(label="法人番号", required=False)
     prefecture = forms.ChoiceField(label="都道府県", choices=pref_choice, required=True)
     city = forms.CharField(label="市区町村", required=False, widget=forms.widgets.Select())
+    founded_year = forms.IntegerField(label="設立年", required=False)
 
 
 class InterviewForm(forms.ModelForm):

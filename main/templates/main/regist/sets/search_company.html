@@ -114,8 +114,8 @@
                 }
                 Object.entries(res).forEach(function([key, value]){
                     let option = document.createElement('option');
-                    option.value = value;
-                    option.text = key;
+                    option.value = value.code;
+                    option.text = key +( value.yomi ?` (${value.yomi})` :` ${prefecture.options[prefecture.selectedIndex].text} 全域`);
                     city.appendChild(option);
                 });})
         </script>

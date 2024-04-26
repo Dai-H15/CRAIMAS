@@ -39,7 +39,7 @@
                     </button>
                     <ul class = "dropdown-menu">
                         <li><a href="{% url "search_company" "regist_all" %}" class="btn dropdown-item  btn-outline-success" >gBizINFOから引用</a></li>
-                        <li><a type = "button"  onclick = "open_as_window('{% url "json_import" %}', 400, 200)" class = "btn dropdown-item  btn-outline-info">JSONから引用</a></li>
+                        <li><a type = "button"  onclick = "open_as_window('{% url "json_import" %}','import_json', 400, 200)" class = "btn dropdown-item  btn-outline-info">JSONから引用</a></li>
                     </ul>
                     
                     <a href="{% url "index" %}" class = "btn btn-outline-warning mx-2" >ホームへ戻る</a>
@@ -88,7 +88,7 @@
             <div class = "row ">
                 <div class = "col border-top">
                 <h5 class = "col">企業データ</h5>
-                <button type="button" class="btn btn-outline-warning my-3" onclick = "open_as_window('{% url "calc" %}',600,300)">金額入力ツール</button>
+                <button type="button" class="btn btn-outline-warning my-3" onclick = "open_as_window('{% url "calc" %}','calc',600,300)">金額入力ツール</button>
                     <table class  = "table  table-hover">{% for f in D_Form %}{% bootstrap_field f %}{% endfor %}</table>
                 </div>
             </div>
@@ -110,39 +110,7 @@
     </div>
         </form>
     </div>
-    <script>
-        let wind;
-        function open_as_window(url,width,height){
-            wind = window.open(`${url}`, "view_post", `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no`);
-    };
-    window.addEventListener('beforeunload', function(){
-        if (wind){
-            wind.close();
-        }
-    });
-
-</script>
-<script type="module">
-    const AssistCheck = document.getElementById("assist-check");
-    let tooltipTriggerList;
-    let tooltipList;
-    AssistCheck.addEventListener("change", function(){
-        if (AssistCheck.checked){
-            tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-            console.log("assisted");
-        }else{
-            tooltipList.forEach(tooltip => tooltip.dispose());
-            console.log("not assisted");
-        }
-    })
-    const assets = await import("{% static 'assets/tooltip_desc.js' %}");
-    const InputList = document.getElementsByClassName("form-control");
-    for (let i = 0; i < InputList.length; i++) {
-        InputList[i].setAttribute('data-bs-toggle', 'tooltip');
-        InputList[i].setAttribute('data-bs-placement', 'bottom');
-        InputList[i].setAttribute('data-bs-title',assets.desc[InputList[i].name]);
-    }
-</script>
+<script src = "{% static "js/open_as_window.js" %}"></script>
+<script src = "{% static "js/assist_tooltip.js" %}"></script>
 </body>
 </html>

@@ -46,7 +46,7 @@
                 <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_as_window('{% url "prof_interviewer" company_id=inst.RegistID.company.CompanyID  i_name=f.value %}', 'prof_interviewer', 530,600)"> 担当者プロフィールを検索</button>
                 {% elif f.name == "Event_URL" %}
                 {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "open_as_window('{{f.value}}', 'event_url', 1000,800)"> 開く</button>
+                <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
                 {% else %}
                 {% bootstrap_field f %}
                 {% endif %}
@@ -60,6 +60,21 @@
     </div>
     <div class = "row m-3"><button class = "btn btn-success" onclick = "window.close()">閉じる</button></div>
     </div>
+    <script>
+        function open_url(id,name,width,height){
+            let url = document.getElementById(id).value;
+            let toastBootstrap;
+            if (!(URL.canParse(url))){
+                const toast = document.getElementById('status-toast');
+                toast.className = "toast bg-danger";
+                toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
+                document.getElementById('toast-status').innerHTML = `表示に失敗しました<br>http または https から始まるURLを入力してください` ;
+                toastBootstrap.show();
+            }else{
+                open_as_window(document.getElementById(id).value,name,width,height);
+            };
+        };
+    </script>
     <script>
         let wind3;
         function search_zipcode(){

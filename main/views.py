@@ -902,18 +902,23 @@ def export_sheet(request, id):
             if "by_U_ID" in s:
                 del s["by_U_ID"]
         name += "_exported_sheet"
-        if request.POST["type"] == "csv":
-            response = HttpResponse(content_type="text/csv; charset=Shift-JIS")
-            for s in sets.values():
-                csv_columns = list(s.keys())
-                writer = csv.DictWriter(response, csv_columns)
-                writer.writeheader()
-                writer.writerow(s)
-                writer.writerow({})
-            response["Content-Disposition"] = "attachment; filename*=UTF-8''{}".format(
-                urllib.parse.quote((f"{name}.csv").encode("utf8"))
-            )
-            return response
+        try:
+            if request.POST["type"] == "csv":
+                response = HttpResponse(content_type="text/csv; charset=shift-jis")
+                for s in sets.values():
+                    csv_columns = list(s.keys())
+                    writer = csv.DictWriter(response, csv_columns)
+                    writer.writeheader()
+                    writer.writerow(s)
+                    writer.writerow({})
+                response["Content-Disposition"] = "attachment; filename*=UTF-8''{}".format(
+                    urllib.parse.quote((f"{name}.csv").encode("utf8"))
+                )
+                return response
+        except UnicodeEncodeError as e:
+            return HttpResponse(f"エラーが発生しました<br>環境依存文字が使用されている化膿性があります。シートを見直してください<br>\
+                <h4>詳細</h4>{e}<br>\
+                    <h4>該当箇所: </h4><p>{s}</p>")
         else:
 
             class DateTimeEncoder(json.JSONEncoder):

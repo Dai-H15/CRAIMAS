@@ -18,6 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 import debug_toolbar
 
+admin.site.site_title = '管理者ページ'
+admin.site.site_header = 'BizIntelliScan 管理サイト'
+admin.site.index_title = '管理対象シート一覧'
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("main.urls")),

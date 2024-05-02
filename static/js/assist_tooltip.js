@@ -17,7 +17,7 @@ const AssistCheck = document.getElementById("assist-check");
     const InputList = document.getElementsByClassName("form-control");
     for (let i = 0; i < InputList.length; i++) {
         InputList[i].setAttribute('data-bs-toggle', 'tooltip');
-        InputList[i].setAttribute('data-bs-placement', 'bottom');
+        InputList[i].setAttribute('data-bs-placement', 'top');
         InputList[i].setAttribute('data-bs-title',assets.desc[InputList[i].name]);
     }
 

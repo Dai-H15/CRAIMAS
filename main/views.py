@@ -261,13 +261,6 @@ def mypage(request):
     n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
     contexts["n_regist"] = n_regist
     contexts["regsets"] = collect_regsets(user)
-    posts = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")
-    contexts["posts"] = posts
-    post_interviews = {}
-    for post in posts:
-        i = Interview.objects.filter(RegistID=post).order_by("-date").first()
-        post_interviews[post.RegistID] = i.InterviewID if i is not None else None
-    contexts["post_interviews"] = post_interviews
     return render(request, "main/mypage/mypage.html", contexts)
 
 
@@ -1038,4 +1031,9 @@ def search_post(request, sheet_from, where):
     if sheet_from == "担当者名":
         res = res.filter(company__contact__contains=where)
     contexts["posts"] = res
+    post_interviews = {}
+    for post in res:
+        i = Interview.objects.filter(RegistID=post).order_by("-date").first()
+        post_interviews[post.RegistID] = i.InterviewID if i is not None else None
+    contexts["post_interviews"] = post_interviews
     return render(request, "main/mypage/search_result.html", contexts)

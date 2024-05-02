@@ -49,71 +49,20 @@
                         <span class = "input-group-text">検索文字列</span><input type="text" class = "form-control" id = "search_str">
                         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">検索対象項目</button>
                         <input type="hidden" name = "search_item_value" id= "search_item_value" value = ""/>
-                        <button class="btn btn-success rounded-end" type="button" onclick = "search_post('{% url "search_post" sheet_from="sheet_from" where="where" %}')">検索</button>
+                        <button class="btn btn-success rounded-end" type="button" onclick = "check_and_fetch('{% url "search_post" sheet_from="sheet_from" where="where" %}')">検索</button>
                         <ul class="dropdown-menu">
                             <button class="dropdown-item" onclick = "select_search('企業名')" type = "button">企業名</button>
                             <button class="dropdown-item"onclick = "select_search('所属業界名')" type = "button">所属業界名</button>
                             <button class="dropdown-item"onclick = "select_search('所在地')" type = "button">所在地</button>
                             <button class="dropdown-item"onclick = "select_search('担当者名')" type = "button">担当者名</button>
-                            
-                          </ul>
+                        </ul>
                         </div>
-                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="window.location.reload();">リセット</button></div>
-                    
+                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="init_fetch('{% url 'search_post' sheet_from='init' where='none' %}')">リセット</button></div>
                 </div>
                 <div class="row m-3">
                     <!--投稿一覧-->
                     <h3 class = "border-bottom my-3">投稿一覧</h3>
-                    <table class="  border table table-hover"  id = "post_list">
-                        <thead>
-                            <tr>
-                                <th scope="col">投稿日時</th>
-                                <th scope="col">企業名</th>
-                                <th scope="col">所属業界</th>
-                                <th scope="col">採用職種</th>
-                                <th scope="col">担当者名</th>
-                                <th scope="col">募集年度</th>
-                                <th scope="col">応募元サイト</th>
-                                <th scope="col">最新の面談録</th>
-                                <th scope="col">詳細・削除</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for post in posts %}
-                            <tr class = "{% if post.isActive %}table-success {% else %}table-secondary{% endif %}">
-                                <td>{{post.created}}</td>
-                                <td>{{post.company}}</td>
-                                <td>{{post.company.industry}}</td>
-                                <td>{{post.adoption.occupation}}</td>
-                                <td>{{post.company.contact}}</td>
-                                <td>{{post.adoption.a_year}}</td>
-                                <td>{% if post.adoption.from_url != "" %} <button class = "btn btn-outline-info" onclick="open_as_window('{{ post.adoption.from_url }}', 'AD_Site', 1000,800)"> 開く</button>{% endif %}
-                                <td>{% get_interview post.RegistID post_interviews%}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                            操作
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><button class="dropdown-item text-bg-success p-2"
-                                                    onclick="open_as_window('{% url "view_my_post" post.RegistID %}','view_my_post',800,900)">閲覧</button>
-                                            </li>
-                                            <li><button class="dropdown-item text-bg-info p-2"
-                                                    onclick="open_as_window('{% url "edit_posts" post.RegistID %}','edit_posts',800,900)">編集</button></li>
-                                            <li><button class="dropdown-item text-bg-warning p-2"
-                                                    onclick="open_as_window('{% url "export_sheet" post.RegistID %}','export_sheet',400,600)">保存</button></li>
-                                            <li><button class="dropdown-item text-bg-danger p-2"
-                                                onclick="open_as_window('{% url "delete_posts" post.RegistID %}','export_sheet',800,900)">削除</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <table class="  border table table-hover"  id = "post_list"></table>
                     <div class="text-center"><a href="{% url "index" %}"><button class="btn btn-primary">ホームに戻る</button></a>
                     </div>
                 </div>
@@ -123,12 +72,16 @@
     </div>
     <script src="{% static "js/open_as_window.js" %}"></script>
 
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
     </script>
 
     <script src="{% static "js/search.js" %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", async function() {
+        await init_fetch('{% url "search_post" sheet_from="init" where="none" %}');
+    });
+</script>
 
 </body>
 

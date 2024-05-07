@@ -34,6 +34,13 @@ async function check_and_fetch(search_url){
 }
 async function init_fetch(search_url){
     let table = document.getElementById('post_list');
+    let search_item_show = document.getElementById("search_item_show");
+    let search_item_value = document.getElementById("search_item_value");
+    let search_str = document.getElementById("search_str");
+    search_item_show.innerHTML = "";
+    search_item_value.innerHTML = "";
+    search_item_value.value = "";
+    search_str.value = "";
     table.innerHTML = '<h3 class = "text-center"> 読込中・・・ </h3>';
     table.innerHTML = await search_post(search_url);
 }

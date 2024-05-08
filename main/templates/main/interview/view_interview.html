@@ -43,7 +43,7 @@
                 <button type="button" class = "btn btn-warning" onclick="search_zipcode()">住所を検索</button>
                 {% elif f.name == "interviewer" %}
                 {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_as_window('{% url "prof_interviewer" company_id=inst.RegistID.company.CompanyID  i_name=f.value %}', 'prof_interviewer', 530,600)"> 担当者プロフィールを検索</button>
+                <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_interviewer('{% url "prof_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> 担当者プロフィールを検索</button>
                 {% elif f.name == "Event_URL" %}
                 {% bootstrap_field f %}
                 <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
@@ -52,93 +52,24 @@
                 {% endif %}
                 {% endfor %}
                 <div class = "text-center">
-                <button type="button" onclick = "t_save()" class = "btn btn-success mx-4">登録・更新</button>
-                <button type="button" onclick="delete_interview()" class = "btn btn-danger mx-4">面談録を削除</button></div>
+                <button type="button" onclick = "t_save(`{% url 'view_interview' inst.InterviewID %}`)" class = "btn btn-success mx-4">登録・更新</button>
+                <button type="button" onclick="delete_interview(`{% url 'delete_interview' inst.InterviewID %}`)" class = "btn btn-danger mx-4">面談録を削除</button></div>
             </form>
             
         </div>
     </div>
     <div class = "row m-3"><button class = "btn btn-success" onclick = "window.close()">閉じる</button></div>
     </div>
-    <script>
-        function open_url(id,name,width,height){
-            let url = document.getElementById(id).value;
-            let toastBootstrap;
-            if (!(URL.canParse(url))){
-                const toast = document.getElementById('status-toast');
-                toast.className = "toast bg-danger";
-                toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-                document.getElementById('toast-status').innerHTML = `表示に失敗しました<br>http または https から始まるURLを入力してください` ;
-                toastBootstrap.show();
-            }else{
-                open_as_window(document.getElementById(id).value,name,width,height);
-            };
-        };
-    </script>
-    <script>
-        let wind3;
-        function search_zipcode(){
-            let zipcode = document.getElementById('id_zipcode').value;
-            let d_url = "{% url 'get_address' 'placeholder' %}"
-            let url = d_url.replace('placeholder', zipcode);
-            wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
 
-    };
-    window.addEventListener('beforeunload', function(){
-        if (wind3){
-            wind3.close();
-        }
-        window.opener.location.reload();
-    });
-
-</script>
-<script src="{% static "js/open_as_window.js" %}"></script>
-
-<script>
-    async function t_save(){
-        const s = document.querySelector('form');
-        const url = "{% url 'view_interview' inst.InterviewID %}";
-        const formData = new FormData(s);
-        const init = {
-            method: "POST",
-            body: formData
-        }
-        const res = await fetch(url,init);
-        if (res.ok) {
-            const toast = document.getElementById('status-toast');
-            toast.className = "toast bg-info";
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-            document.getElementById('toast-status').innerText = "保存しました";
-          toastBootstrap.show();
-        }else{
-            const toast = document.getElementById('status-toast');
-            toast.className = "toast bg-danger";
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-            document.getElementById('toast-status').innerText = `保存に失敗しました。  理由:  ${res.statusText}` ;
-            toastBootstrap.show();
-        }
-        
-
-        };
-</script>
-<script>
-    async function delete_interview(){
-        if(window.confirm("本当に削除しますか？") == false){
-            return;
-        }else{const url = '{% url "delete_interview" inst.InterviewID %}';
-        let res = await fetch(url);
-        if (res.ok){
-            document.getElementById('form-container').innerText = await res.text();
-            }
-        }}
-
-</script>
 <div class="toast-container position-fixed top-0 start-0 p-3">
     <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-body text-white " id = "toast-status"></div>
     </div>
-  </div>
+</div>
 
+<script src="{% static "js/open_as_window.js" %}"></script>
+<script src = "{% static "js/interview.js" %}"></script>
+<script src="{% static "js/open_as_window.js" %}"></script>
 
 </body>
 

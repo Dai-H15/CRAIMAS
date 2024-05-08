@@ -14,10 +14,10 @@
             <td>{{result.company}}</td>
             <td>{{result.company.industry}}</td>
             <td>{{result.adoption.occupation}}</td>
-            {% if result.d_company.url == "about:blank" %}
-            <td>-</td>
+            {% if result.d_company.url != "about:blank" and result.d_company.url %}
+            <td><button  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" class = "btn btn-outline-primary" onclick="open_as_window('{{result.d_company.url}}','c_site{{forloop.counter}}',1200,1000)">開く</button></td>
             {% else %}
-            <td><a class = "text-primary border-0" onclick="open_as_window('{{result.d_company.url}}','c_site{{forloop.counter}}',1200,1000)">サイト</a></td>
+            <td>-</td>
             {% endif %}
             <td>{{result.created}}</td>
             <td>

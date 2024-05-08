@@ -16,10 +16,10 @@
                     {% if day != 0 %}
                         <p class = "">{{day}}</p>
                         {% for interview in list_interview %}
-
                                 {% if day == interview.date %}
-                                
-                                {% if feature is True or interview.date|is_bigger:today%}
+                                {% if interview.Interview.tag == "is_Planned"%}
+                                <div class = "bg-danger p-2 text-white text-center"><p>予定あり。面談不可</p> [{{interview.Interview.title}}] <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
+                                {% elif feature is True or interview.date|is_bigger:today%}
                                 <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">未来の予定 (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
                                 {% elif interview.date == today %}
                                 <button class = "btn btn-outline-danger" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '10000' )">本日の面談録（予定） (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>

@@ -13,7 +13,7 @@
     <tr>
       <th scope="row">{{forloop.counter}}</th>
       {% for key,val in th_all.items %}
-      <td>{{ result |get_item:key }}</td>
+      <td class="col">{{ result |get_item:key }}</td>
       {% endfor %}
     </tr>
     {% endfor %}

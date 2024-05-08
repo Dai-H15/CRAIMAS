@@ -25,6 +25,8 @@ class About(models.Model):
     CHOICES = (
         ("B to B", "B to B"),
         ("B to C", "B to C"),
+        ("両方", "両方"),
+        ("その他", "その他"),
     )
     AboutID = models.CharField(max_length=200, primary_key=True, unique=True)
     by_U_ID = models.CharField(max_length=100, default="default")
@@ -191,13 +193,16 @@ class Interview(models.Model):
         ("最終面接", "最終面接"),
         ("インターンシップ", "インターンシップ"),
         ("インターンシップ説明会", "インターンシップ説明会"),
+        ("インターンシップ面談", "インターンシップ面談"),
         ("座談会", "座談会"),
         ("エンジニア面接", "エンジニア面接"),
         ("グループディスカッション", "グループディスカッション"),
         ("勉強会／ビジネス体験", "勉強会／ビジネス体験"),
         ("内定", "内定"),
         ("試験", "試験"),
-        ("その他", "その他")
+        ("その他", "その他"),
+        ("is_Planned", "[特殊設定] テスト等終日利用不可"),
+        
     )
     RegistID = models.ForeignKey(RegistSets, on_delete=models.CASCADE)
     InterviewID = models.CharField(max_length=128)

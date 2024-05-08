@@ -57,7 +57,7 @@
                             <td>〒{{result.postal_code}} {{result.location}}</td>
                             <td>{{result.business_summary}}</td>
                             <td>{{result.employee_number}}</td>
-                            <td><p>{{result.company_url}}</p><button type = "button" class = "btn btn-outline-info" onclick="open_as_window('{{result.company_url}}', 'url', 1000,1000)">URLを開く</button></td>
+                            <td>{% if result.company_url %}<p>{{result.company_url}}</p><button type = "button" class = "btn btn-outline-info" onclick="open_as_window('{{result.company_url}}', 'url', 1000,1000)">URLを開く</button>{% else %}<p>URL無し</p>{% endif %}</td>
                             <td>{{result.update_date}}</td>
                             <td>{% if result.status == "-" %} 営業中 {% else %} {{result.status}}{% endif %}</td>
                             <td>{{result.a_year}}</td>

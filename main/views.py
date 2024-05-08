@@ -237,7 +237,7 @@ def regist_all(request):
                     contexts["Interviewers_count"] = n
             return render(request, "main/regist/regist_done.html", contexts)
         else:
-            print(C_Form.errors.as_text(), A_Form.errors.as_text(), I_Form.errors.as_text(), M_Form.errors.as_text(), D_Form.errors.as_text(), AD_Form.errors.as_text())
+            pass
 
     contexts["C_Form"] = C_Form
 
@@ -301,19 +301,14 @@ def delete_posts(request, id):
         else:
             post = RegistSets.objects.get(RegistID=id)
             if "del_A_Form" in request.POST:
-                print("del_A_Form")
                 post.about.delete()
             if "del_I_Form" in request.POST:
-                print("del_I_Form")
                 post.idea.delete()
             if "del_M_Form" in request.POST:
-                print("del_M_Form")
                 post.motivation.delete()
             if "del_D_Form" in request.POST:
-                print("del_D_Form")
                 post.d_company.delete()
             if "del_AD_Form" in request.POST:
-                print("del_AD_Form")
                 post.adoption.delete()
         return HttpResponse(
             f"削除しています...<script>window.opener.location.href='{reverse('mypage')}'</script>"
@@ -338,11 +333,11 @@ def create_company(request):
             n_CForm.save()
             Temp_regist = RegistSets.objects.create(
                 RegistID=secrets.token_hex(64),
-                by_U_ID=CustomUser.objects.get(username=request.user),
+                by_U_ID=request.user.U_ID,
                 company=Companies.objects.get(CompanyID=CompanyID),
             )
             request.session["RegistID"] = Temp_regist.RegistID
-            print("new company created.")
+            print("RegistSets is created.")
             return redirect("create_about")
     C_Form = CompaniesForm()
     if "forms" in request.session:
@@ -365,6 +360,7 @@ def import_company(request):
                 by_U_ID=request.user.U_ID,
                 company=Companies.objects.get(CompanyID=CompanyID),
             )
+            print("RegistSets is created.")
             request.session["RegistID"] = Temp_regist.RegistID
             return redirect("create_about")
     companies = Companies.objects.filter(by_U_ID=request.user.U_ID).all()
@@ -633,7 +629,6 @@ def search_company(request, return_to):
                     url += "&city=" + form.cleaned_data["city"]
                 if form.cleaned_data["founded_year"] is not None:
                     url += "&founded_year=" + str(form.cleaned_data["founded_year"])
-                print(url)
                 headers = {
                     "Accept": "application/json",
                     "X-hojinInfo-api-token": request.user.gBIZINFO_key,
@@ -786,7 +781,6 @@ def interview_create(request, id):
             data.save()
             return redirect("interview_main", id)
         else:
-            print(form.errors.as_text())
             contexts["errors"] = form.errors.as_text()
             contexts["form"] = form
     return render(request, "main/interview/interview_create.html", contexts)
@@ -802,7 +796,6 @@ def get_address(request, zipcode):
     url = r"https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + zipcode
     try:
         res = requests.get(url).json()
-        print(res)
         if res["status"] != 200 or res["results"] is None:
             contexts["message"] = {"color": "warning", "message": f"結果が存在しません。再度確認してください   (レスポンス: {res['message'] if res['message'] is not None else 'NotFound'})"}
     except ConnectionError:
@@ -819,17 +812,21 @@ def view_interview(request, id):
         contexts["interview"] = interview
         contexts["inst"] = inst
         contexts["RegistID"] = inst.RegistID.RegistID
-        contexts["from_url"] = inst.RegistID.adoption.from_url
+        try:
+            contexts["from_url"] = inst.RegistID.adoption.from_url
+        except AttributeError:
+            contexts["from_url"] = None
         if request.method == "POST":
             form = InterviewForm(
                 request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             )
             if form.is_valid():
                 form.save()
+            else:
+                print(form.errors)
         return render(request, "main/interview/view_interview.html", contexts)
     except Interview.DoesNotExist:
         return HttpResponse(" <script>window.close()</script> ")
-
 
 def calc(request):
     contexts = {}
@@ -1022,7 +1019,6 @@ def search_post(request, sheet_from, where):
     contexts = {}
     res = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")
     if sheet_from == "企業名":
-        print(where)
         res = res.filter(company__name__contains=where)
     if sheet_from == "所属業界名":
         res = res.filter(company__industry__contains=where)

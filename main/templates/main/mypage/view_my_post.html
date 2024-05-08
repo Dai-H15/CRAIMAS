@@ -95,7 +95,7 @@
                     <table class  = "table  table-hover">{% for field in AD_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{% if field.name == "from_url" %} <button class = "btn btn-outline-info" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick="open_as_window('{{ field.value }}', 'AD_Site', 1000,800)"> 開く</button> {% endif %}</td>
+                            <td>{% if field.name == "from_url" %}{% if field.value  %} URLあり <button class = "btn btn-outline-info" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick="open_as_window('{{ field.value }}', 'AD_Site', 1000,800)"> 開く</button> {% else %} 未登録 {% endif %}{% endif %}</td>
                         </tr>
                     {% endfor %}</table>
                 </div>

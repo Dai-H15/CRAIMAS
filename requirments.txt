@@ -4,3 +4,4 @@ django-cleanup==8.0.0
 django-debug-toolbar==4.2.0
 pillow==10.2.0
 requests
+gunicorn

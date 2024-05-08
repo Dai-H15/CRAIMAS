@@ -12,6 +12,8 @@ RUN python manage.py makemigrations authUser main task_calendar view_sheet
 
 RUN python manage.py migrate
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:9999"]
+RUN python manage.py collectstatic --noinput
 
-EXPOSE 9999
+CMD ["gunicorn", "--bind", "127.0.0.1:8888", "settings.wsgi"]
+
+EXPOSE 8888

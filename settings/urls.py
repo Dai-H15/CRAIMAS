@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import debug_toolbar
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.site.site_title = '管理者ページ'
 admin.site.site_header = 'BizIntelliScan 管理サイト'
@@ -30,4 +31,5 @@ urlpatterns = [
     path("task_calendar/", include("task_calendar.urls")),
 ]
 urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
+urlpatterns += staticfiles_urlpatterns()
 

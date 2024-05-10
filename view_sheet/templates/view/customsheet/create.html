@@ -192,6 +192,12 @@
                                                 以下
                                             </label>
                                         </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="view_setting_search_how" id="view_setting_search_exclude " value = "5">
+                                            <label class="form-check-label" for="view_setting_search_exclude ">
+                                                を除く
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class = "col">
                                         <div class=" input-group mb-3">
@@ -241,6 +247,7 @@
                                 {% if result_data.view_setting_search_how == "2" %}<option value="2" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' と 部分一致</option>{% endif %}
                                 {% if result_data.view_setting_search_how == "3" %}<option value="3" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' 以上</option>{% endif %}
                                 {% if result_data.view_setting_search_how == "4" %}<option value="4" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' 以下</option>{% endif %}
+                                {% if result_data.view_setting_search_how == "5" %}<option value="5" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' を除く</option>{% endif %}
                             </select>
                         </div>
                         <button class = "btn btn-success" type = "button" onclick = "submit_sheet_settings('create_sheet')">登録する</button>

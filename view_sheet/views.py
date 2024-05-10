@@ -273,6 +273,14 @@ def view_main(request, control, option):
                             ]
                         }
                     )
+                elif cs.search_settings["how"] == "5":
+                    results = results.exclude(
+                        **{
+                            f"{cs.search_settings['where']}": cs.search_settings[
+                                "what"
+                            ]
+                        }
+                    )
             if cs.view_settings != {}:
                 if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
                     results = results.order_by(list(cs.view_settings.keys())[0])

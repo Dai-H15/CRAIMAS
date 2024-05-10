@@ -16,7 +16,8 @@ input("local_settings.pyを作成します。Enterを押してください。")
 
 with open("settings/local_settings.py", "w") as f:
     chars = string.ascii_uppercase + string.ascii_lowercase + string.digits + "_@#&!?-#$"
-    f.write(f"SECRET_KEY = {''.join([secrets.choice(chars) for _ in range(50)]) }\n")
+    passw = "".join([secrets.choice(chars) for _ in range(50)])
+    f.write(f"SECRET_KEY = '{passw}'\n")
     f.close()
 
 

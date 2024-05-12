@@ -28,6 +28,12 @@
             </div>
         </div>
         <div class="row m-2">
+            {% if as_staff %}
+            <div class = "text-center alert alert-warning">
+                <h5>管理者権限での閲覧です。</h5>
+                <h5>削除・編集を行うことができません</h5>
+            </div>
+            {% endif %}
             <div class = "row text-center">
                 <h5>企業名：{{inst.RegistID.company.name}}</h5>
             </div>
@@ -51,9 +57,12 @@
                 {% bootstrap_field f %}
                 {% endif %}
                 {% endfor %}
+                {% if not as_staff %}
                 <div class = "text-center">
-                <button type="button" onclick = "t_save(`{% url 'view_interview' inst.InterviewID %}`)" class = "btn btn-success mx-4">登録・更新</button>
-                <button type="button" onclick="delete_interview(`{% url 'delete_interview' inst.InterviewID %}`)" class = "btn btn-danger mx-4">面談録を削除</button></div>
+                    <button type="button" onclick = "t_save(`{% url 'view_interview' inst.InterviewID %}`)" class = "btn btn-success mx-4">登録・更新</button>
+                    <button type="button" onclick="delete_interview(`{% url 'delete_interview' inst.InterviewID %}`)" class = "btn btn-danger mx-4">面談録を削除</button>
+                </div>
+                {% endif %}
             </form>
             
         </div>

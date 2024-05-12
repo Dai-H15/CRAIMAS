@@ -53,8 +53,17 @@ def collect_regsets(user):
 
 
 def getRegistForms(RegistID, contexts, request):
-    post = RegistSets.objects.get(RegistID=RegistID, by_U_ID=request.user.U_ID)
-    contexts["post"] = post
+    try:
+        post = RegistSets.objects.get(RegistID=RegistID, by_U_ID=request.user.U_ID)
+        contexts["post"] = post
+        contexts["as_staff"] = False
+    except RegistSets.DoesNotExist:
+        if request.user.is_staff:
+            post = RegistSets.objects.get(RegistID=RegistID)
+            contexts["post"] = post
+            contexts["as_staff"] = True
+        else:
+            return HttpResponse("不正なアクセス、もしくは権限がないシートです")
     if post.company is not None:
         C_Form = CompaniesForm(instance=post.company)
         contexts["C_Form"] = C_Form
@@ -677,9 +686,6 @@ def get_more_compinfo(request, corporate_number, return_to):
     return render(request, "main/regist/sets/get_more_compinfo.html", contexts)
 
 
-
-
-
 def set_searched_data(request):
     if request.method == "POST":
         return_to = request.POST["return_to"]
@@ -758,8 +764,17 @@ def set_searched_data(request):
 
 def interview_main(request, id):
     contexts = collect_regnum(request)
-    R_sets = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
-    interviews = Interview.objects.filter(RegistID=R_sets, by_U_ID=request.user.U_ID)
+    try:
+        R_sets = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
+        interviews = Interview.objects.filter(RegistID=R_sets, by_U_ID=request.user.U_ID)
+        contexts["as_staff"] = False
+    except RegistSets.DoesNotExist:
+        if request.user.is_staff:
+            R_sets = RegistSets.objects.get(RegistID=id)
+            interviews = Interview.objects.filter(RegistID=R_sets)
+            contexts["as_staff"] = True
+        else:
+            return HttpResponse("存在しない登録情報シート、もしくは閲覧権限がありません。")
     contexts["R_sets"] = R_sets
     contexts["interviews"] = interviews
     return render(request, "main/interview/interview_main.html", contexts)
@@ -787,7 +802,12 @@ def interview_create(request, id):
 
 
 def delete_interview(request, id):
-    Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID).delete()
+    try:
+        Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID).delete()
+    except Interview.DoesNotExist:
+        if request.user.is_staff:
+            return HttpResponse("管理者は面談録の削除を行うことができません")
+        return HttpResponse("削除に失敗しました。権限がない、もしくは存在しない面談録です")
     return HttpResponse("削除しました この画面を閉じてください")
 
 
@@ -807,7 +827,13 @@ def get_address(request, zipcode):
 def view_interview(request, id):
     try:
         contexts = collect_regnum(request)
-        inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
+        try:
+            inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
+            contexts["as_staff"] = False
+        except Interview.DoesNotExist:
+            if request.user.is_staff:  # すべてのユーザーの面談録の閲覧が可能
+                contexts["as_staff"] = True
+                inst = Interview.objects.get(InterviewID=id)
         interview = InterviewForm(instance=inst)
         contexts["interview"] = interview
         contexts["inst"] = inst
@@ -822,11 +848,14 @@ def view_interview(request, id):
             )
             if form.is_valid():
                 form.save()
+                contexts["is_saved"] = True
             else:
-                print(form.errors)
+                contexts["is_saved"] = False
         return render(request, "main/interview/view_interview.html", contexts)
     except Interview.DoesNotExist:
+        contexts["is_saved"] = False
         return HttpResponse(" <script>window.close()</script> ")
+
 
 def calc(request):
     contexts = {}
@@ -972,19 +1001,41 @@ def prof_interviewer(request, company_id, i_name):
     contexts = collect_regnum(request)
     try:
         company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
+        contexts["as_staff"] = False
     except (RegistSets.DoesNotExist, AttributeError):
-        return HttpResponse("不正なリクエストです")
+        if request.user.is_staff:
+            try:
+                company = RegistSets.objects.get(company=company_id).company
+                contexts["as_staff"] = True
+            except (RegistSets.DoesNotExist, AttributeError):
+                return HttpResponse("データが存在しません。")
+        else:
+            return HttpResponse("不正なリクエストです")
     contexts["company"] = company.name
     contexts["company_id"] = company_id
     contexts["i_name"] = i_name
     try:
-        instance_data = Interviewer.objects.get(
-            by_U_ID=request.user.U_ID,
-            company_name=company,
-            name=i_name,
-        )
+        if contexts["as_staff"] is False:
+            instance_data = Interviewer.objects.get(
+                by_U_ID=request.user.U_ID,
+                company_name=company,
+                name=i_name,
+            )
+        elif contexts["as_staff"] is True:
+            try:
+                instance_data = Interviewer.objects.get(
+                    company_name=company,
+                    name=i_name,
+                )
+            except Interviewer.DoesNotExist:
+                return HttpResponse("面談者情報が存在しません。登録を確認してください")
+        else:
+            return HttpResponse("不正なリクエストです")
         init_form = Form_Prof_Interviewer(instance=instance_data)
-        contexts["message"] = {"type": "success", "texts": ["一致した担当者情報があります", "編集して保存することができます"]}
+        if contexts["as_staff"] is False:
+            contexts["message"] = {"type": "success", "texts": ["一致した担当者情報があります", "編集して保存することができます"]}
+        if contexts["as_staff"] is True:
+            contexts["message"] = {"type": "info", "texts": ["一致した担当者情報があります", "管理者権限による閲覧のため、閲覧のみ可能です"]}
     except Interviewer.DoesNotExist:
         init_form = Form_Prof_Interviewer(initial={"company_name": Companies.objects.get(CompanyID=company_id, by_U_ID=request.user.U_ID), "interviewer_name": i_name})
         contexts["message"] = {"type": "warning", "texts": ["一致する担当者情報が見つかりませんでした。", "新規作成を行います。名前と企業を確認し、項目を埋めてください"]}

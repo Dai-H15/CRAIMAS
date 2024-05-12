@@ -43,6 +43,11 @@
                             <h3>マイページ</h3>
                         </div>
                     </a>
+                    {% if user.is_staff %}
+                    <a href="{% url "management" %}">
+                        <div class="col text-center p-3 border text-success ">
+                            <h3> 管理者用ページ</h3>
+                        </div></a>{% endif %}
                     <a href="{% url "view_index" %}">
                     <div class="col text-center p-3 border">
                         <h3>各種シート管理</h3>

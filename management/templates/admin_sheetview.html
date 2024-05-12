@@ -1,0 +1,43 @@
+{% load static %}
+{% load main_tags %}
+    <thead>
+        <tr>
+            <th scope="col">投稿日時</th>
+            <th scope="col">企業名</th>
+            <th scope="col">所属業界</th>
+            <th scope="col">採用職種</th>
+            <th scope="col">担当者名</th>
+            <th scope="col">募集年度</th>
+            <th scope="col">応募元サイト</th>
+            <th scope="col">最新の面談録</th>
+            <th scope="col">詳細</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post in posts %}
+        <tr class = "{% if post.isActive %}table-success {% else %}table-secondary{% endif %}">
+            <td>{{post.created}}</td>
+            <td>{{post.company}}</td>
+            <td>{{post.company.industry}}</td>
+            <td>{{post.adoption.occupation}}</td>
+            <td>{{post.company.contact}}</td>
+            <td>{{post.adoption.a_year}}</td>
+            <td>{% if post.adoption.from_url != "" %} <button class = "btn btn-outline-info" onclick="open_as_window('{{ post.adoption.from_url }}', 'AD_Site', 1000,800)"> 開く</button>{% endif %}
+            <td>{% get_interview post.RegistID post_interviews%}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        操作
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item text-bg-success p-2"
+                                onclick="open_as_window('{% url "view_my_post" post.RegistID %}','view_my_post',800,900)">閲覧</button>
+                        </li>
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>

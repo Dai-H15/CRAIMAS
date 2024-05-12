@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "main",
     "view_sheet",
     "task_calendar",
+    "management",
 ]
 
 MIDDLEWARE = [

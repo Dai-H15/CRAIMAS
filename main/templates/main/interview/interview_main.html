@@ -27,6 +27,12 @@
             </div>
         </div>
         <div class="row m-2">
+            {% if as_staff %}
+            <div class = "text-center alert alert-warning">
+                <h5>管理者権限での閲覧です。</h5>
+                <h5>削除・編集を行うことができません</h5>
+            </div>
+            {% endif %}
             <div class  = "text-center"><h4 class = "border-bottom p-3">{{R_sets.company}}</h4><h5> 面談録一覧</h5></div>
             <div class="container">
                 <div class="row p-3">
@@ -35,7 +41,9 @@
                     <li><a onclick="view_interview('{{interview.InterviewID}}')"><p>{{interview.title}} <br> ({{interview.date}})</p></a></li>
                     {% endfor %}
                 </ul>
+                {% if not as_staff %}
                     <a href="{% url "interview_create" R_sets.RegistID %}" class = "btn btn-success"> 新規作成 </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

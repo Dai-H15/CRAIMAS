@@ -20,7 +20,7 @@ import debug_toolbar
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.site.site_title = '管理者ページ'
-admin.site.site_header = 'BizIntelliScan 管理サイト'
+admin.site.site_header = 'CRAIMAS 【クレイマス】 管理サイト'
 admin.site.index_title = '管理対象シート一覧'
 
 
@@ -33,4 +33,3 @@ urlpatterns = [
 ]
 urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
 urlpatterns += staticfiles_urlpatterns()
-

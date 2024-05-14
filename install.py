@@ -11,14 +11,14 @@ elif user_os == "1":
     os.system("python -m pip install -r requirements.txt")
 
 print("インストールが完了しました。")
+if not os.path.exists("settings/local_settings.py"):
+    input("local_settings.pyを作成します。Enterを押してください。")
 
-input("local_settings.pyを作成します。Enterを押してください。")
-
-with open("settings/local_settings.py", "w") as f:
-    chars = string.ascii_uppercase + string.ascii_lowercase + string.digits + "_@#&!?-#$"
-    passw = "".join([secrets.choice(chars) for _ in range(50)])
-    f.write(f"SECRET_KEY = '{passw}'\n")
-    f.close()
+    with open("settings/local_settings.py", "w") as f:
+        chars = string.ascii_uppercase + string.ascii_lowercase + string.digits + "_@#&!?-#$"
+        passw = "".join([secrets.choice(chars) for _ in range(50)])
+        f.write(f"SECRET_KEY = '{passw}'\n")
+        f.close()
 
 
 input("SQLite3にてデータベースを作成します。Enterを押してください。")

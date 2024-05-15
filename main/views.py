@@ -63,7 +63,7 @@ def getRegistForms(RegistID, contexts, request):
             contexts["post"] = post
             contexts["as_staff"] = True
         else:
-            return HttpResponse("不正なアクセス、もしくは権限がないシートです")
+            raise AttributeError
     if post.company is not None:
         C_Form = CompaniesForm(instance=post.company)
         contexts["C_Form"] = C_Form
@@ -523,7 +523,12 @@ def create_complete(request):
 
 
 def edit_posts(request, id):
-    contexts = getRegistForms(id, collect_regnum(request), request)
+    try:
+        contexts = getRegistForms(id, collect_regnum(request), request)
+    except RegistSets.DoesNotExist as e:
+        return HttpResponse(f"<h4>権限がない、もしくは不正なアクセスです。({e})</h4><button onclick='window.location=`/`'>戻る</button>")
+    if contexts["as_staff"] is True:
+        return HttpResponse("<h3>管理者は、ユーザーの登録情報シートに変更を加えることができません</h3><button onclick='window.location=`/`'>戻る</button>")
     NotFound = []
     contexts["R_id"] = id
     if "A_Form" not in contexts:

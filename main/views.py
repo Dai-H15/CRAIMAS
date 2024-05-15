@@ -279,6 +279,8 @@ def view_my_post(request, id):
         contexts = getRegistForms(id, contexts, request)
     except RegistSets.DoesNotExist:
         return redirect(to="mypage")
+    except AttributeError:
+        return HttpResponse("<h3>アクセス権限がありません。ログイン情報を確かめるか、管理者に問い合わせてください</h3>")
     return render(request, "main/mypage/view_my_post.html", contexts)
 
 
@@ -834,11 +836,10 @@ def view_interview(request, id):
             inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             contexts["as_staff"] = False
         except (Interview.DoesNotExist, AttributeError):
-            try:
-                if request.user.is_staff:  # すべてのユーザーの面談録の閲覧が可能
-                    contexts["as_staff"] = True
-                    inst = Interview.objects.get(InterviewID=id)
-            except AttributeError:
+            if request.user.is_staff:  # すべてのユーザーの面談録の閲覧が可能
+                contexts["as_staff"] = True
+                inst = Interview.objects.get(InterviewID=id)
+            else:
                 return HttpResponse("アクセス権限がありません。操作は取り消されました。アカウントを確認するか、管理者に連絡してください")
         interview = InterviewForm(instance=inst)
         contexts["interview"] = interview

@@ -833,7 +833,7 @@ def view_interview(request, id):
         try:
             inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             contexts["as_staff"] = False
-        except Interview.DoesNotExist:
+        except (Interview.DoesNotExist, AttributeError):
             try:
                 if request.user.is_staff:  # すべてのユーザーの面談録の閲覧が可能
                     contexts["as_staff"] = True

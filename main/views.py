@@ -651,7 +651,10 @@ def search_company(request, return_to):
                         contexts["message"] = (f"情報を取得できませんでした。ネットワーク接続、ファイアウォールの設定を確認し、再度お試しください。")
                     except KeyError:
                         contexts["results"] = []
-                        contexts["message"] = (f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})")
+                        if r.status_code == 401:
+                            contexts["message"] = (f" APIキーが不正です。管理者にご連絡ください。(code: {r.status_code})")
+                        else:
+                            contexts["message"] = (f"条件に一致する検索結果がありませんでした。再度確認してください (code: {r.status_code})")
     contexts["form"] = form
     return render(request, "main/regist/sets/search_company.html", contexts)
 
@@ -831,9 +834,12 @@ def view_interview(request, id):
             inst = Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             contexts["as_staff"] = False
         except Interview.DoesNotExist:
-            if request.user.is_staff:  # すべてのユーザーの面談録の閲覧が可能
-                contexts["as_staff"] = True
-                inst = Interview.objects.get(InterviewID=id)
+            try:
+                if request.user.is_staff:  # すべてのユーザーの面談録の閲覧が可能
+                    contexts["as_staff"] = True
+                    inst = Interview.objects.get(InterviewID=id)
+            except AttributeError:
+                return HttpResponse("アクセス権限がありません。操作は取り消されました。アカウントを確認するか、管理者に連絡してください")
         interview = InterviewForm(instance=inst)
         contexts["interview"] = interview
         contexts["inst"] = inst
@@ -980,8 +986,8 @@ def json_import(request):
                 data["Interviewer"] if "Interviewer" in data else "None"
             )
             return HttpResponse("<script>window.opener.location.reload();</script>")
-        except KeyError:
-            contexts["message"] = "インポートに失敗しました。ファイルを確かめて再度実行するか、手入力にて登録してください"
+        except (KeyError, UnicodeDecodeError) as e:
+            contexts["message"] = f"インポートに失敗しました。ファイルを確かめて再度実行するか、手入力にて登録してください (Detail: {e})"
     return render(request, "main/regist/sets/json_import.html", contexts)
 
 

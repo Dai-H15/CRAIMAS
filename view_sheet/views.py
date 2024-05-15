@@ -489,31 +489,35 @@ def export_customsheet(request):
 
 def import_customsheet(request):
     contexts = collect_regnum(request)
-    if request.method == "POST":
-        num_data = 0
-        ok_data = 0
-        name_ok_data = []
-        name_ng_data = []
-        data = json.loads(request.FILES["file"].read())
-        for s in data["sheets"]:
-            num_data += 1
-            if CustomSheet.objects.filter(sheet_name=s["sheet_name"], by_U_ID=request.user.U_ID).count() > 0:
-                name_ng_data.append(s["sheet_name"])
-                continue
-            CustomSheet.objects.create(
-                sheet_id=secrets.token_hex(32),
-                sheet_name=s["sheet_name"],
-                model=s["model"],
-                selected_field=s["selected_field"],
-                view_settings=s["view_settings"],
-                by_U_ID=request.user.U_ID,
-                search_settings=s["search_settings"],
-            )
-            name_ok_data.append(s["sheet_name"])
-            ok_data += 1
-        contexts["num_data"] = num_data
-        contexts["ok_data"] = ok_data
-        contexts["name_ok_data"] = name_ok_data
-        contexts["name_ng_data"] = name_ng_data
-        return render(request, "view/import_result.html", contexts)
+        if request.method == "POST":
+            num_data = 0
+            ok_data = 0
+            name_ok_data = []
+            name_ng_data = []
+            try:
+                data = json.loads(request.FILES["file"].read())
+                for s in data["sheets"]:
+                    num_data += 1
+                    if CustomSheet.objects.filter(sheet_name=s["sheet_name"], by_U_ID=request.user.U_ID).count() > 0:
+                        name_ng_data.append(s["sheet_name"])
+                        continue
+                    CustomSheet.objects.create(
+                        sheet_id=secrets.token_hex(32),
+                        sheet_name=s["sheet_name"],
+                        model=s["model"],
+                        selected_field=s["selected_field"],
+                        view_settings=s["view_settings"],
+                        by_U_ID=request.user.U_ID,
+                        search_settings=s["search_settings"],
+                    )
+                    name_ok_data.append(s["sheet_name"])
+                    ok_data += 1
+            except UnicodeDecodeError as e:
+                return HttpResponse("<p> ファイルの構成が不正です。</p>")
+            contexts["num_data"] = num_data
+            contexts["ok_data"] = ok_data
+            contexts["name_ok_data"] = name_ok_data
+            contexts["name_ng_data"] = name_ng_data
+            return render(request, "view/import_result.html", contexts)
+    
     return render(request, "view/import_customsheet.html", contexts)

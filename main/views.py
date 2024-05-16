@@ -102,7 +102,7 @@ def index(request):
         del request.session["Interviews"]
     if "result_data" in request.session:
         del request.session["result_data"]
-    if "Interviewers" in request.session:
+    if "ers" in request.session:
         del request.session["Interviewers"]
     contexts = collect_regnum(request)
     return render(request, "main/index.html", contexts)
@@ -776,12 +776,12 @@ def interview_main(request, id):
     contexts = collect_regnum(request)
     try:
         R_sets = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
-        interviews = Interview.objects.filter(RegistID=R_sets, by_U_ID=request.user.U_ID)
+        interviews = Interview.objects.filter(RegistID=R_sets, by_U_ID=request.user.U_ID).order_by("date")
         contexts["as_staff"] = False
     except RegistSets.DoesNotExist:
         if request.user.is_staff:
             R_sets = RegistSets.objects.get(RegistID=id)
-            interviews = Interview.objects.filter(RegistID=R_sets)
+            interviews = Interview.objects.filter(RegistID=R_sets).order_by("date")
             contexts["as_staff"] = True
         else:
             return HttpResponse("存在しない登録情報シート、もしくは閲覧権限がありません。")

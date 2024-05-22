@@ -46,7 +46,7 @@
                 {% for f in interview %}
                 {% if f.name == "zipcode" %}
                 {% bootstrap_field f %}
-                <button type="button" class = "btn btn-warning" onclick="search_zipcode()">住所を検索</button>
+                <button type="button" class = "btn btn-warning" onclick="search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
                 {% elif f.name == "interviewer" %}
                 {% bootstrap_field f %}
                 <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_interviewer('{% url "prof_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> 担当者プロフィールを検索</button>

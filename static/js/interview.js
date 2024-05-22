@@ -13,9 +13,9 @@ function open_url(id,name,width,height){
 };
 
 let wind3;
-function search_zipcode(){
+function search_zipcode(k){
     let zipcode = document.getElementById('id_zipcode').value;
-    let d_url = "{% url 'get_address' 'placeholder' %}"
+    let d_url = k
     let url = d_url.replace('placeholder', zipcode);
     wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
 

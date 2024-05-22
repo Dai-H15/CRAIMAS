@@ -18,6 +18,9 @@ if not os.path.exists("settings/local_settings.py"):
         chars = string.ascii_uppercase + string.ascii_lowercase + string.digits + "_@#&!?-#$"
         passw = "".join([secrets.choice(chars) for _ in range(50)])
         f.write(f"SECRET_KEY = '{passw}'\n")
+        from cryptography.fernet import Fernet
+        sec = Fernet.generate_key()
+        f.write(f"ENCRYPT_KEY = {sec}\n")
         f.close()
 
 

@@ -4,28 +4,14 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 ">
-    <title>CRAIMAS 【クレイマス】</title>
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
+    {% include "main/html_head.html" %}
+
 </head>
 
 <body>
     <div class="container-fluid">
 
-        <div class="row border ">
-            <!-- ヘッダー -->
-            <h2 class="text-center">CRAIMAS 【クレイマス】 </h2>
-            <div class="row text-center ">
-                <div class="col">
-                    <h4>現在の登録社数: {{num_c}}社</h4>
-                </div>
-                <div class="col">
-                    <h4>現在の活動中件数: {{num_a}}件</h4>
-                </div>
-            </div>
-        </div>
+        {% include "main/header.html" %}
         <div class="row m-2">
             {% if message %}<div class="alert alert-{{message.type}} text-center" role="alert">{% for text in message.texts %} <b>{{text}}</b><br> {% endfor %}</div>{% endif %}
             <div class  = "text-center"><h4>{{company}}</h4></div>

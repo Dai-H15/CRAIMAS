@@ -3,28 +3,13 @@
 <!DOCTYPE html>
 <html lang="jp">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        {% bootstrap_css %}
-        {% bootstrap_javascript %}
+        {% include "main/html_head.html" %}
         <link rel="stylesheet" href="{% static "css/textarea.css" %}">
     </head>
 
     <body>
     <div class = "container-fluid">
-        <div class="row border">
-            <!-- ヘッダー -->
-            <h2 class="text-center">CRAIMAS 【クレイマス】 </h2>
-            <div class="row text-center">
-                <div class="col">
-                    <h4>現在の登録社数: {{num_c}}社</h4>
-                </div>
-                <div class="col">
-                    <h4>現在の活動中件数: {{num_a}}件</h4>
-                </div>
-            </div>
-        </div>
+        {% include "main/header.html" %}
         <div class = "row text-center p-3">
             <div class = "col">
                 <h3>一括登録を行います</h3>

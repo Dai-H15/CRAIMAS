@@ -10,7 +10,7 @@
                     {% if  user.is_authenticated %}
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="col text-center p-3 border">
+                        <button type="submit" class="col text-center p-3 border" style="background: none!important; border: none; padding: 0!important; font-family: arial, sans-serif; color: #069; text-decoration: underline; cursor: pointer;">
                             <h3>ログアウト</h3>
                         </button>
                     </form>

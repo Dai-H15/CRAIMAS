@@ -1,19 +1,19 @@
 FROM python:3.11-slim
 
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV PYTHONBUFFERED 1
 
-WORKDIR /BizIntelliScan
+WORKDIR /CRAIMAS
 
-COPY . /BizIntelliScan
+COPY . /CRAIMAS
 
-RUN pip install -r requirments.txt
+RUN pip install -r requirements.txt
 
-RUN python manage.py makemigrations authUser main task_calendar view_sheet
-
-RUN python manage.py migrate
+RUN python install_linux.py
 
 RUN python manage.py collectstatic --noinput
 
-CMD ["gunicorn", "--bind", "127.0.0.1:8888", "settings.wsgi"]
-
-EXPOSE 8888
+EXPOSE 8000

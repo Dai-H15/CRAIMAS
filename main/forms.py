@@ -60,8 +60,8 @@ class D_CompanyForm(forms.ModelForm):
         labels = {
             "founded": "設立・創立年",
             "fonded_t": "設立・創立年タグ",
-            "capital": "資本金",
-            "sales_n": "売上高",
+            "capital": "資本金（万円）",
+            "sales_n": "売上高（万円）",
             "sales_y": "実績年度",
             "sales_t": "売上高タグ",
             "employee_n": "従業員数",

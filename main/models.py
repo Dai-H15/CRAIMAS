@@ -114,8 +114,8 @@ class D_Company(models.Model):
         max_length=50, choices=C_Tags["founded_t"], default="null", verbose_name="設立・創立年タグ"
     )
 
-    capital = models.IntegerField(verbose_name="資本金", default=0)
-    sales_n = models.IntegerField(verbose_name="売上高", default=0)
+    capital = models.IntegerField(verbose_name="資本金（万円）", default=0)
+    sales_n = models.IntegerField(verbose_name="売上高（万円）", default=0)
     sales_y = models.IntegerField(verbose_name="実績年度", default=0)
     sales_t = models.CharField(max_length=50, choices=C_Tags["sales_t"], default="None", verbose_name="売上高タグ")
 

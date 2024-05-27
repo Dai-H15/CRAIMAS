@@ -2,14 +2,17 @@ from django.shortcuts import render, HttpResponse
 from main.views import collect_regnum
 from main.models import RegistSets, Interview
 from authUser.models import CustomUser
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
+@login_required
 def management(request):
     contexts = collect_regnum(request)
     return render(request, "index.html", contexts)
 
 
+@login_required
 def all_sheets(request):
     if request.user.is_staff:
         contexts = collect_regnum(request)
@@ -31,6 +34,7 @@ def all_interviewer(request):
     return render(request, "all_interviewer.html", contexts)
 
 
+@login_required
 def admin_all_sheet(request, sheet_from, where):
     contexts = collect_regnum(request)
     if request.user.is_staff:

@@ -114,6 +114,7 @@ def regist_base(request):
     return render(request, "main/regist/regist_base.html", contexts)
 
 
+@login_required
 def regist_all(request):
     contexts = collect_regnum(request)
     if request.method == "GET":
@@ -273,6 +274,7 @@ def mypage(request):
     return render(request, "main/mypage/mypage.html", contexts)
 
 
+@login_required
 def view_my_post(request, id):
     contexts = {}
     try:
@@ -284,6 +286,7 @@ def view_my_post(request, id):
     return render(request, "main/mypage/view_my_post.html", contexts)
 
 
+@login_required
 def delete_posts(request, id):
     contexts = getRegistForms(id, {}, request)
     if request.method == "POST":
@@ -522,6 +525,7 @@ def create_complete(request):
     return render(request, "main/regist/sets/create_complete.html", contexts)
 
 
+@login_required
 def edit_posts(request, id):
     try:
         contexts = getRegistForms(id, collect_regnum(request), request)
@@ -622,6 +626,7 @@ def edit_posts(request, id):
     return render(request, "main/mypage/edit_posts.html", contexts)
 
 
+@login_required
 def search_company(request, return_to):
     contexts = collect_regnum(request)
     contexts["return_to"] = return_to
@@ -696,6 +701,7 @@ def get_more_compinfo(request, corporate_number, return_to):
     return render(request, "main/regist/sets/get_more_compinfo.html", contexts)
 
 
+@login_required
 def set_searched_data(request):
     if request.method == "POST":
         return_to = request.POST["return_to"]
@@ -772,6 +778,7 @@ def set_searched_data(request):
         return redirect(return_to)
 
 
+@login_required
 def interview_main(request, id):
     contexts = collect_regnum(request)
     try:
@@ -790,6 +797,7 @@ def interview_main(request, id):
     return render(request, "main/interview/interview_main.html", contexts)
 
 
+@login_required
 def interview_create(request, id):
     contexts = collect_regnum(request)
     form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64)})
@@ -811,6 +819,7 @@ def interview_create(request, id):
     return render(request, "main/interview/interview_create.html", contexts)
 
 
+@login_required
 def delete_interview(request, id):
     try:
         Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID).delete()
@@ -834,6 +843,7 @@ def get_address(request, zipcode):
     return render(request, "main/interview/get_address.html", contexts)
 
 
+@login_required
 def view_interview(request, id):
     try:
         contexts = collect_regnum(request)
@@ -874,6 +884,7 @@ def calc(request):
     return render(request, "main/regist/calc.html", contexts)
 
 
+@login_required
 def export_sheet(request, id):
     contexts = {}
     if request.method == "POST":
@@ -971,6 +982,7 @@ def export_sheet(request, id):
     return render(request, "main/mypage/export_sheet.html", contexts)
 
 
+@login_required
 def json_import(request):
     contexts = {}
     if request.method == "POST":
@@ -997,6 +1009,7 @@ def json_import(request):
     return render(request, "main/regist/sets/json_import.html", contexts)
 
 
+@login_required
 def change_active(request):
     if request.method == "POST":
         RegistSets.objects.filter(RegistID=request.POST.get("RegistID"), by_U_ID=request.user.U_ID).update(
@@ -1005,10 +1018,12 @@ def change_active(request):
     return HttpResponse("<script>window.opener.location.reload()</script>")
 
 
+@login_required
 def get_interviewer(request, id):
     return JsonResponse({"interviewer": RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.contact})
 
 
+@login_required
 def prof_interviewer(request, company_id, i_name):
     contexts = collect_regnum(request)
     try:

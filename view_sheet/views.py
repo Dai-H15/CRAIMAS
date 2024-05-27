@@ -312,6 +312,7 @@ def view_main(request, control, option):
     return render(request, "view/main.html", contexts)
 
 
+@login_required
 def create_custom_sheet(request):
     contexts = collect_regnum(request)
     contexts["model_names"] = {
@@ -451,6 +452,7 @@ def create_custom_sheet(request):
     return render(request, "view/customsheet/create.html", contexts)
 
 
+@login_required
 def delete_custom_sheet(request, id):
     contexts = collect_regnum(request)
     cs = CustomSheet.objects.get(sheet_id=id, by_U_ID=request.user.U_ID)
@@ -469,6 +471,7 @@ def delete_custom_sheet(request, id):
     return render(request, "view/customsheet/delete.html", contexts)
 
 
+@login_required
 def export_customsheet(request):
     contexts = collect_regnum(request)
     if request.method == "POST":
@@ -487,6 +490,7 @@ def export_customsheet(request):
     return render(request, "view/export_customsheet.html", contexts)
 
 
+@login_required
 def import_customsheet(request):
     contexts = collect_regnum(request)
     if request.method == "POST":

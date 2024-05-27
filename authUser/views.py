@@ -8,15 +8,17 @@ import secrets
 
 
 def signup_view(request):
+    contexts = {}
     if request.method == "POST":
-
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.U_ID = secrets.token_hex(32)
+            user.is_active = False
             user.save()
-            login(request, user)
-            return redirect(to="/")
+            contexts["U_ID"] = user.U_ID
+            contexts["username"] = user.username
+            return render(request, "registration/signup_done.html", contexts)
 
     else:
         form = SignupForm()
@@ -24,3 +26,7 @@ def signup_view(request):
     param = {"form": form}
 
     return render(request, "registration/signup.html", param)
+
+
+def done_view(request):
+    pass

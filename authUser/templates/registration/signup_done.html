@@ -1,0 +1,21 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+    <head>
+        {% include "main/html_head.html" %}
+    </head>
+    
+    <body>
+        <div class = "container-fluid px-0">
+            <h3 class = "text-center border-bottom  py-3">ユーザー登録完了</h3>
+            <div class = "row">
+                <div class = "col border text-center p-3">
+                    <h4>ユーザー登録が完了しました</h4>
+                    <p>利用を開始するには、<a href="mailto:s1f102200828@iniad.org?subject=CRAIMAS ユーザー登録申請メール&body=申請にあたって、大学名を記載してください。(正規利用かの判定のため)【所属大学名】:  〇〇大学 %0D%0A %0D%0A  %0D%0A 連絡事項等がありましたら以下の部分に入力してください。%0D%0A 【管理者への連絡事項】: %0D%0A %0D%0A ________________________ %0D%0A 以下の内容は変更せずに送信してください。また、第三者と共有しないようご注意ください。 %0D%0A 【ユーザー名】: {{username}} %0D%0A 【トークン】: {{U_ID}} %0D%0A">こちら</a>から管理者宛に<b>メールを送信してユーザーを有効化する必要があります。</b></p>
+                    <p>承認され次第、ログインが可能となります。<b>登録したメールアドレスから送信して<b>必ず<b>認証を行ってください。</b></p>
+            </div>
+            </div>
+    </div>
+
+</body>
+</html>

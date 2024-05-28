@@ -57,7 +57,7 @@
         var input2 = document.getElementById("2");
         var value1 = input1.value;
         var value2 = input2.value;
-        var result = value1 * 10000 + value2;
+        var result = Number(value1 * 10000) + Number(value2);
         if (capital.checked) {
           window.opener.document.getElementById("id_capital").value = result;
         } else if (sales.checked) {

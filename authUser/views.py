@@ -30,3 +30,8 @@ def signup_view(request):
 
 def done_view(request):
     pass
+
+
+def policy_view(request):
+    contexts = {}
+    return render(request, "registration/policy.html", contexts)

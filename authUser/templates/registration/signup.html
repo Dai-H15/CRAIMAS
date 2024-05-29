@@ -6,7 +6,7 @@
         {% include "main/html_head.html" %}
     </head>
     <body>
-        <div class = "container">
+        <div class = "container my-5">
                 <h2 class = "row mb-3">ユーザー登録申請</h2>
                 <div class = "row mb-3"></div>
                 <h5> CRAIMAS 利用申請フォームです</h5>
@@ -23,11 +23,16 @@
                     </div>
                 {% endfor %}
                 </div>
-                <div class = "row"><button type = "submit" class = "btn btn-outline-success btn-lg my-2">新規登録</button></div>
-                    </form>
+                <h5 class = "m-3">CRAIMASをご利用いただくには、以下に定める利用規約に同意頂く必要があります</h5>
+                <h5 class = "m-3">必ず確認し、同意の上で新規登録を行ってください。</h5>
+                <div class = "border my-3" style = "overflow-y: scroll; height: 300px">
+                    {% include "registration/policy.html" %}
                 </div>
-                    <div class = "row">
-                    <a href="{% url "index" %}" class = "col-2 mx-auto p-2 btn btn-primary">ホームへ戻る</a>
+                <div class = "row my-2">
+                    <button type = "submit" class = " mx-2 col btn btn-outline-success ">利用規約に同意し、新規登録</button>
+                    <a href="{% url "index" %}" class = "mx-2 col  btn btn-primary">ホームへ戻る</a>
+                </div>
+                    </form>
                 </div>
             </div>
     </div>

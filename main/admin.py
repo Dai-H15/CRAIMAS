@@ -5,8 +5,8 @@ from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Reg
 
 class RegistSetsAdmin(admin.ModelAdmin):
     model = RegistSets
-    list_display = ("company", "by_U_ID", "created")
-    search_fields = ["company", "by_U_ID"]
+    list_display = ("company__name", "by_U_ID", "created")
+    search_fields = ["company__name", "by_U_ID"]
 
 
 admin.site.register(Companies)

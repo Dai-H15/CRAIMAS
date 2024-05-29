@@ -9,4 +9,6 @@ if not os.path.exists("settings/local_settings.py"):
         from cryptography.fernet import Fernet
         sec = Fernet.generate_key()
         f.write(f"ENCRYPT_KEY = {sec}\n")
+        if input("is this DEV server ? y/n >>>") == "n":
+            f.write(f"PG_PSWD = {'pls insert here'}\n")
         f.close()

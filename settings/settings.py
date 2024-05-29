@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from settings.local_settings import *
-
+import settings.local_settings as local_settings
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
-
+SECRET_KEY = local_settings.SECRET_KEY
+ENCRYPT_KEY = local_settings.ENCRYPT_KEY
 
 # Application definition
 
@@ -81,13 +81,13 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': "postgres",
         'USER': "postgres",
-        'PASSWORD': "postgres",
+        'PASSWORD': local_settings.PG_PSWD,
         'HOST': "postgres",
         'PORT': "5432",
     }
@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-"""
+
 
 
 # Password validation

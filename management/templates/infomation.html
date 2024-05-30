@@ -1,5 +1,5 @@
 {% load django_bootstrap5 %}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
     <head>{% include "main/html_head.html" %}</head>
@@ -7,28 +7,34 @@
     <div class="container-fluid">
         {% include "main/header.html" %}
         <div class = "row m-3 border rounded p-3">
-            <h4 class = "border-bottom">お知らせ投稿一覧</h4>
+            <h4 class = "border-bottom">投稿一覧</h4>
             {% if infomations %}
             
             <div
                 class="table-responsive"
             >
                 <table
-                    class="table table-primary"
+                    class="table"
                 >
                     <thead>
-                        <tr>
+                        <tr class = "table-primary">
+                            <th scope="col">投稿日時</th>
                             <th scope="col">タイトル</th>
                             <th scope="col">カテゴリ</th>
                             <th scope="col">内容</th>
+                            <th scope="col">公開範囲</th>
+                            <th scope="col" class ="text-center">操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for infomation in infomations %}
-                        <tr class="">
-                            <td scope="row">{{infomation.title}}</td>
+                        <tr class="{% if infomation.is_active %} table-primary {% else %} bg-secondary{% endif %}">
+                            <td scope="row">{{infomation.created_at}}</td>
+                            <td>{{infomation.title}}</td>
                             <td>{{infomation.category}}</td>
                             <td> {{infomation.content}} </td>
+                            <td>{% if infomation.is_public %}全体公開 {% else %} 限定公開 {% endif %}</td>
+                            <td><button class = "btn btn-success mx-2" onclick="conf_infomation('{{infomation.id}}', 'change_public', '{% url "conf_infomation" %}', '{{csrf_token}}')">範囲切替</button><button class = "btn btn-info mx-2" onclick="conf_infomation('{{infomation.id}}', 'change_show', '{% url "conf_infomation" %}', '{{csrf_token}}')">公開切替</button><button class = "btn btn-danger" onclick="conf_infomation('{{infomation.id}}', 'delete', '{% url "conf_infomation" %}', '{{csrf_token}}')">削除</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -39,7 +45,7 @@
             {% endif %}
         </div>
         <div class="row m-2">
-            <form action="{% url "infomation" %}" method="POST">
+            <form action="{% url "create_infomation" %}" method="POST">
                 {% csrf_token %}
                 <div class="container">
                     {% for f in form %}
@@ -51,7 +57,7 @@
         </div>
     </div>
     </div>
-
+<script src="{% static "js/infomation.js" %}"></script>
 </body>
 
 </html>

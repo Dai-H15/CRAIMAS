@@ -7,5 +7,6 @@ urlpatterns = [
     path("management_sheets/", views.management_sheets, name="management_sheets"),
     path("all_interviewer", views.all_interviewer, name="all_interviewer"),
     path("admin_all_sheet/<str:sheet_from>/<str:where>", views.admin_all_sheet, name="admin_all_sheet"),
-    path("infomation/", views.infomation, name="infomation"),
+    path("infomation/", views.create_infomation, name="create_infomation"),
+    path("conf_infomation/", views.conf_infomation, name="conf_infomation"),
 ]

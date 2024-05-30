@@ -106,9 +106,14 @@ def index(request):
     if "ers" in request.session:
         del request.session["Interviewers"]
     contexts = collect_regnum(request)
-    contexts["infomation_news"] = InfomationModel.objects.filter(category="news")
-    contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance")
-    contexts["infomation_release"] = InfomationModel.objects.filter(category="release")
+    if request.user.is_authenticated:
+        contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_active=True)
+        contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_active=True)
+        contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_active=True)
+    else:
+        contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_public=True, is_active=True)
+        contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_public=True, is_active=True)
+        contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_public=True, is_active=True)
     return render(request, "main/index.html", contexts)
 
 

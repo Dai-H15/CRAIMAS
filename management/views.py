@@ -64,14 +64,14 @@ def admin_all_sheet(request, sheet_from, where):
 
 
 @login_required
-def infomation(request):
+def create_infomation(request):
     contexts = collect_regnum(request)
     if request.user.is_superuser:
         if request.method == "POST":
             form = InfomationForm(request.POST)
             if form.is_valid():
                 form.save()
-                return redirect(to="infomation")
+                return redirect(to="create_infomation")
             else:
                 contexts["form"] = form
                 return render(request, "infomation.html", contexts)
@@ -81,3 +81,35 @@ def infomation(request):
         return render(request, "infomation.html", contexts)
     else:
         return redirect(to="index")
+
+
+def conf_infomation(request):
+    if request.user.is_superuser:
+        if request.POST.get("operation") == "delete":
+            s = delete_infomation(request)
+        elif request.POST.get("operation") == "change_show":
+            s = change_show_infomation(request)
+        elif request.POST.get("operation") == "change_public":
+            s = change_public(request)
+        return s
+    else:
+        return redirect(to="index")
+
+
+def delete_infomation(request):
+    InfomationModel.objects.get(id=request.POST.get("id")).delete()
+    return redirect("create_infomation")
+
+
+def change_show_infomation(request):
+    info = InfomationModel.objects.get(id=request.POST.get("id"))
+    info.is_active = True if not info.is_active else False
+    info.save()
+    return redirect("create_infomation")
+
+
+def change_public(request):
+    info = InfomationModel.objects.get(id=request.POST.get("id"))
+    info.is_public = True if not info.is_public else False
+    info.save()
+    return redirect("create_infomation")

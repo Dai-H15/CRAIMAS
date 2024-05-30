@@ -4,18 +4,14 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRAIMAS 【クレイマス】</title>
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
+    {% include "main/html_head.html" %}
     <link rel="stylesheet" href="{% static 'css/textarea-interview.css' %}">
 </head>
 
 <body>
     <div class="container-fluid" id = "form-container">
 
-        {% include "main/header.html" %}
+        {% include "main/header_newtab.html" %}
         <div class="row m-2">
             {% if as_staff %}
             <div class = "text-center alert alert-warning">

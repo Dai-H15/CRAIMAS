@@ -4,17 +4,13 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 ">
-    <title>CRAIMAS 【クレイマス】</title>
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
+    {% include "main/html_head.html" %}
 </head>
 
 <body>
     <div class="container-fluid">
 
-        {% include "main/header.html" %}
+        {% include "main/header_newtab.html" %}
         <div class="row m-2">
             {% if errors %}<div class="alert alert-danger text-center list-unstyled" role="alert">{% for error in errors %}{{error}} {% endfor %}</div>{% endif %}
             <div class  = "text-center"><h4 class = "border-bottom p-3">{{name}}</h4></div>

@@ -11,7 +11,7 @@
 <body>
     <div class="container-fluid">
 
-        {% include "main/header.html" %}
+        {% include "main/header_newtab.html" %}
         <div class="row m-2">
             {% if message %}<div class="alert alert-{{message.type}} text-center" role="alert">{% for text in message.texts %} <b>{{text}}</b><br> {% endfor %}</div>{% endif %}
             <div class  = "text-center"><h4>{{company}}</h4></div>

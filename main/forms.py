@@ -171,8 +171,8 @@ class InterviewForm(forms.ModelForm):
                     "review": "面談感想"
                   }
         widgets = {
-            "date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-            "aspire": forms.NumberInput(attrs={ "min": "0", "max": "100", "step": "1"}),
+            "date": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%d %H:%M"),
+            "aspire": forms.NumberInput(attrs={"min": "0", "max": "100", "step": "1"}),
             "InterviewID": forms.HiddenInput()
 
         }

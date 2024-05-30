@@ -27,11 +27,11 @@ import secrets, requests, csv, urllib, json
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+import datetime as dt
 from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.http import JsonResponse
 from django.utils import timezone
-import csv
 
 # Functions
 
@@ -271,6 +271,7 @@ def mypage(request):
     n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
     contexts["n_regist"] = n_regist
     contexts["regsets"] = collect_regsets(user)
+    contexts["l_days"] = (user.ExpiryDate - dt.date.today()).days
     return render(request, "main/mypage/mypage.html", contexts)
 
 
@@ -660,7 +661,7 @@ def search_company(request, return_to):
                         contexts["results"] = r.json()["hojin-infos"]
                     except requests.exceptions.ConnectionError:
                         contexts["results"] = []
-                        contexts["message"] = (f"情報を取得できませんでした。ネットワーク接続、ファイアウォールの設定を確認し、再度お試しください。")
+                        contexts["message"] = ("情報を取得できませんでした。ネットワーク接続、ファイアウォールの設定を確認し、再度お試しください。")
                     except KeyError:
                         contexts["results"] = []
                         if r.status_code == 401:
@@ -800,7 +801,7 @@ def interview_main(request, id):
 @login_required
 def interview_create(request, id):
     contexts = collect_regnum(request)
-    form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64)})
+    form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64), "date": timezone.now()})
     name = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.name
     contexts["form"] = form
     contexts["name"] = name

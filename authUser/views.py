@@ -1,9 +1,10 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .forms import SignupForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 import secrets
-
+import datetime
 # Create your views here.
 
 
@@ -35,3 +36,19 @@ def done_view(request):
 def policy_view(request):
     contexts = {}
     return render(request, "registration/policy.html", contexts)
+
+
+@login_required
+def extension_view(request):
+    contexts = {}
+    user = request.user
+    contexts["ExpiryDate"] = user.ExpiryDate
+    contexts["l_days"] = (user.ExpiryDate - datetime.date.today()).days
+    contexts["ExtensionDate"] = (user.ExpiryDate + datetime.timedelta(days=30)) if contexts["l_days"] < 20 else "有効日数が20日以上です。"
+    contexts["can_extension"] = True if contexts["l_days"] < 20 else False
+    if request.method == "POST":
+        if contexts["can_extension"]:
+            user.ExpiryDate = user.ExpiryDate + datetime.timedelta(days=30)
+            user.save()
+            return HttpResponse('<script>window.opener.location.reload();</script>')
+    return render(request, "registration/extension.html", contexts)

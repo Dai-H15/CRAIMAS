@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+    <head>
+        {% include "main/html_head.html" %}
+    </head>
+    
+    <body>
+        <div class = "container-fluid px-0">
+            <h3 class = "text-center border-bottom  py-3">アカウント有効期限延長</h3>
+            <div class = "row">
+                
+                <div class = "col border text-center p-3">
+                    <h6>現在、無償提供中のため費用無しで延長を行うことができます</h6>
+                    <p>不必要なアカウントの管理を削減するため、<br>手動での有効期限の延長をお願いしております。</p>
+                    <p>一回の手続きで30日分アカウントの利用期限を延長できます<br>ただし、残り日数が20日以上ある場合は延長できません</p>
+                    <h6>延長する場合は、以下の利用規約に同意し実行ボタンを押してください。</h6>
+            </div>
+            </div>
+            <div class = "row border border-3 m-3 p-3">
+                <h5 class = " border-bottom border-2 my-3">アカウント情報</h5>
+                <table>
+                    <tr>
+                        <th>ユーザー名</th>
+                        <th>アカウント有効期限 延長前 ⇒</th>
+                        <th>アカウント有効期限 延長後</th>
+                    </tr>
+                    <tr>
+                        <td>{{user}}</td>
+                        <td>{{ExpiryDate}} 残り{{l_days}}日</td>
+                        <td>{{ExtensionDate}}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class = "row">
+            <div class = "col-11 border m-4" style = "overflow-y: scroll; height: 300px; overflow-x:clip" >
+                {% include "registration/policy.html" %}
+            </div>
+                {% if can_extension %}
+                <button class = "col-6 mx-auto btn btn-outline-success mb-3" onclick = "apply_extension('{% url 'extension' %}', '{{ csrf_token }}')">利用規約に同意し有効期限を延長</button>
+                <script src="{% static "js/apply_extension.js" %}"></script>
+                {% else %}
+                <button class = "col-6 mx-auto btn btn-danger disabled mb-3" role = "button" aria-disabled="true"> 有効日数が20日以上です。<br>延長できません。 </button>
+                {% endif %}
+            </div>
+    </div>
+
+</body>
+</html>

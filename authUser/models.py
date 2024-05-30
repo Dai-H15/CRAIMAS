@@ -11,11 +11,3 @@ class CustomUser(AbstractUser):
     gBIZINFO_key = models.CharField(max_length=100)
     ExpiryDate = models.DateField(null=False, blank=False, default=datetime.date.today() + datetime.timedelta(days=20), verbose_name="アカウント利用期限")
     REQUIRED_FIELDS = ["email", "y_graduation", "gBIZINFO_key"]
-
-    def is_account_expired(self):
-        return self.ExpiryDate < datetime.date.today()
-
-    def save(self, *args, **kwargs):
-        if self.is_account_expired():
-            self.is_active = False
-        super().save(*args, **kwargs)

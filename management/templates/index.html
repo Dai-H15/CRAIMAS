@@ -10,7 +10,7 @@
         <div class = "row p-3 text-center">
             <h3>管理者用サイト</h3>
             <div class = "row ">
-
+            <a href="{% url "infomation" %}"><div class = "col border m-3 p-3 "><h5>お知らせ管理</h5></div></a>
             <a href="{% url "all_sheets" %}"><div class = "col border m-3 p-3 "><h5>全登録シート閲覧</h5></div></a>
             <a href="{% url "management_sheets" %}"><div class = "col border m-3 p-3"><h5>統括シート閲覧</h5></div></a>
             <a href="{% url "all_interviewer" %}"><div class = "col border m-3 p-3 "><h5>全採用担当者閲覧</h5></div></a>
@@ -19,6 +19,12 @@
     </div>
     <div class = "row">
         <ul class = "list-unstyled">
+            <li><h5>お知らせ管理</h5></li>
+            <ul>
+                <li><p>利用者に対して表示するお知らせを管理できます</p></li>
+                <li><p> カテゴリごとの表示、表示・非表示の設定、表示させるユーザーの設定などを行うことができます </p></li>
+
+            </ul>
             <li><h5>全登録シート閲覧</h5></li>
             <ul>
                 <li><p>登録されている全ユーザーの企業情報シートを閲覧することができます</p></li>

@@ -12,6 +12,7 @@ from .models import (
 )
 
 from authUser.models import CustomUser
+from management.models import InfomationModel
 from .forms import (
     CompaniesForm,
     AboutForm,
@@ -105,6 +106,9 @@ def index(request):
     if "ers" in request.session:
         del request.session["Interviewers"]
     contexts = collect_regnum(request)
+    contexts["infomation_news"] = InfomationModel.objects.filter(category="news")
+    contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance")
+    contexts["infomation_release"] = InfomationModel.objects.filter(category="release")
     return render(request, "main/index.html", contexts)
 
 

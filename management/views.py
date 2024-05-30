@@ -1,8 +1,10 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from main.views import collect_regnum
 from main.models import RegistSets, Interview
 from authUser.models import CustomUser
 from django.contrib.auth.decorators import login_required
+from .forms import InfomationForm
+from .models import InfomationModel
 # Create your views here.
 
 
@@ -59,3 +61,23 @@ def admin_all_sheet(request, sheet_from, where):
     else:
         return HttpResponse("error: 権限がありません。")
     return render(request, "admin_sheetview.html", contexts)
+
+
+@login_required
+def infomation(request):
+    contexts = collect_regnum(request)
+    if request.user.is_superuser:
+        if request.method == "POST":
+            form = InfomationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect(to="infomation")
+            else:
+                contexts["form"] = form
+                return render(request, "infomation.html", contexts)
+        form = InfomationForm()
+        contexts["infomations"] = InfomationModel.objects.all()
+        contexts["form"] = form
+        return render(request, "infomation.html", contexts)
+    else:
+        return redirect(to="index")

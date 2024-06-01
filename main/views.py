@@ -345,6 +345,7 @@ def regist_sets(request):
     contexts = collect_regnum(request)
     return render(request, "main/regist/sets/main.html", contexts)
 
+
 @login_required
 def create_company(request):
     contexts = collect_regnum(request)

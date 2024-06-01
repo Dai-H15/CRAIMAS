@@ -24,6 +24,7 @@ def calendar_main(request):
     return render(request, "task_calendar/main.html", contexts)
 
 
+@login_required
 def get_calendar(request, year, month):
     contexts = {}
     calendar.setfirstweekday(calendar.SUNDAY)

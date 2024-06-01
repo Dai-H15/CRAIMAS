@@ -110,6 +110,7 @@ def index(request):
         contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_active=True)
         contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_active=True)
         contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_active=True)
+        contexts["ExpirationDate"] = (request.user.ExpiryDate - dt.date.today()).days
     else:
         contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_public=True, is_active=True)
         contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_public=True, is_active=True)

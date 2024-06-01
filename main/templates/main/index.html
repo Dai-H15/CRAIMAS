@@ -9,6 +9,14 @@
                     <div class = "row p-3 my-3 border rounded  "style = "background-color: #e6ffb3">
                 <div class = "container" >
                         <h4 class = "border-bottom border-dark">Infomation</h4>
+                        {% if user.is_authenticated %}
+                        {% if ExpirationDate < 15 %}
+                        <div class="alert alert-warning" role="alert">
+                            アカウントの有効期限が15日未満です。マイページから延長手続きを行わないとアカウントが停止されます。
+                            お手続きをお願いいたします
+                        </div>
+                        {% endif %}
+                        {% endif %}
                         <div class = "row">
                             <div class = "col border rounded m-2">
                                 <h5>お知らせ</h5>

@@ -84,7 +84,7 @@ def create_infomation(request):
                 contexts["form"] = form
                 return render(request, "infomation.html", contexts)
         form = InfomationForm()
-        contexts["infomations"] = InfomationModel.objects.all()
+        contexts["infomations"] = InfomationModel.objects.all().order_by("-is_active")
         contexts["form"] = form
         return render(request, "infomation.html", contexts)
     else:

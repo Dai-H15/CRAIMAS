@@ -6,6 +6,7 @@ import django.urls.exceptions as url_exceptions
 from datetime import datetime
 import pytz
 
+
 def test_user_init(user):
     client = Client()
     client.force_login(user)
@@ -135,3 +136,140 @@ def create_interview(post, **client):
                                                     date=datetime.now(pytz.timezone('Asia/Tokyo')),
                                                     )
     return interview
+
+
+def all_user(self, url):
+    u = create_user()
+    a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    self.assertEqual(is_error(url, user), False)
+    self.assertEqual(is_error(url, admin), False)
+    self.assertEqual(is_error(url, anonymous), False)
+    self.assertEqual(can_access(url, user), True)
+    self.assertEqual(can_access(url, admin), True)
+    self.assertEqual(can_access(url, anonymous), True)
+    self.assertEqual(cannot_access(url, user), False)
+    self.assertEqual(cannot_access(url, admin), False)
+    self.assertEqual(cannot_access(url, anonymous), False)
+
+
+def only_login_user(self, url, **uargs):
+    if uargs:
+        u = create_user(another=1)
+    else:
+        u = create_user()
+    if uargs:
+        a = create_admin(another=1)
+    else:
+        a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    self.assertEqual(is_error(url, user), False)
+    self.assertEqual(is_error(url, admin), False)
+    self.assertEqual(is_error(url, anonymous), False)
+    self.assertEqual(can_access(url, user), True)
+    self.assertEqual(can_access(url, admin), True)
+    self.assertEqual(can_access(url, anonymous), False)
+    self.assertEqual(cannot_access(url, user), False)
+    self.assertEqual(cannot_access(url, admin), False)
+    self.assertEqual(cannot_access(url, anonymous), True)
+
+
+def only_login_user_no_data(self, url, **uargs):
+    """
+    データがない場合のテスト。リダイレクト、若しくは何かしらのHTTPレスポンスがある場合
+    """
+    if uargs:
+        u = create_user(another=1)
+    else:
+        u = create_user()
+    if uargs:
+        a = create_admin(another=1)
+    else:
+        a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    self.assertEqual(is_error(url, user), True)
+    self.assertEqual(is_error(url, admin), True)
+    self.assertEqual(is_error(url, anonymous), True)
+    self.assertEqual(can_access(url, user), True)
+    self.assertEqual(can_access(url, admin), True)
+    self.assertEqual(can_access(url, anonymous), False)
+    self.assertEqual(cannot_access(url, user), False)
+    self.assertEqual(cannot_access(url, admin), False)
+    self.assertEqual(cannot_access(url, anonymous), True)
+
+
+def only_admin_user(self, url):
+    u = create_user()
+    a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    self.assertEqual(is_error(url, user), False)
+    self.assertEqual(is_error(url, admin), False)
+    self.assertEqual(is_error(url, anonymous), False)
+    self.assertEqual(can_access(url, user), False)
+    self.assertEqual(can_access(url, admin), True)
+    self.assertEqual(can_access(url, anonymous), False)
+    self.assertEqual(cannot_access(url, user), True)
+    self.assertEqual(cannot_access(url, admin), False)
+    self.assertEqual(cannot_access(url, anonymous), True)
+
+
+def only_admin_no_data(self, url):
+    u = create_user()
+    a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    self.assertEqual(is_error(url, user), True)
+    self.assertEqual(is_error(url, admin), True)
+    self.assertEqual(is_error(url, anonymous), True)
+    self.assertEqual(can_access(url, user), False)
+    self.assertEqual(can_access(url, admin), True)
+    self.assertEqual(can_access(url, anonymous), False)
+    self.assertEqual(cannot_access(url, user), True)
+    self.assertEqual(cannot_access(url, admin), False)
+    self.assertEqual(cannot_access(url, anonymous), True)
+
+
+def only_login_user_with_post(self, url):
+    u = create_user()
+    a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    post = create_post(client=u)
+    self.assertEqual(is_error(url, user, uargs=[post.RegistID]), False)
+    self.assertEqual(is_error(url, admin, uargs=[post.RegistID]), False)
+    self.assertEqual(is_error(url, anonymous, uargs=[post.RegistID]), False)
+    self.assertEqual(can_access(url, user, uargs=[post.RegistID]), True)
+    self.assertEqual(can_access(url, admin, uargs=[post.RegistID]), True)
+    self.assertEqual(can_access(url, anonymous, uargs=[post.RegistID]), False)
+    self.assertEqual(cannot_access(url, user, uargs=[post.RegistID]), False)
+    self.assertEqual(cannot_access(url, admin, uargs=[post.RegistID]), False)
+    self.assertEqual(cannot_access(url, anonymous, uargs=[post.RegistID]), True)
+
+
+def only_login_user_with_interview(self, url):
+    u = create_user()
+    a = create_admin()
+    user = test_user_init(u)
+    admin = test_user_init(a)
+    anonymous = test_anonymous_init()
+    post = create_post(client=u)
+    interview = create_interview(post, client=u)
+    self.assertEqual(is_error(url, user, uargs=[interview.InterviewID]), False)
+    self.assertEqual(is_error(url, admin, uargs=[interview.InterviewID]), False)
+    self.assertEqual(is_error(url, anonymous, uargs=[interview.InterviewID]), False)
+    self.assertEqual(can_access(url, user, uargs=[interview.InterviewID]), True)
+    self.assertEqual(can_access(url, admin, uargs=[interview.InterviewID]), True)
+    self.assertEqual(can_access(url, anonymous, uargs=[interview.InterviewID]), False)
+    self.assertEqual(cannot_access(url, user, uargs=[interview.InterviewID]), False)
+    self.assertEqual(cannot_access(url, admin, uargs=[interview.InterviewID]), False)
+    self.assertEqual(cannot_access(url, anonymous, uargs=[interview.InterviewID]), True)

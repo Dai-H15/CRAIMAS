@@ -2,19 +2,21 @@ from django.shortcuts import render, HttpResponse, redirect
 from main.views import collect_regnum
 from main.models import RegistSets, Interview
 from authUser.models import CustomUser
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from .forms import InfomationForm
 from .models import InfomationModel
 # Create your views here.
 
 
 @login_required
+@permission_required("authUser.is_staff")
 def management(request):
     contexts = collect_regnum(request)
     return render(request, "index.html", contexts)
 
 
 @login_required
+@permission_required("authUser.is_staff")
 def all_sheets(request):
     if request.user.is_staff:
         contexts = collect_regnum(request)
@@ -26,17 +28,22 @@ def all_sheets(request):
     return render(request, "all_sheets.html", contexts)
 
 
+@login_required
+@permission_required("authUser.is_staff")
 def management_sheets(request):
     contexts = collect_regnum(request)
     return render(request, "management_sheets.html", contexts)
 
 
+@login_required
+@permission_required("authUser.is_staff")
 def all_interviewer(request):
     contexts = collect_regnum(request)
     return render(request, "all_interviewer.html", contexts)
 
 
 @login_required
+@permission_required("authUser.is_staff")
 def admin_all_sheet(request, sheet_from, where):
     contexts = collect_regnum(request)
     if request.user.is_staff:
@@ -64,6 +71,7 @@ def admin_all_sheet(request, sheet_from, where):
 
 
 @login_required
+@permission_required("authUser.is_staff")
 def create_infomation(request):
     contexts = collect_regnum(request)
     if request.user.is_superuser:
@@ -83,6 +91,8 @@ def create_infomation(request):
         return redirect(to="index")
 
 
+@login_required
+@permission_required("authUser.is_staff")
 def conf_infomation(request):
     if request.user.is_superuser:
         if request.POST.get("operation") == "delete":
@@ -96,11 +106,15 @@ def conf_infomation(request):
         return redirect(to="index")
 
 
+@login_required
+@permission_required("authUser.is_staff")
 def delete_infomation(request):
     InfomationModel.objects.get(id=request.POST.get("id")).delete()
     return redirect("create_infomation")
 
 
+@login_required
+@permission_required("authUser.is_staff")
 def change_show_infomation(request):
     info = InfomationModel.objects.get(id=request.POST.get("id"))
     info.is_active = True if not info.is_active else False
@@ -108,6 +122,8 @@ def change_show_infomation(request):
     return redirect("create_infomation")
 
 
+@login_required
+@permission_required("authUser.is_staff")
 def change_public(request):
     info = InfomationModel.objects.get(id=request.POST.get("id"))
     info.is_public = True if not info.is_public else False

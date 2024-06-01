@@ -340,11 +340,12 @@ def delete_posts(request, id):
     return render(request, "main/mypage/delete.html", contexts)
 
 
+@login_required
 def regist_sets(request):
     contexts = collect_regnum(request)
     return render(request, "main/regist/sets/main.html", contexts)
 
-
+@login_required
 def create_company(request):
     contexts = collect_regnum(request)
     if request.method == "POST":
@@ -370,6 +371,7 @@ def create_company(request):
     return render(request, "main/regist/sets/create_company.html", contexts)
 
 
+@login_required
 def import_company(request):
     contexts = collect_regnum(request)
     if request.method == "POST":
@@ -392,6 +394,7 @@ def import_company(request):
     return render(request, "main/regist/sets/import_company.html", contexts)
 
 
+@login_required
 def create_about(request):
     contexts = collect_regnum(request)
     A_Form = AboutForm()
@@ -420,6 +423,7 @@ def create_about(request):
     return render(request, "main/regist/sets/create_about.html", contexts)
 
 
+@login_required
 def create_idea(request):
     contexts = collect_regnum(request)
     contexts["A_Form"] = AboutForm(
@@ -445,6 +449,7 @@ def create_idea(request):
     return render(request, "main/regist/sets/create_idea.html", contexts)
 
 
+@login_required
 def create_motivation(request):
     contexts = collect_regnum(request)
     contexts["I_Form"] = IdeaForm(
@@ -470,6 +475,7 @@ def create_motivation(request):
     return render(request, "main/regist/sets/create_motivation.html", contexts)
 
 
+@login_required
 def create_d_company(request):
     contexts = collect_regnum(request)
     contexts["M_Form"] = MotivationForm(
@@ -1103,6 +1109,7 @@ def prof_interviewer(request, company_id, i_name):
     return render(request, "main/regist/interviewer.html", contexts)
 
 
+@login_required
 def search_post(request, sheet_from, where):
     contexts = {}
     res = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")

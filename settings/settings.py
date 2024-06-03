@@ -81,7 +81,6 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -100,6 +99,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+"""
 
 
 
@@ -157,3 +157,7 @@ STATICFILES_DIRS = (
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 CSRF_TRUSTED_ORIGINS = ['https://craimas.com']
+
+SESSION_COOKIE_AGE = 3600*5
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

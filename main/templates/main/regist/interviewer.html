@@ -21,10 +21,10 @@
                     {% csrf_token %}
                     {% for f in form %}
                     {% bootstrap_field f %}
-                    {% if f.name == "prof_url" %}<button type ="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .90rem;" class = "btn btn-outline-info" onclick="open_url('prof_url', 1000,800)"> このURLを開く</button>{% endif %}
+                    {% if f.name == "prof_url" %}<button type ="button" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .90rem;" class = "btn btn-outline-info" onclick="Main.default.open_url.open_url('prof_url', 1000,800)"> このURLを開く</button>{% endif %}
                     {% endfor %}
                     {% if not as_staff %}
-                    <button type="button" onclick="p_save()" class = "btn btn-success">登録</button>
+                    <button type="button" onclick="Main.default.interviewer.p_save()" class = "btn btn-success">登録</button>
                     {% endif %}
                 </form>
                 </div>
@@ -34,10 +34,14 @@
 
     </div>
     {% if not as_staff %}
-    <script src = "{% static "js/interviewer.js" %}"></script>
+    <script>
+        Main.default.interviewer.init();
+    </script>
     {% endif %}
-    <script src = "{% static "js/open_url.js" %}"></script>
-    <script src = {% static "js/open_as_window.js" %}></script>
+    
+    <script>
+        Main.default.open_as_window.init()
+    </script>
     <div class="toast-container position-fixed top-0 start-0 p-3">
         <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
           <div class="toast-body text-white " id = "toast-status"></div>

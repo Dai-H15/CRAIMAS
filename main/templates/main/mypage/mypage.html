@@ -4,6 +4,9 @@
 <html lang="ja">
 <head>
     {% include "main/html_head.html" %}
+    <script>Main.default.mypage.init('{% url "search_post" sheet_from="init" where="none" %}')</script>
+    <script>Main.default.open_as_window.init()</script>
+
 </head>
 <body>
     <div class="container-fluid">
@@ -24,7 +27,7 @@
                             <td>{{user}}</td>
                             <td>{{user.y_graduation}}</td>
                             <td>{{n_regist}}件</td>
-                            <td>{{user.ExpiryDate}} 残り{{l_days}}日 <button onclick="open_as_window('{% url "extension" %}', 'extension',600,800)" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">延長</button> </td>
+                            <td>{{user.ExpiryDate}} 残り{{l_days}}日 <button onclick="Main.default.open_as_window.open_as_window('{% url "extension" %}', 'extension',600,800)" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">延長</button> </td>
                         </tr>
                         </tr>
                     </table>
@@ -35,15 +38,15 @@
                         <span class = "input-group-text">検索文字列</span><input type="text" class = "form-control" id = "search_str">
                         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">検索対象項目</button>
                         <input type="hidden" name = "search_item_value" id= "search_item_value" value = ""/>
-                        <button class="btn btn-success rounded-end" type="button" onclick = "check_and_fetch('{% url "search_post" sheet_from="sheet_from" where="where" %}')">検索</button>
+                        <button class="btn btn-success rounded-end" type="button" onclick = "Main.default.search.check_and_fetch('{% url "search_post" sheet_from="sheet_from" where="where" %}')">検索</button>
                         <ul class="dropdown-menu">
-                            <button class="dropdown-item" onclick = "select_search('企業名')" type = "button">企業名</button>
-                            <button class="dropdown-item"onclick = "select_search('所属業界名')" type = "button">所属業界名</button>
-                            <button class="dropdown-item"onclick = "select_search('所在地')" type = "button">所在地</button>
-                            <button class="dropdown-item"onclick = "select_search('担当者名')" type = "button">担当者名</button>
+                            <button class="dropdown-item" onclick = "Main.default.search.select_search('企業名')" type = "button">企業名</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('所属業界名')" type = "button">所属業界名</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('所在地')" type = "button">所在地</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('担当者名')" type = "button">担当者名</button>
                         </ul>
                         </div>
-                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="init_fetch('{% url 'search_post' sheet_from='init' where='none' %}')">リセット</button></div>
+                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="Main.default.search.init_fetch('{% url 'search_post' sheet_from='init' where='none' %}')">リセット</button></div>
                 </div>
                 <div class="row m-3">
                     <!--投稿一覧-->
@@ -56,14 +59,6 @@
 
         </div>
     </div>
-    <script src="{% static "js/open_as_window.js" %}"></script>
-
-    <script src="{% static "js/search.js" %}"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", async function() {
-        await init_fetch('{% url "search_post" sheet_from="init" where="none" %}');
-    });
-</script>
 
 </body>
 

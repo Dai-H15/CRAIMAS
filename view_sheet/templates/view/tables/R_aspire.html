@@ -11,7 +11,6 @@
         {% for th in th_all %}
         <th scope = "col">{{th}}</th>
         {% endfor %}
-        
     </tr>
 </thead>
 <tbody>
@@ -28,8 +27,8 @@
                       操作
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "view_my_post" result.R_sets.RegistID %}','view{{forloop.counter}}',900,800)">シート閲覧</a></li>
-                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "interview_main" result.R_sets.RegistID %}','interview{{forloop.counter}}',400,600)">面談録閲覧</a></li>
+                      <li><a class="dropdown-item  p-2" onclick="Main.default.open_as_window.open_as_window('{% url "view_my_post" result.R_sets.RegistID %}','view{{forloop.counter}}',900,800)">シート閲覧</a></li>
+                      <li><a class="dropdown-item  p-2" onclick="Main.default.open_as_window.open_as_window('{% url "interview_main" result.R_sets.RegistID %}','interview{{forloop.counter}}',400,600)">面談録閲覧</a></li>
                     </ul>
                   </div>
             </td>

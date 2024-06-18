@@ -22,10 +22,10 @@
                     {% for f in form %}
                     {% if f.name == "zipcode" %}
                     {% bootstrap_field f %}
-                    <button type = "button" class = "btn btn-warning mb-3" onclick="search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
+                    <button type = "button" class = "btn btn-warning mb-3" onclick="Main.default.interview_create.search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
                     {% elif f.name == "interviewer" %}
                     {% bootstrap_field f %}
-                    <button type = "button" class = "btn btn-outline-info mb-3" onclick="get_interviewer('{% url 'get_interviewer' R_id %}')">企業シートから担当者を引用</button>
+                    <button type = "button" class = "btn btn-outline-info mb-3" onclick="Main.default.interview_create.get_interviewer('{% url 'get_interviewer' R_id %}')">企業シートから担当者を引用</button>
                     {% else %}
                     {% bootstrap_field f %}
                     {% endif %}
@@ -38,7 +38,9 @@
     </div>
 
     </div>
-    <script src="{% static "js/interview_create.js" %}"></script>
+    <script>
+        Main.default.interview_create.init()
+    </script>
 </body>
 
 </html>

@@ -41,20 +41,7 @@
       </div>
     </div>
     <script>
-      document.addEventListener("DOMContentLoaded", (event) => {
-        const radios = document.querySelectorAll(
-          'input[type=radio][name="address"]'
-        );
-        radios.forEach((radio) => {
-          radio.addEventListener("change", (event) => {
-            if (event.target.checked) {
-              let address =
-                event.target.nextElementSibling.querySelector("#address").value;
-              window.opener.document.getElementById("id_place").value = address;
-            }
-          });
-        });
-      });
+      Main.default.get_address.init();
     </script>
   </body>
 </html>

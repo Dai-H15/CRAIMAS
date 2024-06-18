@@ -8,6 +8,7 @@
 </head>
 
 <body>
+    {% csrf_token %}
     <div class="container-fluid">
 
         {% include "main/header.html" %}
@@ -43,7 +44,7 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="{{key}}"
                                                 id="{{forloop.counter}}" name="selected_field"
-                                                onchange="change_input('{{forloop.counter}}')">
+                                                onchange="Main.default.custom_sheet_create.change_input('{{forloop.counter}}')">
                                             <label class="form-check-label" for="{{forloop.counter}}">{{val}}</label>
                                             <div class="input-group ">
                                                 <input class="form-control" type="text" placeholder="表示名を入力"
@@ -59,7 +60,7 @@
                                 </div>
 
                                 
-                        </div><button class="btn btn-success m-3" type="button" onclick="submit_sheet_settings('select_model_and_field')">次へ進む</button>{% endif %}
+                        </div><button class="btn btn-success m-3" type="button" onclick="Main.default.custom_sheet_create.submit_sheet_settings('select_model_and_field')">次へ進む</button>{% endif %}
                                     
                                     {% if selected_field %}
                                     <div class="input-group mb-3">
@@ -191,7 +192,7 @@
                                         </div>
                                     </div>
                             </div></div>
-                        </div><button class = "btn btn-success" type = "button" onclick = "submit_sheet_settings('view_setting')">次へ進む</button>
+                        </div><button class = "btn btn-success" type = "button" onclick = "Main.default.custom_sheet_create.submit_sheet_settings('view_setting')">次へ進む</button>
                         {% endif %}
                     </div>
                     {% if result_data %}
@@ -235,7 +236,7 @@
                                 {% if result_data.view_setting_search_how == "5" %}<option value="5" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' を除く</option>{% endif %}
                             </select>
                         </div>
-                        <button class = "btn btn-success" type = "button" onclick = "submit_sheet_settings('create_sheet')">登録する</button>
+                        <button class = "btn btn-success" type = "button" onclick = "Main.default.custom_sheet_create.submit_sheet_settings('create_sheet')">登録する</button>
                         {% endif %}
 
                     </form>
@@ -247,47 +248,6 @@
     </div>
 
     </div>
-    <script>
-        function change_input(number) {
-            let input = document.getElementById(number + '_field_name');
-            if (input.disabled) {
-                input.disabled = false;
-            } else {
-                input.disabled = true;
-            }
-        }
-    </script>
-    <script>
-        function submit_sheet_settings(set_name) {
-            let form = document.querySelector('form');
-            let csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = 'csrfmiddlewaretoken';
-            csrf.value = '{{csrf_token}}';
-            form.appendChild(csrf);
-            let type = document.createElement('input');
-            type.value = set_name
-            type.name = "request_type"
-            form.appendChild(type)
-            form.method = 'post';
-            form.submit();
-        }
-    </script>
-    <script>
-        let wind = [];
 
-        function open_as_window(url, name, width, height) {
-            wind.push(window.open(`${url}`, `${name}`,
-                `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`
-            ))
-        };
-        window.addEventListener('beforeunload', function () {
-            if (wind.length != 0) {
-                for (let i = 0; i < wind.length; i++) {
-                    wind[i].close();
-                }
-            }
-        });
-    </script>
 </body>
 </html>

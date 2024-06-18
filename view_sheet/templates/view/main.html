@@ -1,5 +1,5 @@
 {% load django_bootstrap5 %}
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -35,7 +35,7 @@
                             <button class="btn btn-primary m-2" type="button" data-bs-toggle="collapse" data-bs-target="#settings_info" aria-expanded="false" aria-controls="settings_info">
                                 検索条件を表示
                             </button>
-                            <button class = "btn btn-outline-danger" onclick = "open_as_window('{% url "delete_custom_sheet" sheet_config.sheet_id %}','interview{{forloop.counter}}',400,600)">カスタムシートを削除する</button>
+                            <button class = "btn btn-outline-danger" onclick = "Main.default.open_as_window.open_as_window('{% url "delete_custom_sheet" sheet_config.sheet_id %}','interview{{forloop.counter}}',400,600)">カスタムシートを削除する</button>
 
                             <div class="collapse" id="settings_info">
                                 <div class="alert alert-info">
@@ -72,17 +72,7 @@
 
     </div>
     <script>
-        let wind = [];
-        function open_as_window(url,name,width,height){
-            wind.push(window.open(`${url}`, `${name}`, `width=${width},height=${height},toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes`))
-    };
-    window.addEventListener('beforeunload', function(){
-        if (wind.length !=0){
-            for(let i = 0; i < wind.length; i++){
-                wind[i].close();
-            }
-        };
-    });
+        Main.default.open_as_window.init();
 </script>
 </body>
 </html>

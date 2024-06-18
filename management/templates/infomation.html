@@ -34,7 +34,7 @@
                             <td>{{infomation.category}}</td>
                             <td> {{infomation.content}} </td>
                             <td>{% if infomation.is_public %}全体公開 {% else %} 限定公開 {% endif %}</td>
-                            <td><button class = "btn btn-success mx-2" onclick="conf_infomation('{{infomation.id}}', 'change_public', '{% url "conf_infomation" %}', '{{csrf_token}}')">範囲切替</button><button class = "btn btn-info mx-2" onclick="conf_infomation('{{infomation.id}}', 'change_show', '{% url "conf_infomation" %}', '{{csrf_token}}')">公開切替</button><button class = "btn btn-danger" onclick="conf_infomation('{{infomation.id}}', 'delete', '{% url "conf_infomation" %}', '{{csrf_token}}')">削除</button></td>
+                            <td><button class = "btn btn-success mx-2" onclick="Main.default.infomation.conf_infomation('{{infomation.id}}', 'change_public', '{% url "conf_infomation" %}', '{{csrf_token}}')">範囲切替</button><button class = "btn btn-info mx-2" onclick="Main.default.infomation.conf_infomation('{{infomation.id}}', 'change_show', '{% url "conf_infomation" %}', '{{csrf_token}}')">公開切替</button><button class = "btn btn-danger" onclick="Main.default.infomation.conf_infomation('{{infomation.id}}', 'delete', '{% url "conf_infomation" %}', '{{csrf_token}}')">削除</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -57,7 +57,8 @@
         </div>
     </div>
     </div>
-<script src="{% static "js/infomation.js" %}"></script>
+
+
 </body>
 
 </html>

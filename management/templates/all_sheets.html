@@ -18,16 +18,16 @@
                         <span class = "input-group-text">検索文字列</span><input type="text" class = "form-control" id = "search_str">
                         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">検索対象項目</button>
                         <input type="hidden" name = "search_item_value" id= "search_item_value" value = ""/>
-                        <button class="btn btn-success rounded-end" type="button" onclick = "check_and_fetch('{% url "admin_all_sheet" sheet_from="sheet_from" where="where" %}')">検索</button>
+                        <button class="btn btn-success rounded-end" type="button" onclick = "Main.default.search.check_and_fetch('{% url "admin_all_sheet" sheet_from="sheet_from" where="where" %}')">検索</button>
                         <ul class="dropdown-menu">
-                            <button class="dropdown-item" onclick = "select_search('企業名')" type = "button">企業名</button>
-                            <button class="dropdown-item"onclick = "select_search('所属業界名')" type = "button">所属業界名</button>
-                            <button class="dropdown-item"onclick = "select_search('所在地')" type = "button">所在地</button>
-                            <button class="dropdown-item"onclick = "select_search('担当者名')" type = "button">担当者名</button>
-                            <button class="dropdown-item"onclick = "select_search('ユーザー名')" type = "button">ユーザー名(完全一致)</button>
+                            <button class="dropdown-item" onclick = "Main.default.search.select_search('企業名')" type = "button">企業名</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('所属業界名')" type = "button">所属業界名</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('所在地')" type = "button">所在地</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('担当者名')" type = "button">担当者名</button>
+                            <button class="dropdown-item"onclick = "Main.default.search.select_search('ユーザー名')" type = "button">ユーザー名(完全一致)</button>
                         </ul>
                         </div>
-                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="init_fetch('{% url 'admin_all_sheet' sheet_from='init' where='none' %}')">リセット</button></div>
+                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="Main.default.search.init_fetch('{% url 'admin_all_sheet' sheet_from='init' where='none' %}')">リセット</button></div>
                 </div>
                 <div class="row m-3">
                     <!--投稿一覧-->
@@ -40,14 +40,9 @@
 
         </div>
     </div>
-    <script src="{% static "js/open_as_window.js" %}"></script>
 
-
-    <script src="{% static "js/search.js" %}"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", async function() {
-        await init_fetch('{% url "admin_all_sheet" sheet_from="init" where="none" %}');
-    });
+    Main.default.search.init_fetch('{% url "admin_all_sheet" sheet_from="init" where="none" %}');
 </script>
 
 </body>

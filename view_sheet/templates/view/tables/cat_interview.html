@@ -37,7 +37,7 @@
                       操作
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item  p-2" onclick="open_as_window('{% url "view_interview" result.InterviewID %}','interview{{forloop.counter}}',400,600)">面談録閲覧</a></li>
+                      <li><a class="dropdown-item  p-2" onclick="Main.default.open_as_window.open_as_window('{% url "view_interview" result.InterviewID %}','interview{{forloop.counter}}',400,600)">面談録閲覧</a></li>
                     </ul>
                   </div>
             </td>
@@ -46,8 +46,5 @@
 </tbody>
 </table>
 <script>
-    document.getElementById('choice').addEventListener('change', function() {
-        window.location.href = this.value;
-    });
-    
+    Main.default.cat_interview.init();
 </script>

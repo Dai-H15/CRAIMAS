@@ -17,7 +17,7 @@
             <div class  = "text-center"><h4 class = "border-bottom p-3">{{i_name}}</h4></div>
             <div class="container">
                 <div class="row p-3">
-                    <form method = "post">
+                    <form method = "post" action = "{% url 'prof_interviewer' company_id=company_id i_name=i_name %}">
                     {% csrf_token %}
                     {% for f in form %}
                     {% bootstrap_field f %}

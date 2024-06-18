@@ -1063,50 +1063,55 @@ def get_interviewer(request, id):
 
 @login_required
 def prof_interviewer(request, company_id, i_name):
-    contexts = collect_regnum(request)
-    try:
-        company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
-        contexts["as_staff"] = False
-    except (RegistSets.DoesNotExist, AttributeError):
-        if request.user.is_staff:
-            try:
-                company = RegistSets.objects.get(company=company_id).company
-                contexts["as_staff"] = True
-            except (RegistSets.DoesNotExist, AttributeError):
-                return HttpResponse("データが存在しません。")
-        else:
-            return HttpResponse("不正なリクエストです")
-    contexts["company"] = company.name
-    contexts["company_id"] = company_id
-    contexts["i_name"] = i_name
-    try:
-        if contexts["as_staff"] is False:
-            instance_data = Interviewer.objects.get(
-                by_U_ID=request.user.U_ID,
-                company_name=company,
-                name=i_name,
-            )
-        elif contexts["as_staff"] is True:
-            try:
+    if request.method == "GET":
+        contexts = collect_regnum(request)
+        try:
+            company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
+            contexts["as_staff"] = False
+        except (RegistSets.DoesNotExist, AttributeError):
+            if request.user.is_staff:
+                try:
+                    company = RegistSets.objects.get(company=company_id).company
+                    contexts["as_staff"] = True
+                except (RegistSets.DoesNotExist, AttributeError):
+                    return HttpResponse("データが存在しません。")
+            else:
+                return HttpResponse("不正なリクエストです")
+        contexts["company"] = company.name
+        contexts["company_id"] = company_id
+        contexts["i_name"] = i_name
+        try:
+            if contexts["as_staff"] is False:
                 instance_data = Interviewer.objects.get(
+                    by_U_ID=request.user.U_ID,
                     company_name=company,
                     name=i_name,
                 )
-            except Interviewer.DoesNotExist:
-                return HttpResponse("面談者情報が存在しません。登録を確認してください")
-        else:
-            return HttpResponse("不正なリクエストです")
-        init_form = Form_Prof_Interviewer(instance=instance_data)
-        if contexts["as_staff"] is False:
-            contexts["message"] = {"type": "success", "texts": ["一致した担当者情報があります", "編集して保存することができます"]}
-        if contexts["as_staff"] is True:
-            contexts["message"] = {"type": "info", "texts": ["一致した担当者情報があります", "管理者権限による閲覧のため、閲覧のみ可能です"]}
-    except Interviewer.DoesNotExist:
-        init_form = Form_Prof_Interviewer(initial={"company_name": Companies.objects.get(CompanyID=company_id, by_U_ID=request.user.U_ID), "interviewer_name": i_name})
-        contexts["message"] = {"type": "warning", "texts": ["一致する担当者情報が見つかりませんでした。", "新規作成を行います。名前と企業を確認し、項目を埋めてください"]}
+            elif contexts["as_staff"] is True:
+                try:
+                    instance_data = Interviewer.objects.get(
+                        company_name=company,
+                        name=i_name,
+                    )
+                except Interviewer.DoesNotExist:
+                    return HttpResponse("面談者情報が存在しません。登録を確認してください")
+            else:
+                return HttpResponse("不正なリクエストです")
+            init_form = Form_Prof_Interviewer(instance=instance_data)
+            if contexts["as_staff"] is False:
+                contexts["message"] = {"type": "success", "texts": ["一致した担当者情報があります", "編集して保存することができます"]}
+            if contexts["as_staff"] is True:
+                contexts["message"] = {"type": "info", "texts": ["一致した担当者情報があります", "管理者権限による閲覧のため、閲覧のみ可能です"]}
+        except Interviewer.DoesNotExist:
+            init_form = Form_Prof_Interviewer(initial={"company_name": Companies.objects.get(CompanyID=company_id, by_U_ID=request.user.U_ID), "interviewer_name": i_name})
+            contexts["message"] = {"type": "warning", "texts": ["一致する担当者情報が見つかりませんでした。", "新規作成を行います。名前と企業を確認し、項目を埋めてください"]}
 
     if request.method == "POST":
         try:
+            try:
+                company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
+            except (RegistSets.DoesNotExist, AttributeError):
+                return JsonResponse({"status": "NG", "reason": "不正なリクエストです。操作は取り消されました。管理者までお問い合わせください。"})
             data = Interviewer.objects.get(
                 by_U_ID=request.user.U_ID,
                 company_name=company,
@@ -1125,7 +1130,7 @@ def prof_interviewer(request, company_id, i_name):
             data.save()
             return JsonResponse({"status": "OK", "reason": reason})
         else:
-            return JsonResponse({"status": "NG", "reason": "無効なフォームです", "error_list": str(form.errors)})
+            return JsonResponse({"status": "ERROR", "reason": "無効なフォームです", "error_list": str(form.errors)})
 
     contexts["form"] = init_form
     return render(request, "main/regist/interviewer.html", contexts)

@@ -1,58 +1,105 @@
 {% load django_bootstrap5 %}
 <!DOCTYPE html>
-<html lang="jp">
-<head>
+<html lang="ja">
+  <head>
     {% include "main/html_head.html" %}
-
-</head>
-<body>
-    <div class = "container">
-        <div class = "row">
-            <div class = "col text-center">
-                <h5 class = "border-bottom">シートの内容をエクスポートします。設定を指定してください</h5>
-                <h4>企業名: {{conpany_name}}</h4>
-                <div class="alert alert-danger" role="alert">
-                    <h5>ファイルには機密情報が含まれています。</h5>
-                    <h5>取り扱いには十分注意し、漏洩しないようにしてください</h5>
-                </div>
-                <form method = "post" class = "border">
-                    {% csrf_token %}
-                    <div class = "col border m-3">
-                            <p>エクスポート形式</p>
-                        <div class="form-check border-bottom border-top">
-                            <input class="form-check-input" type="radio" name="type" id="csv" value="csv" checked />
-                            <label class="form-check-label" for="csv"> CSV </label>
-                        </div>
-                        <div class="form-check ">
-                            <input class="form-check-input" type="radio" name="type" id="json_asF" value="json_asF" />
-                            <label class="form-check-label" for="json_asF"> JSON(ファイルとしてダウンロード) </label>
-                        </div>
-                        <div class="form-check border-top">
-                            <input class="form-check-input" type="radio" name="type" id="json_asR" value="json_asR" />
-                            <label class="form-check-label" for="json_asR"> JSON(Responseを表示) </label>
-                        </div>
-                    </div>
-                    <div class = "col border m-3">
-                        <p>エクスポートする情報</p>
-                        <div class="form-check border-bottom border-top">
-                            <input class="form-check-input" type="radio" name="data" id="one" value="one" checked />
-                            <label class="form-check-label" for="one"> シートのみ </label>
-                        </div>
-                        <div class="form-check border-bottom">
-                            <input class="form-check-input" type="radio" name="data" id="two" value="two" />
-                            <label class="form-check-label" for="two"> シート+面談録 </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="data" id="three" value="three" />
-                            <label class="form-check-label" for="three"> シート+面談録+担当者プロフィール </label>
-                        </div>
-                    </div>
-                    <div class = "row p-3">
-                        <button type="submit" class="btn btn-primary">抽出</button>
-                    </div>
-                </form>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <h5 class="border-bottom">
+            シートの内容をエクスポートします。設定を指定してください
+          </h5>
+          <h4>企業名: {{conpany_name}}</h4>
+          <div class="alert alert-danger" role="alert">
+            <h5>ファイルには機密情報が含まれています。</h5>
+            <h5>取り扱いには十分注意し、漏洩しないようにしてください</h5>
+          </div>
+          <form method="post" class="border">
+            {% csrf_token %}
+            <div class="col border m-3">
+              <p>エクスポート形式</p>
+              <div class="form-check border-bottom border-top">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="type"
+                  id="csv"
+                  value="csv"
+                  checked
+                />
+                <label class="form-check-label" for="csv"> CSV </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="type"
+                  id="json_asF"
+                  value="json_asF"
+                />
+                <label class="form-check-label" for="json_asF">
+                  JSON(ファイルとしてダウンロード)
+                </label>
+              </div>
+              <div class="form-check border-top">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="type"
+                  id="json_asR"
+                  value="json_asR"
+                />
+                <label class="form-check-label" for="json_asR">
+                  JSON(Responseを表示)
+                </label>
+              </div>
             </div>
+            <div class="col border m-3">
+              <p>エクスポートする情報</p>
+              <div class="form-check border-bottom border-top">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="data"
+                  id="one"
+                  value="one"
+                  checked
+                />
+                <label class="form-check-label" for="one"> シートのみ </label>
+              </div>
+              <div class="form-check border-bottom">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="data"
+                  id="two"
+                  value="two"
+                />
+                <label class="form-check-label" for="two">
+                  シート+面談録
+                </label>
+              </div>
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="data"
+                  id="three"
+                  value="three"
+                />
+                <label class="form-check-label" for="three">
+                  シート+面談録+担当者プロフィール
+                </label>
+              </div>
+            </div>
+            <div class="row p-3">
+              <button type="submit" class="btn btn-primary">抽出</button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

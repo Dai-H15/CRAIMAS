@@ -122,6 +122,27 @@ def only_login_user_with_interview(self, url):
     self.assertEqual(testasset.cannot_access(url, anonymous, uargs=[interview.InterviewID]), True)
 
 
+def only_login_user_with_args(self, url, args):
+    """
+    URLにて渡す必要がある値が存在する際に使用するテストセット。
+    エラーが発生することなく、ログインが必要（リダイレクトが行われるなどで回避される）なページのテスト
+    """
+    u = testasset.create_user()
+    a = testasset.create_admin()
+    user = testasset.test_user_init(u)
+    admin = testasset.test_user_init(a)
+    anonymous = testasset.test_anonymous_init()
+    self.assertEqual(testasset.is_error(url, user, uargs=args), False)
+    self.assertEqual(testasset.is_error(url, admin, uargs=args), False)
+    self.assertEqual(testasset.is_error(url, anonymous, uargs=args), False)
+    self.assertEqual(testasset.can_access(url, user, uargs=args), True)
+    self.assertEqual(testasset.can_access(url, admin, uargs=args), True)
+    self.assertEqual(testasset.can_access(url, anonymous, uargs=args), False)
+    self.assertEqual(testasset.cannot_access(url, user, uargs=args), False)
+    self.assertEqual(testasset.cannot_access(url, admin, uargs=args), False)
+    self.assertEqual(testasset.cannot_access(url, anonymous, uargs=args), True)
+
+
 class MainViewTests(TestCase):
     def test_index(self):
         all_user(self, "index")
@@ -172,8 +193,8 @@ class MainViewTests(TestCase):
     def test_set_sarched_data(self):
         only_login_user(self, "import_company")
 
-    def get_address(self):
-        only_login_user(self, "get_address")
+    def test_get_address(self):
+        only_login_user_with_args(self, "get_address", args={"zipcode": "1100000"})
 
     def test_interview_main(self):
         only_login_user_with_post(self, "interview_main")
@@ -188,7 +209,7 @@ class MainViewTests(TestCase):
         only_login_user_with_interview(self, "delete_interview")
 
     def test_calc(self):
-        all_user(self, "calc")
+        only_login_user(self, "calc")
 
     def test_export_sheet(self):
         only_login_user_with_post(self, "export_sheet")

@@ -1,3 +1,11 @@
+const search = {
+    "select_search":select_search,
+    "search_post": search_post,
+    "check_and_fetch":check_and_fetch,
+    "init_fetch":init_fetch,
+}
+export default search;
+
 function select_search(name){
     let s = document.getElementById("search_item_show");
     s.innerHTML ="対象:"+  name;

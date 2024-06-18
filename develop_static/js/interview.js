@@ -1,3 +1,13 @@
+
+const interview = {
+    "init":init,
+    "open_url": open_url,
+    "delete_interview":delete_interview,
+    "search_zipcode":search_zipcode,
+    "open_interviewer":open_interviewer,
+    "t_save":t_save,
+}
+
 function open_url(id,name,width,height){
     let url = document.getElementById(id).value;
     let toastBootstrap;
@@ -12,7 +22,6 @@ function open_url(id,name,width,height){
     };
 };
 
-let wind3;
 function search_zipcode(k){
     let zipcode = document.getElementById('id_zipcode').value;
     let d_url = k
@@ -20,12 +29,6 @@ function search_zipcode(k){
     wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
 
 };
-window.addEventListener('beforeunload', function(){
-if (wind3){
-    wind3.close();
-}
-window.opener.location.reload();
-});
 
 function open_interviewer(user_url){
 open_as_window(user_url.replace("interviewer_name", document.getElementById("id_interviewer").value), "interviewer_view",500,600);
@@ -66,3 +69,15 @@ async function delete_interview(url){
         document.getElementById('form-container').innerText = await res.text();
         }
     }}
+
+function init(){
+    let wind3;
+    window.addEventListener('beforeunload', function(){
+        if (wind3){
+            wind3.close();
+        }
+        window.opener.location.reload();
+        });
+        
+}
+export default interview;

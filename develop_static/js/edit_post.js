@@ -1,3 +1,9 @@
+const edit_post = {
+    "t_save": t_save,
+    "init":init,
+}
+export default edit_post
+
 async function t_save(){
     const s = document.querySelector('form');
     const formData = new FormData(s);
@@ -25,8 +31,11 @@ async function t_save(){
     }
     
     };
-window.addEventListener('DOMContentLoaded', () => {
+function init(){
+    window.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
-    form.onsubmit = ()=>{t_save(); return false};
+    form.onsubmit = ()=>{edit_post.t_save(); return false};
     ;
 });
+}
+

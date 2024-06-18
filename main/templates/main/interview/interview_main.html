@@ -22,7 +22,7 @@
                 <div class="row p-3">
                     <ul class = "list-unstyled">
                     {% for interview in interviews %}
-                    <li><a onclick="view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.title}} <br> ({{interview.date}})</p></a></li>
+                    <li><a onclick="Main.default.interview_main.view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.title}} <br> ({{interview.date}})</p></a></li>
                     {% endfor %}
                 </ul>
                 {% if not as_staff %}
@@ -34,7 +34,9 @@
     </div>
 
     </div>
-    <script src = "{% static "js/interview_main.js" %}"></script>
+    <script>
+        Main.default.interview_main.init()
+    </script>
 </body>
 
 </html>

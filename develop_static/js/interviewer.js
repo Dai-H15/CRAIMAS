@@ -1,3 +1,10 @@
+const interviewer = {
+    "p_save":p_save,
+    "init": init,
+}
+
+export default interviewer
+
 async function p_save(){
     const s = document.querySelector('form');
     const url = s.action;
@@ -33,8 +40,11 @@ async function p_save(){
         toastBootstrap.show();
     };
     };
+
+function init(){
     window.addEventListener('DOMContentLoaded', () => {
         const form = document.querySelector('form');
         form.onsubmit = ()=>{t_save(); return false};
         ;
     });
+}

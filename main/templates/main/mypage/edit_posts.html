@@ -58,7 +58,7 @@
             <div class = "row ">
                 <div class = "col border-top">
                 <h5>企業データ</h5>
-                <button type="button" class="btn btn-outline-warning my-3" onclick = "open_as_window('{% url "calc" %}','calc',600,300)">金額入力ツール</button>
+                <button type="button" class="btn btn-outline-warning my-3" onclick = "Main.default.open_as_window.open_as_window('{% url "calc" %}','calc',600,300)">金額入力ツール</button>
                     <table class  = "table  table-hover">{% for f in D_Form %}{% bootstrap_field f %}{% endfor %}</table>
                 </div>
             </div>
@@ -81,14 +81,20 @@
     </div>
         </form>
     </div>
-<script src = "{% static "js/open_as_window.js" %}"></script>
-<script src ="{% static "js/edit_post.js" %}" ></script>
+<script>
+    Main.default.open_as_window.init();
+</script>
+<script>
+    Main.default.edit_post.init();
+</script>
 <div class="toast-container position-fixed top-0 start-0 p-3">
     <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-body text-white " id = "toast-status"></div>
     </div>
   </div>
-  <script src = "{% static "js/assist_tooltip.js" %}"></script>
+<script>
+    Main.default.assist_tooltip.main()
+</script>
 
 </body>
 </html>

@@ -1,3 +1,7 @@
+const infomation = {
+    "conf_infomation": conf_infomation,
+}
+export default infomation;
 function conf_infomation(d_id, operation, action, t_csrf){
     let form = document.createElement('form');
     form.action = action;

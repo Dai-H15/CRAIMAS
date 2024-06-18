@@ -1,4 +1,10 @@
-function apply_extension(url, csrf_token){
+const apply_extension = {
+    "apply_extension": main
+}
+
+export default apply_extension;
+
+function main(url, csrf_token){
     let form = document.createElement('form');
     form.action = url;
     form.method = "post";

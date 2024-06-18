@@ -1,4 +1,9 @@
-let wind3;
+const interview_create = {
+    "init": init,
+    "search_zipcode": search_zipcode,
+    "get_interviewer": get_interviewer,
+}
+export default interview_create;
         function search_zipcode(d_url){
             let zipcode = document.getElementById('id_zipcode').value;
             if (zipcode.length < 7){
@@ -20,8 +25,12 @@ let wind3;
         }
         
     };
+    
+function init(){
+    let wind3;
     window.addEventListener('beforeunload', function(){
-        if (wind3){
-            wind3.close();
-        }
-    });
+            if (wind3){
+                wind3.close();
+            }
+        });
+}

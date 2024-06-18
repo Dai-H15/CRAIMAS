@@ -24,7 +24,7 @@
                     
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{{ field.value }}{% if field.name == "contact" or field.name == "president" %}<button class = "btn btn-outline-primary mx-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "open_as_window('{% url "prof_interviewer" company_id=post.company.CompanyID i_name=field.value %}', 'prof_interviewer', 530,600)"> {{field.label}}プロフィールを検索</button>{% endif %}</td>
+                            <td>{{ field.value }}{% if field.name == "contact" or field.name == "president" %}<button class = "btn btn-outline-primary mx-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.open_as_window.open_as_window('{% url "prof_interviewer" company_id=post.company.CompanyID i_name=field.value %}', 'prof_interviewer', 530,600)"> {{field.label}}プロフィールを検索</button>{% endif %}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -69,11 +69,11 @@
                 </tr>
             {% endfor %}</table>
             <div class = "border-top">
-                <div class = "row p-4 "> <button onclick = "open_as_window('{% url "interview_main" post.RegistID %}', 'interview_main', 400,600)"  class = " btn btn-success">面談録</button></div>
+                <div class = "row p-4 "> <button onclick = "Main.default.open_as_window.open_as_window('{% url "interview_main" post.RegistID %}', 'interview_main', 400,600)"  class = " btn btn-success">面談録</button></div>
                 {% if not as_staff %}
 
-                <div class = "row p-4 "> <button class = "btn btn-outline-warning " onclick= "open_as_window('{% url "export_sheet" post.RegistID %}', 'export_sheet', 400,600)">シートをエクスポートする</button></div>
-                <div class = "row p-4 "> <button class = "btn btn-outline-info " onclick= "change_active('{{post.RegistID}}', '{{post.isActive}}')">活動状況を切り替える</button></div>
+                <div class = "row p-4 "> <button class = "btn btn-outline-warning " onclick= "Main.default.open_as_window.open_as_window('{% url "export_sheet" post.RegistID %}', 'export_sheet', 400,600)">シートをエクスポートする</button></div>
+                <div class = "row p-4 "> <button class = "btn btn-outline-info " onclick= "Main.default.view_my_post.change_active('{% url "change_active" %}','{{post.RegistID}}', '{{post.isActive}}')">活動状況を切り替える</button></div>
                 {% endif %}
             </div>
         </div>
@@ -85,7 +85,7 @@
                         <tr>
                             <td>{{ field.label }}:</td>
                         {% if field.label == "URL" %}
-                            <td>{{ field.value }}<br><button class = "btn btn-outline-info" onclick="open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
+                            <td>{{ field.value }}<br><button class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
                         {% else %}
                             <td>{{ field.value }}</td>
                         {% endif %}
@@ -100,7 +100,7 @@
                     <table class  = "table  table-hover">{% for field in AD_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{% if field.name == "from_url" %}{% if field.value  %} URLあり <button class = "btn btn-outline-info" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick="open_as_window('{{ field.value }}', 'AD_Site', 1000,800)"> 開く</button> {% else %} 未登録 {% endif %}{% endif %}</td>
+                            <td>{% if field.name == "from_url" %}{% if field.value  %} URLあり <button class = "btn btn-outline-info" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'AD_Site', 1000,800)"> 開く</button> {% else %} 未登録 {% endif %}{% endif %}</td>
                         </tr>
                     {% endfor %}</table>
                 </div>
@@ -115,40 +115,10 @@
         
     </div>
     </div>
-    <script src="{% static "js/open_as_window.js" %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
-</script>
-{% if not as_staff %}
-<script>
-    function change_active(set_id, current_status){
-        form = document.createElement('form');
-        form.method = 'post';
-        form.action = "{% url 'change_active' %}";
-
-        let csrf = document.createElement("input");
-        csrf.name = 'csrfmiddlewaretoken';
-        csrf.type = 'hidden';
-        csrf.value = '{{ csrf_token }}';
-        form.appendChild(csrf);
-
-        let id = document.createElement("input");
-        id.value = set_id;
-        csrf.type = 'hidden';
-        id.name = 'RegistID';
-        form.appendChild(id);
-
-        let status = document.createElement("input");
-        status.value = current_status;
-        status.type = "hidden";
-        status.name = "current_status";
-        form.appendChild(status);
-        document.body.appendChild(form);
-        form.submit();
-    };
-
-</script>
-{% endif %}
+    <script>
+        Main.default.open_as_window.init()
+    </script>
+    
 
 </body>
 </html>

@@ -505,6 +505,7 @@ def create_d_company(request):
     return render(request, "main/regist/sets/create_d_company.html", contexts)
 
 
+@login_required
 def create_adoption(request):
     contexts = collect_regnum(request)
     contexts["D_Form"] = D_CompanyForm(
@@ -530,6 +531,7 @@ def create_adoption(request):
     return render(request, "main/regist/sets/create_adoption.html", contexts)
 
 
+@login_required
 def create_complete(request):
     contexts = collect_regnum(request)
     regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
@@ -545,32 +547,40 @@ def create_complete(request):
 
 @login_required
 def edit_posts(request, id):
-    try:
-        contexts = getRegistForms(id, collect_regnum(request), request)
-    except RegistSets.DoesNotExist as e:
-        return HttpResponse(f"<h4>権限がない、もしくは不正なアクセスです。({e})</h4><button onclick='window.location=`/`'>戻る</button>")
-    if contexts["as_staff"] is True:
-        return HttpResponse("<h3>管理者は、ユーザーの登録情報シートに変更を加えることができません</h3><button onclick='window.location=`/`'>戻る</button>")
-    NotFound = []
-    contexts["R_id"] = id
-    if "A_Form" not in contexts:
-        contexts["A_Form"] = AboutForm()
-        NotFound.append("A_Form")
-    if "I_Form" not in contexts:
-        contexts["I_Form"] = IdeaForm()
-        NotFound.append("I_Form")
-    if "M_Form" not in contexts:
-        contexts["M_Form"] = MotivationForm()
-        NotFound.append("M_Form")
-    if "D_Form" not in contexts:
-        contexts["D_Form"] = D_CompanyForm()
-        NotFound.append("D_Form")
-    if "AD_Form" not in contexts:
-        contexts["AD_Form"] = AdoptionForm()
-        NotFound.append("AD_Form")
-    request.session["NotFound"] = NotFound
+    if request.method == "GET":
+        try:
+            contexts = getRegistForms(id, collect_regnum(request), request)
+        except (RegistSets.DoesNotExist, AttributeError):
+            return HttpResponse(f"<h4>権限がない、もしくは不正なアクセスです。</h4><button onclick='window.location=`/`'>戻る</button>")
+        if contexts["as_staff"] is True:
+            return HttpResponse("<h3>管理者は、ユーザーの登録情報シートに変更を加えることができません</h3><button onclick='window.location=`/`'>戻る</button>")
+        NotFound = []
+        contexts["R_id"] = id
+        if "A_Form" not in contexts:
+            contexts["A_Form"] = AboutForm()
+            NotFound.append("A_Form")
+        if "I_Form" not in contexts:
+            contexts["I_Form"] = IdeaForm()
+            NotFound.append("I_Form")
+        if "M_Form" not in contexts:
+            contexts["M_Form"] = MotivationForm()
+            NotFound.append("M_Form")
+        if "D_Form" not in contexts:
+            contexts["D_Form"] = D_CompanyForm()
+            NotFound.append("D_Form")
+        if "AD_Form" not in contexts:
+            contexts["AD_Form"] = AdoptionForm()
+            NotFound.append("AD_Form")
+        request.session["NotFound"] = NotFound
+
     if request.method == "POST":
-        Temp_regist = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
+        res = {"status": "", "message": ""}
+        try:
+            Temp_regist = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
+        except (RegistSets.DoesNotExist, AttributeError):
+            res["status"] = "NG"
+            res["message"] = "不正な操作を検出しました。操作を取り消しました。管理者までお問い合わせください。"
+            return JsonResponse(res)
         if "A_Form" in request.session["NotFound"]:
             AboutID = secrets.token_hex(64)
             A_Form = AboutForm(request.POST)
@@ -601,13 +611,7 @@ def edit_posts(request, id):
         else:
             AD_Form = AdoptionForm(request.POST, instance=Temp_regist.adoption)
             AdoptionID = Temp_regist.adoption.AdoptionID
-        if (
-            A_Form.is_valid()
-            and I_Form.is_valid()
-            and M_Form.is_valid()
-            and D_Form.is_valid()
-            and AD_Form.is_valid()
-        ):
+        if (A_Form.is_valid() and I_Form.is_valid() and M_Form.is_valid() and D_Form.is_valid() and AD_Form.is_valid()):
             n_AForm = A_Form.save(commit=False)
             n_IForm = I_Form.save(commit=False)
             n_MForm = M_Form.save(commit=False)
@@ -640,7 +644,12 @@ def edit_posts(request, id):
             Temp_regist.d_company = D_Company.objects.get(D_CompanyID=D_CompanyID, by_U_ID=request.user.U_ID)
             Temp_regist.adoption = Adoption.objects.get(AdoptionID=AdoptionID, by_U_ID=request.user.U_ID)
             Temp_regist.save()
-
+            res["status"] = "OK"
+        else:
+            res["status"] = "ERROR"
+            for f in [A_Form.errors, I_Form.errors, M_Form.errors, D_Form.errors, AD_Form.errors]:
+                res["message"] += str(f) + "<br>"
+        return JsonResponse(res)
     return render(request, "main/mypage/edit_posts.html", contexts)
 
 
@@ -689,6 +698,7 @@ def search_company(request, return_to):
     return render(request, "main/regist/sets/search_company.html", contexts)
 
 
+@login_required
 def get_city(request, prefecture):
     res = {}
     with open("static/assets/address_code.csv", "r", encoding="utf-8-sig") as f:
@@ -700,6 +710,7 @@ def get_city(request, prefecture):
     return JsonResponse(res)
 
 
+@login_required
 def get_more_compinfo(request, corporate_number, return_to):
     contexts = collect_regnum(request)
     contexts["return_to"] = return_to
@@ -848,6 +859,7 @@ def delete_interview(request, id):
     return HttpResponse("削除しました この画面を閉じてください")
 
 
+@login_required
 def get_address(request, zipcode):
     contexts = {}
     url = r"https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + zipcode
@@ -883,20 +895,24 @@ def view_interview(request, id):
         except AttributeError:
             contexts["from_url"] = None
         if request.method == "POST":
+            res = {}
             form = InterviewForm(
                 request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             )
             if form.is_valid():
                 form.save()
-                contexts["is_saved"] = True
+                res["is_saved"] = True
             else:
-                contexts["is_saved"] = False
+                res["is_saved"] = False
+                res["errors"] = str(form.errors)
+            return JsonResponse(res)
         return render(request, "main/interview/view_interview.html", contexts)
     except Interview.DoesNotExist:
         contexts["is_saved"] = False
         return HttpResponse(" <script>window.close()</script> ")
 
 
+@login_required
 def calc(request):
     contexts = {}
     return render(request, "main/regist/calc.html", contexts)
@@ -1038,7 +1054,11 @@ def change_active(request):
 
 @login_required
 def get_interviewer(request, id):
-    return JsonResponse({"interviewer": RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.contact})
+    try:
+        interviewer = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.contact
+        return JsonResponse({"status": "OK", "interviewer": interviewer})
+    except (RegistSets.DoesNotExist, AttributeError):
+        return JsonResponse({"status": "NG", "res": "不正なリクエストです。処理は中断されました。管理者まで問い合わせてください。"})
 
 
 @login_required

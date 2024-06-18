@@ -12,7 +12,7 @@
         {% for week in list_calendar %}
             <tr style="height: 100px;">
             {% for day in week %}
-                <td class = " border " style = "{% if day == today %}background-color:#d5fcd2{% endif %}">
+                <td class = "border " style = "{% if day == today %}background-color:#d5fcd2{% endif %}">
                     {% if day != 0 %}
                         <p class = "">{{day}}</p>
                         {% for interview in list_interview %}
@@ -21,7 +21,7 @@
                                 <div class = "bg-danger p-2 text-white text-center"><p>予定あり。面談不可</p> [{{interview.Interview.title}}] <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
                                 {% elif feature is True or interview.date|is_bigger:today%}
                                 {% if interview.Interview.tag == "インターンシップ" %}
-                                <button class = "btn btn-outline-success" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">未来の予定 (インターンシップ): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                <button class = "btn btn-outline-success" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">参加予定インターンシップ: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
                                 {% else %}
                                 <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">未来の予定 (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
                                 {% endif %}

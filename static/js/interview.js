@@ -39,17 +39,19 @@ async function t_save(url){
         body: formData
     }
     const res = await fetch(url,init);
-    if (res.ok) {
+    let data = await res.json();
+
+    if (data.is_saved) {
         const toast = document.getElementById('status-toast');
         toast.className = "toast bg-info";
         const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-        document.getElementById('toast-status').innerText = "保存しました";
+        document.getElementById('toast-status').innerHTML = "保存しました";
       toastBootstrap.show();
     }else{
         const toast = document.getElementById('status-toast');
         toast.className = "toast bg-danger";
         const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-        document.getElementById('toast-status').innerText = `保存に失敗しました。  理由:  ${res.statusText}` ;
+        document.getElementById('toast-status').innerHTML = `保存に失敗しました。 <br> 理由:  ${data.errors}` ;
         toastBootstrap.show();
     }
     

@@ -8,7 +8,6 @@ from main.models import Interview
 
 
 def get_listInterview(request, year, month):
-
     return [{"Interview": i, "date": timezone.make_naive(i.date).day} for i in Interview.objects.filter(by_U_ID=request.user.U_ID).filter(date__year=year).filter(date__month=month).filter(RegistID__isActive=True)]
 
 

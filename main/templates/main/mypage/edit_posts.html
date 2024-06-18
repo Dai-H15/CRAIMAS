@@ -18,7 +18,7 @@
             <button class = "btn btn-outline-warning" onclick = "window.opener.location.reload()">マイページへ戻る</button>
             
         </div></div>
-        <form method = "post">
+        <form method = "post" action = "{% url "edit_posts" R_id %}">
             {% csrf_token %}
             <div class = "container">
 
@@ -70,7 +70,7 @@
             </div>
             <div class = "row border-top text-center">
                 <div class = "col m-3 ">
-                <button type = "button" onclick = "t_save()" class = "btn btn-outline-success btn-lg mx-3"> 更新 </button>
+                <button type = "submit" class = "btn btn-outline-success btn-lg mx-3"> 更新 </button>
                 <button type = "button" onclick = "window.opener.location.reload();" class = "btn btn-secondary btn-lg mx-3">閉じる</button>
             
             </div>
@@ -82,33 +82,7 @@
         </form>
     </div>
 <script src = "{% static "js/open_as_window.js" %}"></script>
-<script>
-    async function t_save(){
-        const s = document.querySelector('form');
-        const url = "{% url 'edit_posts' R_id %}";
-        const formData = new FormData(s);
-        const init = {
-            method: "POST",
-            body: formData
-        }
-        const res = await fetch(url,init);
-        if (res.ok) {
-            const toast = document.getElementById('status-toast');
-            toast.className = "toast bg-info";
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-            document.getElementById('toast-status').innerText = "保存しました";
-          toastBootstrap.show();
-        }else{
-            const toast = document.getElementById('status-toast');
-            toast.className = "toast bg-danger";
-            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toast);
-            document.getElementById('toast-status').innerText = `保存に失敗しました。  理由:  ${res.statusText}` ;
-            toastBootstrap.show();
-        }
-        
-
-        };
-</script>
+<script src ="{% static "js/edit_post.js" %}" ></script>
 <div class="toast-container position-fixed top-0 start-0 p-3">
     <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-body text-white " id = "toast-status"></div>

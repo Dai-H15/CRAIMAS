@@ -1,3 +1,4 @@
+{% load static %}
 {% load django_bootstrap5 %}
 
 <!DOCTYPE html>
@@ -21,10 +22,10 @@
                     {% for f in form %}
                     {% if f.name == "zipcode" %}
                     {% bootstrap_field f %}
-                    <button type = "button" class = "btn btn-warning mb-3" onclick="search_zipcode()">住所を検索</button>
+                    <button type = "button" class = "btn btn-warning mb-3" onclick="search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
                     {% elif f.name == "interviewer" %}
                     {% bootstrap_field f %}
-                    <button type = "button" class = "btn btn-outline-info mb-3" onclick="get_interviewer()">企業シートから担当者を引用</button>
+                    <button type = "button" class = "btn btn-outline-info mb-3" onclick="get_interviewer('{% url 'get_interviewer' R_id %}')">企業シートから担当者を引用</button>
                     {% else %}
                     {% bootstrap_field f %}
                     {% endif %}
@@ -37,33 +38,7 @@
     </div>
 
     </div>
-    <script>
-        let wind3;
-        function search_zipcode(){
-            let zipcode = document.getElementById('id_zipcode').value;
-            if (zipcode.length < 7){
-                alert('入力値を確認してください');
-                return;
-            }
-            let d_url = "{% url 'get_address' 'placeholder' %}"
-            let url = d_url.replace('placeholder', zipcode);
-            wind3 = window.open(`${url}`, "get_address", "width=400,height=400,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes");
-    };
-
-    async function get_interviewer(){
-        const url = "{% url 'get_interviewer' R_id %}";
-        const init = {method: "get"};
-        let res = await fetch(url, init);
-        let data = await res.json();
-        document.getElementById('id_interviewer').value = data.interviewer;
-    };
-    window.addEventListener('beforeunload', function(){
-        if (wind3){
-            wind3.close();
-        }
-    });
-
-</script>
+    <script src="{% static "js/interview_create.js" %}"></script>
 </body>
 
 </html>

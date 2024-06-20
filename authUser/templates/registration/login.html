@@ -1,12 +1,28 @@
 {% load static %}
-<!doctype html>
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
 <html lang="ja">
     <head>
         {% include "main/html_head.html" %}
     </head>
 <body>
+    {% include "main/header.html" %}
     <div class = "container">
-    <h1>ログイン</h1>
+        <div class = "row">
+            <h1>ログイン</h1>
+            {% if form.errors %}
+                    {% for key,dic in form.errors.items %}
+                {% for e in dic %}
+                <h5 class = "bg-danger text-white m-2 rounded p-2 ">{{e}}</h5>
+                {% endfor %}
+                {% endfor %}
+                <div class = "text-center alert alert-warning">
+                    <h5>もしくは、ユーザーが有効化されていない可能性があります。</h5>
+                    <h5>メール認証を行うか、管理者までお問い合わせください。</h5>
+                </div>
+                
+                {% endif %}
     <p>{{message}}</p>
     <div class = "row">
         <div classs = "col border">
@@ -14,17 +30,10 @@
                     {% csrf_token %}
                     {% for field in form %}
                     <div class="col p-2">
-                        {{ field.label_tag }} {{ field }}
+                        {% bootstrap_field field %}
                     </div>
-                {% endfor %}
-                    {% if form.errors %}
-                    {% for key,dic in form.errors.items %}
-                {% for e in dic %}
-                <h5 class = "bg-danger text-white m-2 rounded ">{{e}}</h5>{% endfor %}
-                {% endfor %}
-                <p>もしくは、ユーザーが有効化されていない可能性があります。</p>
-                <p>メール認証を行うか、管理者までお問い合わせください。</p>
-                {% endif %}
+                    {% endfor %}
+                    
                         <p><input type="hidden" name="next" value="{{next}}"></p>
                         <p><input type="submit" class = "btn btn-primary" value="ログイン"></p>
                     </form>
@@ -34,6 +43,13 @@
     
 
     <p><a href="{% url 'signup'%}">ユーザー登録</a></p>
+        </div>
+    
+    <div class = "my-3">
+    {% include "main/footer.html" %}
+    </div>
+    
+
 </div>
 
 </body>

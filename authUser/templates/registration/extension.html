@@ -38,13 +38,12 @@
                 {% include "registration/policy.html" %}
             </div>
                 {% if can_extension %}
-                <button class = "col-6 mx-auto btn btn-outline-success mb-3" onclick = "apply_extension('{% url 'extension' %}', '{{ csrf_token }}')">利用規約に同意し有効期限を延長</button>
-                <script src="{% static "js/apply_extension.js" %}"></script>
+                <button class = "col-6 mx-auto btn btn-outline-success mb-3" onclick = "Main.default.apply_extension.main('{% url 'extension' %}', '{{ csrf_token }}')">利用規約に同意し有効期限を延長</button>
                 {% else %}
                 <button class = "col-6 mx-auto btn btn-danger disabled mb-3" role = "button" aria-disabled="true"> 有効日数が20日以上です。<br>延長できません。 </button>
                 {% endif %}
             </div>
     </div>
-
+{% include "main/footer.html" %}
 </body>
 </html>

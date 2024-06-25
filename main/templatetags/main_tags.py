@@ -20,6 +20,8 @@ def get_item(value, key):
         res = value.get(key)
     else:
         res = getattr(value, key, None)
+        if key == "name":
+            res += " 様 "
     if is_url(res):
         return mark_safe(f"<p>{(res[:20] + '...')if len(res) >= 20 else res}</p><button class='btn btn-outline-info' onclick='Main.default.open_as_window.open_as_window(\"{res}\", \"URL\", 1200, 1000)'> ページを開く</button>")
     return res

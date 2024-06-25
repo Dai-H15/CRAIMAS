@@ -20,7 +20,7 @@
             <td>{{post.company}}</td>
             <td>{{post.company.industry}}</td>
             <td>{{post.adoption.occupation}}</td>
-            <td>{{post.company.contact}}</td>
+            <td>{{post.company.contact}} 様 </td>
             <td>{{post.adoption.a_year}}</td>
             <td>{% if post.adoption.from_url != "" %} <button class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{{ post.adoption.from_url }}', 'AD_Site', 1000,800)"> 開く</button>{% endif %}
             <td>{% get_interview post.RegistID post_interviews%}</td>

@@ -160,7 +160,7 @@ class InterviewForm(forms.ModelForm):
                     "title": "面談タイトル",
                     "tag": "面談タグ",
                     "date": "面談日時",
-                    "interviewer": "面談者 (敬称略) ",
+                    "interviewer": "面談者",
                     "zipcode": "郵便番号",
                     "place": "住所",
                     "Event_URL": "イベントへのURL",

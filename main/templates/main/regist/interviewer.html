@@ -14,7 +14,7 @@
         <div class="row m-2">
             {% if message %}<div class="alert alert-{{message.type}} text-center" role="alert">{% for text in message.texts %} <b>{{text}}</b><br> {% endfor %}</div>{% endif %}
             <div class  = "text-center"><h4>{{company}}</h4></div>
-            <div class  = "text-center"><h4 class = "border-bottom p-3">{{i_name}} 様</h4></div>
+            <div class  = "text-center"><h4 class = "border-bottom p-3">{{i_name}}</h4></div>
             <div class="container">
                 <div class="row p-3">
                     <form method = "post" action = "{% url 'prof_interviewer' company_id=company_id i_name=i_name %}">

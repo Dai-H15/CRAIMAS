@@ -9,9 +9,9 @@ import datetime
 
 class CustomUserAdmin(admin.ModelAdmin):
     model = CustomUser
-    list_display = ("is_active", "username", "ExpiryDate", "U_ID", "is_staff", "is_superuser")
+    list_display = ("is_active", "username", "ExpiryDate", "last_name", "first_name", "U_ID", "is_staff", "is_superuser")
     list_display_links = ("username",)
-    search_fields = ["username", "email", "U_ID"]
+    search_fields = ["username", "email", "U_ID", "last_name", "first_name", ]
     actions = ["accept_user", "reject_user", "add_use_date"]
 
     def accept_user(self, request, queryset):

@@ -12,16 +12,21 @@
                 <h5> CRAIMAS 利用申請フォームです</h5>
                 <h5> 登録後、完了画面のリンクからメール送信で承認申請を行うことで利用を開始することができます。 </h5>
             <div class = "row">
-                <div class  = "col  border text-center p-3">
+                <div class  = "row  border text-center p-3">
                 <form action="{% url 'signup' %}" method="post">
                     {% csrf_token %}
-                    {% for field in form %}
                     <div class="col p-2">
-                        
-                        {% bootstrap_field field %}
+                    {% for field in form %}
+                        {% if field.name == "first_name" %}
+                        {% bootstrap_field field  field_class="col-5" %}
+                        {% elif field.name == "last_name"  %}
+                        {% bootstrap_field field  field_class="col-5" %}
+                        {% else %}
+                        {% bootstrap_field field  %}
+                        {% endif %}
                         {% if field.name == "gBIZINFO_key" %} <h6 class = "mb-3"> 利用には gBizINFOの Web API の利用申請を行い、APIキーを取得する必要があります。 <a href="https://info.gbiz.go.jp/hojin/api_registration/form" target="_blank" rel="noopener" > こちら </a> からAPIキーを取得してください </h6>{% endif %}
-                    </div>
                 {% endfor %}
+                </div>
                 </div>
                 <h5 class = "m-3">CRAIMASをご利用いただくには、以下に定める利用規約に同意頂く必要があります</h5>
                 <h5 class = "m-3">必ず確認し、同意の上で新規登録を行ってください。</h5>
@@ -36,7 +41,9 @@
                 </div>
             </div>
     </div>
-    <script src = "{% static "js/signup.js" %}"></script>
+    <script>
+        Main.default.signup.init();
+    </script>
     
 
 </body>

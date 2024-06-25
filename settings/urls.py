@@ -23,9 +23,8 @@ admin.site.site_title = '管理者ページ'
 admin.site.site_header = 'CRAIMAS 【クレイマス】 管理サイト'
 admin.site.index_title = '管理対象シート一覧'
 
-
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin_site/', admin.site.urls),
     path("", include("main.urls")),
     path("auth/", include("authUser.urls")),
     path("task_calendar/", include("task_calendar.urls")),

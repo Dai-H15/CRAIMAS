@@ -10,4 +10,4 @@ class CustomUser(AbstractUser):
     y_graduation = models.IntegerField()
     gBIZINFO_key = models.CharField(max_length=100)
     ExpiryDate = models.DateField(null=False, blank=False, default=datetime.date.today() + datetime.timedelta(days=20), verbose_name="アカウント利用期限")
-    REQUIRED_FIELDS = ["email", "y_graduation", "gBIZINFO_key"]
+    REQUIRED_FIELDS = ["last_name", "first_name", "email", "y_graduation", "gBIZINFO_key"]

@@ -516,8 +516,8 @@ def import_customsheet(request):
                 )
                 name_ok_data.append(s["sheet_name"])
                 ok_data += 1
-        except UnicodeDecodeError as e:
-            return HttpResponse(f"<p> ファイルの構成が不正です。{e}</p>")
+        except UnicodeDecodeError:
+            return HttpResponse("<p> ファイルの構成が不正です。</p>")
         contexts["num_data"] = num_data
         contexts["ok_data"] = ok_data
         contexts["name_ok_data"] = name_ok_data

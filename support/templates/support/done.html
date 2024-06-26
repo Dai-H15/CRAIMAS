@@ -1,0 +1,24 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <head>{% include "main/html_head.html" %}</head>
+</head>
+<body>
+    <div class = "container-fluid">
+        <div class = "row text-center">
+            <h4>問い合わせが完了しました。</h4>
+            <h6>頂いた問い合わせのチケットIDは [ {{TicketID}} ] です。<br> 問い合わせの際はこのIDをお伝え下さい。 </h6>
+            <h5>今後のやり取りは登録されているメール宛に行います。</h5>
+            <h5>s1f102200828@iniad.orgからメールを送信いたします</h5>
+            
+        </div>
+        <div class = "row">
+            <div class = "col mx-auto text-center my-3">
+                <a href="{% url "index" %}" class = "btn btn-primary"> ホームへ戻る </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -3,8 +3,9 @@ from main.views import collect_regnum
 from main.models import RegistSets, Interview
 from authUser.models import CustomUser
 from django.contrib.auth.decorators import login_required, permission_required
-from .forms import InfomationForm
+from .forms import InfomationForm, ManagementSupportForm
 from .models import InfomationModel
+from support.models import SupportTicketModel
 # Create your views here.
 
 
@@ -129,3 +130,66 @@ def change_public(request):
     info.is_public = True if not info.is_public else False
     info.save()
     return redirect("create_infomation")
+
+
+@login_required
+@permission_required("authUser.is_staff")
+def management_support(request):
+    contexts = {}
+    choice = ManagementSupportForm()
+    contexts["choice"] = choice
+    return render(request, "support.html", contexts)
+
+
+@login_required
+@permission_required("authUser.is_staff")
+def support_catgory(request, select):
+    contexts = {}
+    if (select == "-------") or (select == "init"):
+        ticket = SupportTicketModel.objects.all().order_by("is_solved")
+    else:
+        ticket = SupportTicketModel.objects.filter(category=select).order_by("is_solved")
+    contexts["ticket"] = ticket
+    return render(request, "support_category.html", contexts)
+
+
+@login_required
+@permission_required("authUser.is_staff")
+def management_support_detail(request):
+    contexts = {}
+    if request.method == "POST":
+        try:
+            ticket = SupportTicketModel.objects.get(TicketID=request.POST.get("TicketID"))
+            contexts["ticket"] = ticket
+            contexts["request_by"] = CustomUser.objects.get(U_ID=ticket.request_by.U_ID)
+            return render(request, "support_detail.html", contexts)
+        except (SupportTicketModel.DoesNotExist, AttributeError):
+            return HttpResponse("サポートチケットが見つかりませんでした")
+    else:
+        return HttpResponse("不正なリクエストです")
+
+
+@login_required
+@permission_required("authUser.is_staff")
+def management_support_change_is_solved(request):
+    if request.method == "POST":
+        try:
+            ticket = SupportTicketModel.objects.get(TicketID=request.POST.get("TicketID"))
+            ticket.is_solved = not ticket.is_solved
+            ticket.save()
+        except (SupportTicketModel.DoesNotExist, AttributeError):
+            return HttpResponse("サポートチケットが見つかりませんでした")
+    return redirect("management_support")
+
+
+@login_required
+@permission_required("authUser.is_staff")
+def support_edit_admin_comment(request):
+    if request.method == "POST":
+        try:
+            ticket = SupportTicketModel.objects.get(TicketID=request.POST.get("TicketID"))
+            ticket.admin_memo = request.POST.get("admin_memo")
+            ticket.save()
+        except (SupportTicketModel.DoesNotExist, AttributeError):
+            return HttpResponse("サポートチケットが見つかりませんでした")
+    return redirect("management_support")

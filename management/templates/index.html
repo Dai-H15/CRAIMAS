@@ -10,8 +10,9 @@
         <div class = "row p-3 text-center">
             <h3>管理者用サイト</h3>
             <div class = "row ">
-            <a href="{% url "create_infomation" %}"><div class = "col border m-3 p-3 "><h5>お知らせ管理</h5></div></a>
-            <a href="{% url "all_sheets" %}"><div class = "col border m-3 p-3 "><h5>全登録シート閲覧</h5></div></a>
+                <a href="{% url "create_infomation" %}"><div class = "col border m-3 p-3 "><h5>お知らせ管理</h5></div></a>
+                <a href="{% url "management_support" %}"><div class = "col border m-3 p-3 "><h5>問い合わせ閲覧</h5></div></a>
+                <a href="{% url "all_sheets" %}"><div class = "col border m-3 p-3 "><h5>全登録シート閲覧</h5></div></a>
             <a href="{% url "management_sheets" %}"><div class = "col border m-3 p-3"><h5>統括シート閲覧</h5></div></a>
             <a href="{% url "all_interviewer" %}"><div class = "col border m-3 p-3 "><h5>全採用担当者閲覧</h5></div></a>
             <a href="{% url "regist_all" %}"><div class = "col border m-3 p-3 "><h5>ユーザー毎面談録管理</h5></div></a>

@@ -1,0 +1,31 @@
+                <table
+                    class="table"
+                >
+                    <thead>
+                        <tr class = "table-primary">
+                            <th scope="col">投稿日時</th>
+                            <th scope="col">タイトル</th>
+                            <th scope="col">カテゴリ</th>
+                            <th scope="col">投稿者</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in ticket %}
+                        <tr class="{% if not t.is_solved %} table-primary {% else %} bg-secondary{% endif %}" id = "tr_{{forloop.counter}}">
+                            <td scope="row">{{t.posted_at}}</td>
+                            <td> {{t.title}} </td>
+                            <td>{{t.category}}</td>
+                            <td> {{t.request_by}} </td>
+                            <td>
+                                <form id ="form_{{forloop.counter}}" method = "POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="TicketID" value = "{{t.TicketID}}">
+                                </form>
+                                <button class = "btn btn-primary" value = "{{forloop.counter}}" onclick="Main.default.support.get_detail('{{forloop.counter}}', '{% url "management_support_detail" %}')"> 詳細表示 </button>
+                                <button class = "btn btn-warning" value = "{{forloop.counter}}" onclick="Main.default.support.change_is_solved('{{forloop.counter}}', '{% url "management_support_change_is_solved" %}')"> クローズ切替 </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>

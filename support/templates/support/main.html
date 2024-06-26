@@ -1,0 +1,27 @@
+{% load django_bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <head>{% include "main/html_head.html" %}</head>
+</head>
+<body>
+
+    <div class = "container-fluid">
+        {% include "main/header.html" %}
+        <div class = "row py-3">
+            <h3> 問い合わせフォーム </h3>
+            <form method = "POST">
+        {% csrf_token %}
+        {% for f in form %}
+        {% bootstrap_field f %}
+        {% endfor %}
+    </div>
+        <button type = "submit" class = "btn btn-success"> 送信 </button>
+        <a class = "btn btn-primary" href = "{% url "index" %}" > ホームへ戻る </a>
+        </form>
+        
+    </div>
+
+</body>
+</html>

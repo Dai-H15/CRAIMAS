@@ -29,6 +29,7 @@ urlpatterns = [
     path("auth/", include("authUser.urls")),
     path("task_calendar/", include("task_calendar.urls")),
     path("management/", include("management.urls")),
+    path("support/", include("support.urls")),
 ]
 urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
 urlpatterns += staticfiles_urlpatterns()

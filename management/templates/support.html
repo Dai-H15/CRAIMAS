@@ -1,0 +1,33 @@
+{% load django_bootstrap5 %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>{% include "main/html_head.html" %}</head>
+<body>
+    
+    <div class="container-fluid">
+        {% include "main/header.html" %}
+        <div class = "row m-3 border rounded p-3">
+            <h4 class = "border-bottom">問い合わせ一覧</h4>
+            <div class = "row">
+                {% for c in choice %}
+                <div class = "col-3 mx-auto">
+                    {% bootstrap_field c %}
+                </div>
+                {% endfor %}
+                </div>
+                <div class="table-responsive" id = "support_table">
+            </div>
+        </div>
+        <div class="row m-2" id = "support_detail">
+        </div>
+        <div class = "text-center">
+            <a href="{% url "index" %}" class = "btn btn-primary"> ホームへ戻る </a>
+        </div>
+        
+    </div>
+    </div>
+    <script>Main.default.support.init('{% url "support_catgory" "holder" %}')</script>
+</body>
+
+</html>

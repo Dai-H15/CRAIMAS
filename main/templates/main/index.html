@@ -59,35 +59,40 @@
                     {% if  user.is_authenticated %}
                     <form method="post" action="{% url 'logout' %}" class = "row">
                         {% csrf_token %}
-                        <button type="submit" class="text-center p-3 border btn" >
+                        <button type="submit" class="text-center p-3 border btn my-2" >
                             <h3>ログアウト</h3>
                         </button>
                     </form>
+                    <a href="{% url "support_main" %}">
+                        <div class="row text-center p-3 border my-2">
+                            <h3>問い合わせ</h3>
+                        </div>
+                    </a>
                     {% else %}
                     <div class = "row m-3">
                         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ3ZmqYMQ1uZMx2pPvkqoyl6RfKupj86FJGux4vjRS3GkDOshQ-Cfe-nmiOgA3pP58xk4zIV8nqHhBB/embed?start=true&loop=true&delayms=5000" frameborder="0" width="1024" height="480" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
                     </div>
                     {% endif %}
                     <a href="{% url "mypage" %}">
-                        <div class="row text-center p-3 border ">
+                        <div class="row text-center p-3 border  my-2">
                             <h3>マイページ</h3>
                         </div>
                     </a>
                     {% if user.is_staff %}
                     <a href="{% url "management" %}">
-                        <div class="row text-center p-3 border text-success ">
+                        <div class="row text-center p-3 border text-success  my-2">
                             <h3> 管理者用ページ</h3>
                         </div></a>{% endif %}
                     <a href="{% url "view_index" %}">
-                    <div class="row text-center p-3 border">
+                    <div class="row text-center p-3 border my-2">
                         <h3>各種シート管理</h3>
                     </div></a>
                     <a href="{% url "calendar_main" %}">
-                        <div class="row text-center p-3 border">
+                        <div class="row text-center p-3 border my-2">
                             <h3> カレンダー</h3>
                         </div></a>
                     <a href="{% url "regist_base" %}">
-                    <div class="row text-center p-3 border">
+                    <div class="row text-center p-3 border my-2">
                         <h3> 登録する</h3>
                     </div></a>
                 

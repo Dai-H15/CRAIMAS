@@ -1,0 +1,28 @@
+{% load django_bootstrap5 %}
+<div class = "mx-auto  col-4 my-3">
+<h4>問い合わせ詳細</h4>
+<p>チケットID:  {{ticket.TicketID}}</p>
+<p>カテゴリ: {{ticket.category}} </p>
+<h5>問い合わせ元情報</h5>
+<p>氏名: {{request_by.last_name}}  {{request_by.first_name}} </p>
+<p>連絡先: <a href="mailto:{{request_by.email}}?subject=CRAIMAS サポートチケットID [ {{ticket.TicketID}} ] に関して "> {{request_by.email}}</a></p>
+
+<br>
+<p>タイトル: {{ticket.title}}</p>
+<h5>問い合わせ内容</h5>
+<textarea class = "form-control" readonly>{{ticket.text}}</textarea>
+<br>
+<h5>管理者用メモ</h5>
+<div class = "col">
+    <form method="POST" action="{% url 'support_edit_admin_comment' %}">
+        <input type="hidden" name = "TicketID" value = "{{ticket.TicketID}}" >
+        {% csrf_token %}
+        <textarea class="form-control" name="admin_memo">{{ticket.admin_memo}}</textarea>
+        <div class="col text-center m-2">
+            <button type="submit" class="btn btn-success px-3">送信</button>
+        </div>
+    </form>
+    </form>
+</div>
+
+</div>

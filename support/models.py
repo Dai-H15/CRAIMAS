@@ -20,7 +20,7 @@ class SupportTicketModel(models.Model):
     title = models.CharField(max_length=64, verbose_name="タイトル")
     text = models.TextField(verbose_name="問い合わせ内容")
     request_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, verbose_name="問い合わせ元")
-    posted_at = models.DateTimeField(auto_created=True)
+    posted_at = models.DateTimeField(auto_now_add=True)
     admin_memo = models.TextField(verbose_name="管理者メモ")
     is_solved = models.BooleanField(default=False, verbose_name="クローズフラグ")
 

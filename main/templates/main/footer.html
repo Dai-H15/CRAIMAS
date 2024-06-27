@@ -1,6 +1,7 @@
 
 <div class = "row border-top my-3">
     <div class = "text-center py-3 mx-auto">
+        <b id = "js_version">動作エラー: JavaScriptが有効になっていることを確認してください</b>
         <p>© 2024 Daichi Matsumoto</p>
     </div>
     <div class = "text-center mx-auto">
@@ -21,4 +22,6 @@
 </div>
 <script>
     Main.default.open_as_window.init();
+    document.getElementById("js_version").innerText = `Library version:  ${Main.default.version}`;
+    
 </script>

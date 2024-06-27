@@ -59,7 +59,10 @@ def admin_all_sheet(request, sheet_from, where):
         if sheet_from == "担当者名":
             res = res.filter(company__contact__contains=where)
         if sheet_from == "ユーザー名":
-            res = res.filter(by_U_ID=CustomUser.objects.get(username=where).U_ID)
+            try:
+                res = res.filter(by_U_ID=CustomUser.objects.get(username=where).U_ID)
+            except (CustomUser.DoesNotExist, AttributeError):
+                return HttpResponse("<div class = 'alert alert-warning m-3 text-center'><b>対象のユーザーが見つかりませんでした。IDを確かめてください</b></div>")
         contexts["posts"] = res
         post_interviews = {}
         for post in res:

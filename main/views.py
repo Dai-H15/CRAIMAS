@@ -1157,3 +1157,13 @@ def search_post(request, sheet_from, where):
         post_interviews[post.RegistID] = i.InterviewID if i is not None else None
     contexts["post_interviews"] = post_interviews
     return render(request, "main/mypage/search_result.html", contexts)
+
+
+@login_required
+def get_address_from_sheet(request, R_id):
+    try:
+        location = RegistSets.objects.get(RegistID=R_id, by_U_ID=request.user.U_ID).d_company.location
+        postal_code = RegistSets.objects.get(RegistID=R_id, by_U_ID=request.user.U_ID).d_company.postal_code
+        return JsonResponse({"status": "OK", "location": location, "postal_code": postal_code})
+    except (RegistSets.DoesNotExist, AttributeError):
+        return JsonResponse({"status": "NG", "res": "不正なリクエストです。処理は中断されました。管理者まで問い合わせてください。"})

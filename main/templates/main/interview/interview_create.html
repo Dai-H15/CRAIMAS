@@ -9,9 +9,8 @@
 </head>
 
 <body>
+    {% include "main/header_newtab.html" %}
     <div class="container-fluid">
-
-        {% include "main/header_newtab.html" %}
         <div class="row m-2">
             {% if errors %}<div class="alert alert-danger text-center list-unstyled" role="alert">{% for error in errors %}{{error}} {% endfor %}</div>{% endif %}
             <div class  = "text-center"><h4 class = "border-bottom p-3">{{name}}</h4></div>
@@ -22,7 +21,8 @@
                     {% for f in form %}
                     {% if f.name == "zipcode" %}
                     {% bootstrap_field f %}
-                    <button type = "button" class = "btn btn-warning mb-3" onclick="Main.default.interview_create.search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
+                    <button type = "button" class = "btn btn-warning mb-3" onclick="Main.default.interview_create.search_zipcode('{% url 'get_address' 'placeholder' %}')">郵便番号から住所を検索</button>
+                    <button type = "button" class = "btn btn-primary mb-3" onclick="Main.default.interview_create.get_address_from_sheet('{% url 'get_address_from_sheet' R_id %}')">シートから所在地を引用</button>
                     {% elif f.name == "interviewer" %}
                     {% bootstrap_field f %}
                     <button type = "button" class = "btn btn-outline-info mb-3" onclick="Main.default.interview_create.get_interviewer('{% url 'get_interviewer' R_id %}')">企業シートから担当者を引用</button>

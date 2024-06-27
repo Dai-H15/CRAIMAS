@@ -69,7 +69,7 @@
                 </tr>
             {% endfor %}</table>
             <div class = "border-top">
-                <div class = "row p-4 "> <button onclick = "Main.default.open_as_window.open_as_window('{% url "interview_main" post.RegistID %}', 'interview_main', 400,600)"  class = " btn btn-success">面談録</button></div>
+                <div class = "row p-4 "> <button onclick = "Main.default.open_as_window.open_as_window('{% url "interview_main" post.RegistID %}', 'interview_main', 490,600)"  class = " btn btn-success">面談録</button></div>
                 {% if not as_staff %}
 
                 <div class = "row p-4 "> <button class = "btn btn-outline-warning " onclick= "Main.default.open_as_window.open_as_window('{% url "export_sheet" post.RegistID %}', 'export_sheet', 400,600)">シートをエクスポートする</button></div>

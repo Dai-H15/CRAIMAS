@@ -7,6 +7,7 @@
                             <th scope="col">タイトル</th>
                             <th scope="col">カテゴリ</th>
                             <th scope="col">投稿者</th>
+                            <th scope = "col"> 対応履歴 </th>
                             <th scope="col">操作</th>
                         </tr>
                     </thead>
@@ -17,6 +18,7 @@
                             <td> {{t.title}} </td>
                             <td>{{t.category}}</td>
                             <td> {{t.request_by}} </td>
+                            <td> {% if t.admin_memo != "" %} 有 {% else %} 無 {% endif %} </td>
                             <td>
                                 <form id ="form_{{forloop.counter}}" method = "POST">
                                     {% csrf_token %}

@@ -33,7 +33,7 @@ from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.http import JsonResponse
 from django.utils import timezone
-
+from support.models import SupportTicketModel
 # Functions
 
 
@@ -111,6 +111,8 @@ def index(request):
         contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_active=True)
         contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_active=True)
         contexts["ExpirationDate"] = (request.user.ExpiryDate - dt.date.today()).days
+        if request.user.is_staff:
+            contexts["n_SupportTicket"] = SupportTicketModel.objects.filter(is_solved=False).count()
     else:
         contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_public=True, is_active=True)
         contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_public=True, is_active=True)

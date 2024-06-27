@@ -17,6 +17,12 @@
                             お手続きをお願いいたします
                         </div>
                         {% endif %}
+                        {% if n_SupportTicket > 0 %}
+                        <div class="alert alert-primary" role="alert">
+                            <h6 class = "text-center">
+                            サポートが完了していない問い合わせが<b>" {{n_SupportTicket}} 件 "</b>  存在します。確認してください。
+                        </h6></div>
+                        {% endif %}
                         {% endif %}
                         <div class = "row">
                             <div class = "col-12 col-sm border rounded m-2">

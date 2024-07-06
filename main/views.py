@@ -735,7 +735,7 @@ def get_more_compinfo(request, corporate_number, return_to):
 @login_required
 def set_searched_data(request):
     if request.method == "POST":
-        return_to = request.POST["return_to"]
+        return_to = "regist_all" if request.POST["return_to"] == "regist_all" else "index"
         corporate_number = request.POST["corporate_number"]
         url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
         headers = {
@@ -994,7 +994,7 @@ def export_sheet(request, id):
                 )
                 return response
         except UnicodeEncodeError as e:
-            return HttpResponse(f"エラーが発生しました<br>環境依存文字が使用されている化膿性があります。シートを見直してください<br>\
+            return HttpResponse(f"エラーが発生しました<br>環境依存文字が使用されている可能性があります。シートを見直してください<br>\
                 <h4>詳細</h4>{e}<br>\
                     <h4>該当箇所: </h4><p>{s}</p>")
         else:
@@ -1040,8 +1040,8 @@ def json_import(request):
                 data["Interviewer"] if "Interviewer" in data else "None"
             )
             return HttpResponse("<script>window.opener.location.reload();</script>")
-        except (KeyError, UnicodeDecodeError) as e:
-            contexts["message"] = f"インポートに失敗しました。ファイルを確かめて再度実行するか、手入力にて登録してください (Detail: {e})"
+        except (KeyError, UnicodeDecodeError):
+            contexts["message"] = "インポートに失敗しました。ファイルを確かめて再度実行するか、手入力にて登録してください "
     return render(request, "main/regist/sets/json_import.html", contexts)
 
 

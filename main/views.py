@@ -993,10 +993,8 @@ def export_sheet(request, id):
                     urllib.parse.quote((f"{name}.csv").encode("utf8"))
                 )
                 return response
-        except UnicodeEncodeError as e:
-            return HttpResponse(f"エラーが発生しました<br>環境依存文字が使用されている可能性があります。シートを見直してください<br>\
-                <h4>詳細</h4>{e}<br>\
-                    <h4>該当箇所: </h4><p>{s}</p>")
+        except UnicodeEncodeError:
+            return HttpResponse("エラーが発生しました<br>環境依存文字が使用されている可能性があります。シートを見直してください<br>")
         else:
 
             class DateTimeEncoder(json.JSONEncoder):

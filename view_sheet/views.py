@@ -330,6 +330,8 @@ def create_custom_sheet(request):
             "ContentType",
             "AdminLog",
             "CustomSheet",
+            "InfomationModel",
+            "SupportTicketModel",
         ]
     }
     if "model" in request.GET:
@@ -377,6 +379,7 @@ def create_custom_sheet(request):
                     "AboutID",
                     "CompanyID",
                     "by_U_ID",
+                    "registsets"
                 ]
             }
             contexts["sheet_name_form"] = request.GET["create_sheet_name"]

@@ -553,7 +553,7 @@ def edit_posts(request, id):
         try:
             contexts = getRegistForms(id, collect_regnum(request), request)
         except (RegistSets.DoesNotExist, AttributeError):
-            return HttpResponse(f"<h4>権限がない、もしくは不正なアクセスです。</h4><button onclick='window.location=`/`'>戻る</button>")
+            return HttpResponse("<h4>権限がない、もしくは不正なアクセスです。</h4><button onclick='window.location=`/`'>戻る</button>")
         if contexts["as_staff"] is True:
             return HttpResponse("<h3>管理者は、ユーザーの登録情報シートに変更を加えることができません</h3><button onclick='window.location=`/`'>戻る</button>")
         NotFound = []

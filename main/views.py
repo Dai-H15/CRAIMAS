@@ -24,7 +24,11 @@ from .forms import (
     InterviewForm,
     Form_Prof_Interviewer
 )
-import secrets, requests, csv, urllib, json
+import secrets
+import requests
+import csv
+import urllib
+import json
 from urllib.parse import quote
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -924,28 +928,32 @@ def calc(request):
 def export_sheet(request, id):
     contexts = {}
     if request.method == "POST":
-        R_set = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
-        C = dict(**{"sheet_name": "Company"}, **model_to_dict(R_set.company))
-        del C["CompanyID"]
-        A = dict(**{"sheet_name": "About"}, **model_to_dict(R_set.about))
-        del A["AboutID"]
-        Id = dict(**{"sheet_name": "Idea"}, **model_to_dict(R_set.idea))
-        del Id["IdeaID"]
-        M = dict(**{"sheet_name": "Motivation"}, **model_to_dict(R_set.motivation))
-        del M["MotivationID"]
-        D = dict(**{"sheet_name": "D_company"}, **model_to_dict(R_set.d_company))
-        del D["D_CompanyID"]
-        AD = dict(**{"sheet_name": "Adoption"}, **model_to_dict(R_set.adoption))
-        del AD["AdoptionID"]
-        sets = {
-            "Company": C,
-            "About": A,
-            "Idea": Id,
-            "Motivation": M,
-            "D_Company": D,
-            "Adoption": AD,
-        }
-        name = R_set.company.name
+        try:
+            R_set = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
+            C = dict(**{"sheet_name": "Company"}, **model_to_dict(R_set.company))
+            del C["CompanyID"]
+            A = dict(**{"sheet_name": "About"}, **model_to_dict(R_set.about))
+            del A["AboutID"]
+            Id = dict(**{"sheet_name": "Idea"}, **model_to_dict(R_set.idea))
+            del Id["IdeaID"]
+            M = dict(**{"sheet_name": "Motivation"}, **model_to_dict(R_set.motivation))
+            del M["MotivationID"]
+            D = dict(**{"sheet_name": "D_company"}, **model_to_dict(R_set.d_company))
+            del D["D_CompanyID"]
+            AD = dict(**{"sheet_name": "Adoption"}, **model_to_dict(R_set.adoption))
+            del AD["AdoptionID"]
+            sets = {
+                "Company": C,
+                "About": A,
+                "Idea": Id,
+                "Motivation": M,
+                "D_Company": D,
+                "Adoption": AD,
+            }
+            name = R_set.company.name
+        except AttributeError:
+            return HttpResponse("エラーが発生しました<br>欠落しているシートが存在しています。詳細はお問い合わせください。<br>")
+
         if request.POST["data"] == "two" or request.POST["data"] == "three":
             name += "_include_interview"
             interviews = Interview.objects.filter(RegistID=id, by_U_ID=request.user.U_ID)

@@ -46,6 +46,7 @@ def collect_regnum(request):
         res = {
             "num_c": Companies.objects.filter(by_U_ID=request.user.U_ID).count(),
             "num_a": RegistSets.objects.filter(isActive=True, by_U_ID=request.user.U_ID).count(),
+            "num_i": Interview.objects.filter(by_U_ID=request.user.U_ID, RegistID__isActive=True).count(),
         }
     else:
         res = {}
@@ -286,6 +287,8 @@ def mypage(request):
     contexts["user"] = user
     n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
     contexts["n_regist"] = n_regist
+    n_interview = Interview.objects.filter(by_U_ID=user.U_ID).count()
+    contexts["n_interview"] = n_interview
     contexts["regsets"] = collect_regsets(user)
     contexts["l_days"] = (user.ExpiryDate - dt.date.today()).days
     return render(request, "main/mypage/mypage.html", contexts)

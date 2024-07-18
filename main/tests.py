@@ -257,3 +257,17 @@ class MainViewTests(TestCase):
         self.assertEqual(testasset.cannot_access(url, user, uargs={"sheet_from": "企業名", "where": "a"}), False)
         self.assertEqual(testasset.cannot_access(url, admin, uargs={"sheet_from": "企業名", "where": "a"}), False)
         self.assertEqual(testasset.cannot_access(url, anonymous, uargs={"sheet_from": "企業名", "where": "a"}), True)
+
+    def test_show_interview_num_zero(self):
+        url = "mypage"
+        u = testasset.create_user()
+        user = testasset.test_user_init(u)
+        self.assertEqual(testasset.is_error(url, user), False)
+
+    def test_show_interview_num_one(self):
+        url = "mypage"
+        u = testasset.create_user()
+        user = testasset.test_user_init(u)
+        post = testasset.create_post(client=u)
+        testasset.create_interview(post, client=u)
+        self.assertEqual(testasset.is_error(url, user), False)

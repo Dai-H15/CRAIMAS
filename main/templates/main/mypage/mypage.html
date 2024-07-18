@@ -20,13 +20,15 @@
                         <tr>
                             <th>ユーザー名</th>
                             <th>卒業年度</th>
-                            <th>投稿数</th>
+                            <th>登録企業数</th>
+                            <th> 登録面談数 </th>
                             <th>アカウント有効期限</th>
                         </tr>
                         <tr>
                             <td>{{user}}</td>
                             <td>{{user.y_graduation}}</td>
                             <td>{{n_regist}}件</td>
+                            <td>{{n_interview}}件</td>
                             <td>{{user.ExpiryDate}} 残り{{l_days}}日 <button onclick="Main.default.open_as_window.open_as_window('{% url "extension" %}', 'extension',600,800)" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">延長</button> </td>
                         </tr>
                         </tr>

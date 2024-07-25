@@ -62,6 +62,11 @@
                         
                 </div>
                 </div>
+                <div type= "button" onclick="Main.default.open_as_window.open_as_window('https://howto-site.craimas.com/', 'howto-site', 1200, 900);">
+                    <div class="row text-center p-3 border text-success my-2">
+                        <h3>使い方ガイド</h3>
+                    </div>
+                </div>
                     {% if  user.is_authenticated %}
                     <form method="post" action="{% url 'logout' %}" class = "row">
                         {% csrf_token %}
@@ -79,11 +84,7 @@
                         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ3ZmqYMQ1uZMx2pPvkqoyl6RfKupj86FJGux4vjRS3GkDOshQ-Cfe-nmiOgA3pP58xk4zIV8nqHhBB/embed?start=true&loop=true&delayms=5000" frameborder="0" width="1024" height="480" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
                     </div>
                     {% endif %}
-                    <div type= "button" onclick="Main.default.open_as_window.open_as_window('https://howto-site.craimas.com/', 'howto-site', 1200, 900);">
-                        <div class="row text-center p-3 border text-success my-2">
-                            <h3>使い方ガイド</h3>
-                        </div>
-                    </div>
+                    
                     <a href="{% url "mypage" %}">
                         <div class="row text-center p-3 border  my-2">
                             <h3>マイページ</h3>

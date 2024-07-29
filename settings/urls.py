@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-import debug_toolbar
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from .settings import DEBUG as setting_debug
+if setting_debug:
+    import debug_toolbar
 
 admin.site.site_title = '管理者ページ'
 admin.site.site_header = 'CRAIMAS 【クレイマス】 管理サイト'
@@ -31,5 +33,6 @@ urlpatterns = [
     path("management/", include("management.urls")),
     path("support/", include("support.urls")),
 ]
-urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
+if setting_debug:
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
 urlpatterns += staticfiles_urlpatterns()

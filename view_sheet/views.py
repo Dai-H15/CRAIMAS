@@ -8,7 +8,7 @@ from main.models import (
 )
 
 from .models import CustomSheet
-
+from django.core.exceptions import FieldError as Django_FieldError
 from django.db.models import Sum, Avg
 from django.apps import apps
 import secrets
@@ -34,6 +34,10 @@ def view_index(request):
 def view_main(request, control, option):
     contexts = collect_regnum(request)
     contexts["control"] = control
+
+    ForeignKeySets = {
+        "company_name": "company_name__name"
+    }
     menu = [
         {"choice": "top", "desc": "トップページ", "th_all": []},
         {
@@ -237,75 +241,85 @@ def view_main(request, control, option):
             "message": "左のメニューから選択してください。(カスタムシートで指定した場合を除き、活動中の企業のみ表示されます)",
         }
     else:
-        if control in [
-            cs.sheet_name
-            for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID)
-        ]:
-            contexts["customsheet"] = "true"
-            cs = CustomSheet.objects.get(sheet_name=control, by_U_ID=request.user.U_ID)
-            results = apps.get_model("main", cs.model).objects.filter(by_U_ID=request.user.U_ID).all()
-            if cs.search_settings != {}:
-                if cs.search_settings["how"] == "1":
-                    results = results.filter(
-                        **{cs.search_settings["where"]: cs.search_settings["what"]}
-                    )
-                elif cs.search_settings["how"] == "2":
-                    results = results.filter(
-                        **{
-                            f"{cs.search_settings['where']}__contains": cs.search_settings[
-                                "what"
-                            ]
-                        }
-                    )
-                elif cs.search_settings["how"] == "3":
-                    results = results.filter(
-                        **{
-                            f"{cs.search_settings['where']}__gte": cs.search_settings[
-                                "what"
-                            ]
-                        }
-                    )
-                elif cs.search_settings["how"] == "4":
-                    results = results.filter(
-                        **{
-                            f"{cs.search_settings['where']}__lte": cs.search_settings[
-                                "what"
-                            ]
-                        }
-                    )
-                elif cs.search_settings["how"] == "5":
-                    results = results.exclude(
-                        **{
-                            f"{cs.search_settings['where']}": cs.search_settings[
-                                "what"
-                            ]
-                        }
-                    )
-            if cs.view_settings != {}:
-                if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
-                    results = results.order_by(list(cs.view_settings.keys())[0])
-                elif cs.view_settings[list(cs.view_settings.keys())[0]] == "2":
-                    results = results.order_by(
-                        list(cs.view_settings.keys())[0]
-                    ).reverse()
-            if results.count() == 0:
-                contexts["message"] = {
-                    "type": "warning",
-                    "message": "条件に一致するデータが1つもありませんでした。",
+        try:
+            if control in [
+                cs.sheet_name
+                for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID)
+            ]:
+                contexts["customsheet"] = "true"
+                cs = CustomSheet.objects.get(sheet_name=control, by_U_ID=request.user.U_ID)
+                results = apps.get_model("main", cs.model).objects.filter(by_U_ID=request.user.U_ID).all()
+                if cs.search_settings != {}:
+                    if cs.search_settings["how"] == "1":
+                        results = results.filter(
+                            **{cs.search_settings["where"]: cs.search_settings["what"]}
+                        )
+                    elif cs.search_settings["how"] == "2":
+                        results = results.filter(
+                            **{
+                                f"{cs.search_settings['where']}__contains": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+                    elif cs.search_settings["how"] == "3":
+                        results = results.filter(
+                            **{
+                                f"{cs.search_settings['where']}__gte": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+                    elif cs.search_settings["how"] == "4":
+                        results = results.filter(
+                            **{
+                                f"{cs.search_settings['where']}__lte": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+                    elif cs.search_settings["how"] == "5":
+                        results = results.exclude(
+                            **{
+                                f"{cs.search_settings['where']}": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+                if cs.view_settings != {}:
+                    if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
+                        results = results.order_by(list(cs.view_settings.keys())[0])
+                    elif cs.view_settings[list(cs.view_settings.keys())[0]] == "2":
+                        results = results.order_by(
+                            list(cs.view_settings.keys())[0]
+                        ).reverse()
+                if results.count() == 0:
+                    contexts["message"] = {
+                        "type": "warning",
+                        "message": "条件に一致するデータが1つもありませんでした。",
+                    }
+                contexts["sheet_config"] = {
+                    "model": cs.model,
+                    "selected": cs.selected_field,
+                    "view_settings": cs.view_settings,
+                    "search_settings": cs.search_settings,
+                    "sheet_id": cs.sheet_id,
                 }
-            contexts["sheet_config"] = {
-                "model": cs.model,
-                "selected": cs.selected_field,
-                "view_settings": cs.view_settings,
-                "search_settings": cs.search_settings,
-                "sheet_id": cs.sheet_id,
-            }
-            contexts["results"] = results
-            contexts["th_all"] = cs.selected_field
-        else:
+                contexts["results"] = results
+                contexts["th_all"] = cs.selected_field
+            else:
+                contexts["message"] = {
+                    "type": "danger",
+                    "message": "不正なリクエストです。",
+                }
+        except Django_FieldError:
+            if cs.search_settings['where'] in ForeignKeySets:
+                cs.search_settings['where'] = ForeignKeySets[cs.search_settings['where']]
+                cs.save()
             contexts["message"] = {
-                "type": "danger",
-                "message": "不正なリクエストです。",
+                "type": "info",
+                "message": f"検索条件の自動修正を行いました。再度{control} を選択し直してください。\n\
+                この画面が繰り返し表示される際は、トップページから管理者へお問い合わせください。",
             }
 
     contexts["menu"] = menu
@@ -332,6 +346,7 @@ def create_custom_sheet(request):
             "CustomSheet",
             "InfomationModel",
             "SupportTicketModel",
+            "RegistSets",
         ]
     }
     if "model" in request.GET:

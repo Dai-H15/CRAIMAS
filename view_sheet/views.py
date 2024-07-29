@@ -318,8 +318,8 @@ def view_main(request, control, option):
                 cs.save()
             contexts["message"] = {
                 "type": "info",
-                "message": f"検索条件の自動修正を行いました。再度{control} を選択し直してください。\n\
-                この画面が繰り返し表示される際は、トップページから管理者へお問い合わせください。",
+                "message": f"検索条件の自動修正を行いました。再度 '{control} ' を選択し直してください。\n\
+                この画面が繰り返し表示される際は、問い合わせ機能から管理者へお問い合わせください",
             }
 
     contexts["menu"] = menu

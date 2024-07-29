@@ -108,7 +108,7 @@ def index(request):
         del request.session["Interviews"]
     if "result_data" in request.session:
         del request.session["result_data"]
-    if "ers" in request.session:
+    if "Interviewers" in request.session:
         del request.session["Interviewers"]
     contexts = collect_regnum(request)
     if request.user.is_authenticated:

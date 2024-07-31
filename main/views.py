@@ -911,6 +911,7 @@ def view_interview(request, id):
             if form.is_valid():
                 form.save()
                 res["is_saved"] = True
+                res["saved_time"] = timezone.now().astimezone().time()
             else:
                 res["is_saved"] = False
                 res["errors"] = str(form.errors)

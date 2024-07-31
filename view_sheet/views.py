@@ -252,7 +252,7 @@ def view_main(request, control, option):
                 if cs.search_settings != {}:
                     if cs.search_settings["how"] == "1":
                         results = results.filter(
-                            **{cs.search_settings["where"]: cs.search_settings["what"]}
+                            **{f"{cs.search_settings['where']}": cs.search_settings["what"]}
                         )
                     elif cs.search_settings["how"] == "2":
                         results = results.filter(
@@ -294,6 +294,8 @@ def view_main(request, control, option):
                             list(cs.view_settings.keys())[0]
                         ).reverse()
                 if results.count() == 0:
+                    if (cs.search_settings['where'] in ForeignKeySets):
+                        raise Django_FieldError
                     contexts["message"] = {
                         "type": "warning",
                         "message": "条件に一致するデータが1つもありませんでした。",

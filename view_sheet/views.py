@@ -349,6 +349,7 @@ def create_custom_sheet(request):
             "InfomationModel",
             "SupportTicketModel",
             "RegistSets",
+            "ESModel",
         ]
     }
     if "model" in request.GET:
@@ -396,7 +397,8 @@ def create_custom_sheet(request):
                     "AboutID",
                     "CompanyID",
                     "by_U_ID",
-                    "registsets"
+                    "registsets",
+                    "ESlist",
                 ]
             }
             contexts["sheet_name_form"] = request.GET["create_sheet_name"]

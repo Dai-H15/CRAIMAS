@@ -1,0 +1,115 @@
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>{% include "main/html_head.html" %}</head>
+    
+<body>
+    {% csrf_token %}
+    <div class="container-fluid">
+        {% include "main/header_newtab.html" %}
+        <div class="row m-2">
+                <div class="container">
+                    <div
+                        class="table-responsive"
+                    >
+                        <table
+                            class="table border"
+                        >
+                            <thead>
+                                <tr>
+                                    <th scope="col">選択</th>
+                                    <th scope="col">日時</th>
+                                    <th scope="col">タイトル</th>
+                                    <th scope="col">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ES in selected_ES %}
+                                <tr class="table-success">
+                                    <td scope="row"><div class="form-check"><input class="form-check-input selectData" type="checkbox" value="{{ES.ESModelID}}" id="" / checked></div></td>
+                                    <td>{{ES.created}}</td>
+                                    <td>R1C3</td>
+                                    <td><button class = "btn btn-primary" onclick="get_detail('{% url "GetEsModelDetail" ES.ESModelID %}')">閲覧</button></td>
+                                </tr>
+                                {% endfor %}
+                                {% for ES in NotSelectedES %}
+                                <tr class="">
+                                    <td scope="row"><div class="form-check"><input class="form-check-input selectData" type="checkbox" value="{{ES.ESModelID}}" id="" /></div></td>
+                                    <td>{{ES.created}}</td>
+                                    <td>R1C3</td>
+                                    <td><button class = "btn btn-primary" onclick="get_detail('{% url "GetEsModelDetail" ES.ESModelID %}')">閲覧</button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    </div>
+            </div>
+        </div>
+        <div class ="row m-2 ">
+            <button
+            type="button"
+            class="btn btn-success col m-2"
+            onclick = "save_check('{% url "ESModelSelect" I_ID %}')"
+        >
+            選択を保存
+        </button>
+        <button
+            type="button"
+            class="btn btn-primary col m-2"
+            onclick = "window.close()"
+        >
+            閉じる
+        </button>
+
+        </div>
+        
+        <div class = "row m-2" id = "ES_detail">
+        </div>
+
+    {% include "main/footer.html"  %}
+</div>
+<script>
+    async function get_detail(url){
+        let holder = document.getElementById("ES_detail");
+        holder.innerHTML =  '<div class="row"><div class="spinner-border text-success mx-auto text-center" role="status" id = "loading"><span class="visually-hidden">Loading...</span></div></div>';
+        let res = await fetch(url)
+        let data = await res.text()
+        holder.innerHTML = data;
+        let f = document.getElementsByClassName("form-control");
+        for (let i = 0; i < f.length; i++) {
+            f[i].disabled = true;
+        }
+        document.getElementById("id_tag").disabled = true;
+        }
+
+
+    async function save_check(url){
+        let inputs = document.getElementsByClassName("selectData");
+        let checked = [];
+        for(const element of inputs){
+            if(element.checked){
+                checked.push(element.value)
+            }
+        }
+        let formData = new FormData();
+        formData.append('selected_data', JSON.stringify(checked));
+        let csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        formData.append('csrfmiddlewaretoken', csrfToken);
+        let res = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+        if (res.ok) {
+            alert("登録されました");
+            window.location.reload();
+        } else {
+            alert('エラーが発生しました。ネットワークを確認してください');
+        }
+    }
+</script>
+
+</body>
+
+</html>

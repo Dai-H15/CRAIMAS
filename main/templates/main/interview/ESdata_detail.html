@@ -1,0 +1,6 @@
+{% load django_bootstrap5 %}
+<div class = "row">
+{% for f in form %}
+{% bootstrap_field f %}
+{% endfor %}
+</div>

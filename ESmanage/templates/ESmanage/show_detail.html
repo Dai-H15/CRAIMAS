@@ -1,0 +1,46 @@
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    {% include "main/html_head.html" %}
+</head>
+<body>
+    <div class="container-fluid">
+        {% include "main/header_newtab.html" %}
+            <div class="container">
+                <div class = "row">
+                    {% if status == "success" %}
+                    <script>
+                        alert("{{message}}")
+                        window.opener.location.reload()
+                    </script>
+                    {% elif status  %}
+                    <div
+                        class="alert alert-{{status}} text-center"
+                        role="alert"
+                    >
+                        <h5>{{message}}</h5>
+                    </div>
+                    {% endif %}
+                <form method = "POST">
+                    {% csrf_token %}
+                    {% for f in form %}
+                    {% bootstrap_field f%}
+                    {% endfor %}
+                    <div class="row">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success col-3 mx-auto"
+                    >
+                        修正
+                    </button>
+                </div>
+            </form>
+
+            </div>
+    </div>
+    {% include "main/footer.html"  %}
+</body>
+
+</html>

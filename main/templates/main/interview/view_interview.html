@@ -44,6 +44,16 @@
                 {% elif f.name == "Event_URL" %}
                 {% bootstrap_field f %}
                 <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
+                {% elif f.name == "reason" %}
+                {% bootstrap_field f %}
+                <button
+                    type="button"
+                    class="form-control btn btn-primary my-2"
+                    onclick = "Main.default.open_as_window.open_as_window('{% url "ESModelSelect" inst.InterviewID %}', 'ESModelSelect', 700, 800)"
+                >
+                    ES項目情報
+                </button>
+                
                 {% else %}
                 {% bootstrap_field f %}
                 {% endif %}

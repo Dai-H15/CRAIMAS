@@ -1,5 +1,6 @@
 from django import forms
 from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Interview, RegistSets, Interviewer
+from .models import ESModel
 
 
 class CompaniesForm(forms.ModelForm):
@@ -191,3 +192,7 @@ class Form_Prof_Interviewer(forms.ModelForm):
             "introduction": "自己紹介",
             "memo": "メモ"
         }
+
+
+class ESModelSelectForm(forms.Form):
+    es_models = forms.ModelMultipleChoiceField(queryset=ESModel.objects.all(), widget=forms.CheckboxSelectMultiple())

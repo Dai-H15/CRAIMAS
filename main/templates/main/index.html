@@ -90,6 +90,10 @@
                             <h3>マイページ</h3>
                         </div>
                     </a>
+                    <a href="{% url "ES_index" %}">
+                        <div class="row text-center p-3 border my-2">
+                            <h3> ES・質問 管理</h3>
+                        </div></a>
                     {% if user.is_staff %}
                     <a href="{% url "management" %}">
                         <div class="row text-center p-3 border text-success  my-2">

@@ -1,0 +1,49 @@
+{% load django_bootstrap5 %} 
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    {% include "main/html_head.html" %}
+</head>
+<body>
+    {% if status == "success" %}
+    <script>
+        window.opener.location.reload()
+    </script>
+    {% endif %}
+    <div class = "container">
+        {% include "main/header_newtab.html" %}
+        <div class ="row">
+            <div
+                class="alert alert-danger text-center col m-2"
+                role="alert"
+            >
+                <b>選択された情報を削除します。内容を確認してください<br>
+                削除後の復元はできません</b>
+            </div>
+        </div>
+            <form method = "POST">
+                <div class = "row">
+
+                {% csrf_token %}
+            {% for f in form %}
+            {% bootstrap_field f %}
+            {% endfor %}
+        <button
+            type="submit"
+            class="btn btn-danger col-8 my-3 mx-auto"
+        >
+            削除
+        </button>
+    </div>
+
+        </form>
+    </div>
+    <script>
+        let f = document.getElementsByClassName("form-control");
+        for (let i = 0; i < f.length; i++) {
+            f[i].disabled = true;
+        }
+        document.getElementById("id_tag").disabled = true;
+    </script>
+</body>
+</html>

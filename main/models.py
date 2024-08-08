@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import URLValidator
-
+from ESmanage.models import ESModel
 
 class Companies(models.Model):
     by_U_ID = models.CharField(max_length=100, default="default")
@@ -217,6 +217,7 @@ class Interview(models.Model):
     Event_URL = models.URLField(verbose_name="イベントURL", blank=True, validators=[URLValidator])
     aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%")
     reason = models.TextField(default="", verbose_name="志望理由", blank=True)
+    ESlist = models.ManyToManyField(ESModel, verbose_name="ES項目", blank=True)
     want_to = models.TextField(default="", verbose_name="やりたいこと", blank=True)
     note = models.TextField(default="", verbose_name="面談メモ", blank=True)
     review = models.TextField(default="", verbose_name="面談感想", blank=True)

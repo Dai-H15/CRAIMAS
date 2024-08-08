@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
+
+from ESmanage.forms import ESModelForm
 from .models import (
     Companies,
     About,
@@ -10,12 +12,14 @@ from .models import (
     Interview,
     Interviewer,
 )
-
+from django.db.models import Q
+from ESmanage.models import ESModel
 from authUser.models import CustomUser
 from management.models import InfomationModel
 from .forms import (
     CompaniesForm,
     AboutForm,
+    ESModelSelectForm,
     IdeaForm,
     MotivationForm,
     D_CompanyForm,
@@ -1177,3 +1181,34 @@ def get_address_from_sheet(request, R_id):
         return JsonResponse({"status": "OK", "location": location, "postal_code": postal_code})
     except (RegistSets.DoesNotExist, AttributeError):
         return JsonResponse({"status": "NG", "res": "不正なリクエストです。処理は中断されました。管理者まで問い合わせてください。"})
+
+
+@login_required
+def ESModelSelect(request, I_ID):
+    contexts = collect_regnum(request)
+    interview = Interview.objects.get(by_U_ID=request.user.U_ID, InterviewID=I_ID)
+    ES_set = ESModel.objects.filter(by_U_ID=request.user.U_ID)
+    if request.method == "POST":
+        returned = json.loads(request.POST["selected_data"])
+        interview.ESlist.clear()
+        for data in returned:
+            interview.ESlist.add(ES_set.get(ESModelID=data))
+        print(interview.ESlist.all())
+        interview.save()
+    contexts["selected_ES"] = interview.ESlist.all()
+    NotSelectedES = ES_set
+    for es in contexts["selected_ES"]:
+        NotSelectedES = NotSelectedES.exclude(ESModelID=es.ESModelID)
+    contexts["NotSelectedES"] = NotSelectedES
+    contexts["I_ID"] = I_ID
+    contexts["ES_set"] = ES_set
+    return render(request, "main/interview/select_ESdata.html", contexts)
+
+
+@login_required
+def GetEsModelDetail(request, id):
+    contexts = {}
+    data = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    form = ESModelForm(initial={"title": data.title, "desc": data.desc, "tag": data.tag})
+    contexts["form"] = form
+    return render(request, "main/interview/ESdata_detail.html", contexts)

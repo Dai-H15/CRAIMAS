@@ -32,6 +32,7 @@ urlpatterns = [
     path("task_calendar/", include("task_calendar.urls")),
     path("management/", include("management.urls")),
     path("support/", include("support.urls")),
+    path("ESmanage/", include("ESmanage.urls"))
 ]
 if setting_debug:
     urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]

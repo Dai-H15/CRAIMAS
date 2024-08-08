@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     "view_sheet",
     "task_calendar",
     "management",
-    "support"
+    "support",
+    "ESmanage"
 ]
 
 

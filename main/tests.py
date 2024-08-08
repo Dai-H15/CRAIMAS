@@ -271,3 +271,24 @@ class MainViewTests(TestCase):
         post = testasset.create_post(client=u)
         testasset.create_interview(post, client=u)
         self.assertEqual(testasset.is_error(url, user), False)
+
+    def test_ES_index(self):
+        only_login_user(self, "ES_index")
+
+    def test_ES_regist(self):
+        only_login_user(self, "ES_regist")
+
+    def test_ES_show(self):
+        only_login_user(self, "ES_show")
+
+    def test_ES_get_data(self):
+        only_login_user(self, "ES_get_data")
+
+    def test_ES_show_detail(self):
+        only_login_user_with_args(self, "ES_show_detail", args={"id": "dummy"})
+
+    def test_ES_search(self):
+        only_login_user_with_args(self, "ES_search", args={"to": "dummy", "what": "dummy"})
+
+    def test_ES_delete(self):
+        only_login_user_with_args(self, "ES_delete", args={"id": "dummy"})

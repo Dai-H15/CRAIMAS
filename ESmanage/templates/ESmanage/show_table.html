@@ -1,0 +1,34 @@
+    <thead>
+        <tr>
+            <th scope="col">投稿日時</th>
+            <th scope="col">タイトル</th>
+            <th scope="col">タグ</th>
+            <th scope="col">詳細・削除</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post in posts %}
+        <tr class = "table-success">
+            <td>{{post.created}}</td>
+            <td>{{post.title}}</td>
+            <td>{{post.tag}}</td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        操作
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="dropdown-item text-bg-success p-2"
+                            onclick = "Main.default.open_as_window.open_as_window('{% url "ES_show_detail" post.ESModelID %}', 'ES_show_detail', 500, 780)">閲覧・編集</button>
+                    </li>
+                <li><button class="dropdown-item text-bg-danger p-2"
+                    onclick = "Main.default.open_as_window.open_as_window('{% url "ES_delete" post.ESModelID %}', 'ES_delete', 440, 780)">削除</button>
+            </li>
+</ul>
+                </div>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>

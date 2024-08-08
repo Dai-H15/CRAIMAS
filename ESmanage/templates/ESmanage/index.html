@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        {% include "main/html_head.html" %}
+    </head>
+    
+<body>
+    <div class = "container-fluid">
+        {% include "main/header.html" %}
+        <div class = "row p-3 text-center">
+            <h3>ES・質問 管理システム</h3>
+            <div class = "row m-3">
+
+                <a href="{% url "ES_regist" %}"><div class = "col border m-3 p-3 "><h5>項目登録</h5></div></a>
+                <a href="{% url "ES_show" %}"><div class = "col border m-3 p-3 "><h5>項目閲覧</h5></div></a>
+            </div>
+    </div>
+    <div class = "row">
+        <ul class = "list-unstyled">
+            <li><h5>項目登録</h5></li>
+            <ul>
+                <li><p>ES・面談等でも質問の内容を登録することができます</p></li>
+                <li><p>自己分析を行った結果の紹介文などを登録できます</p></li>
+                <li><p>面談録内にて引用・閲覧することができます</p></li>
+            </ul>
+            <li><h5>項目閲覧</h5></li>
+            <ul>
+                <li><p>登録済みの項目の閲覧、修正、削除を行うことができます</p></li>
+                <li><p>削除済みの項目を面談録内から閲覧しようとするとエラーになります</p></li>
+            </ul>
+        </ul>
+    </div>
+    <div class = "text-center"><a href="{% url "index" %}"><button class = "btn btn-primary">ホームに戻る</button></a></div>
+    </div>
+    {% include "main/footer.html"  %}
+
+</body>
+</html>

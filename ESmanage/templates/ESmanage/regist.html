@@ -1,0 +1,45 @@
+{% load django_bootstrap5 %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        {% include "main/html_head.html" %}
+    </head>
+    
+<body>
+    <div class = "container-fluid">
+        {% include "main/header.html" %}
+        <div class = "row ">
+        {% if status %}
+        <div class = "col-5 mx-auto my-2 text-center">
+            <div class="alert alert-{{status}} text-center" role="alert"> <b>{{message}}</b><br></div>
+        </div>
+        {% endif %}
+
+        <form method="POST">
+        {% csrf_token %}
+            {% for f in form %}
+            {% bootstrap_field f %}
+            {% endfor %}
+            <button
+                type="submit"
+                class="btn btn-success "
+            >
+                登録
+            </button>
+            <a
+                type="button"
+                class="btn btn-primary "
+                href = '{% url "ES_index" %}'
+            >
+                戻る
+            </a>
+        </form>
+    </div>
+
+    </div>
+    {% include "main/footer.html"  %}
+
+</body>
+</html>

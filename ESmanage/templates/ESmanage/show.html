@@ -1,0 +1,62 @@
+{% load static %}
+{% load main_tags %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    {% include "main/html_head.html" %}
+</head>
+<body>
+    <div class="container-fluid">
+
+        {% include "main/header.html" %}
+        <div class="row">
+            <div class="container">
+                <div class = "row m-3">
+                    <h3 class = "border-bottom">検索</h3>
+                        <div name = "search_item" class = "input-group">
+                        <span class = "input-group-text">検索文字列</span><input type="text" class = "form-control" id = "search_str">
+                        <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">項目を選択して検索</button>
+                        <ul class="dropdown-menu">
+                            <button class="dropdown-item" onclick = "search('{% url "ES_search" to="タイトル" what="placeholder" %}')" type = "button">タイトル</button>
+                            <button class="dropdown-item"onclick = "search('{% url "ES_search" to="タグ" what="placeholder" %}')" type = "button">タグ</button>
+                        </ul>
+                        </div>
+                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="init()">リセット</button></div>
+                </div>
+                <div class="row m-3">
+                    <!--投稿一覧-->
+                    <h3 class = "border-bottom my-3">投稿一覧</h3>
+                    <table class="  border table table-hover"  id = "post_list">
+                    </table>
+                    <div class="text-center"><a href="{% url "ES_index" %}"><button class="btn btn-primary">戻る</button></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% include "main/footer.html"  %}
+<script>
+    async function init(){
+        let table = document.getElementById("post_list")
+        table.innerHTML = '<div class="row"><div class="spinner-border text-success mx-auto text-center" role="status" id = "loading"><span class="visually-hidden">Loading...</span></div></div>';
+        let res = await fetch('{% url "ES_get_data" %}')
+        let data = await res.text()
+        table.innerHTML = data
+        document.getElementById("search_str").value = ""
+    }
+    init()
+    async function search(from_url, to){
+        let table = document.getElementById("post_list")
+        table.innerHTML = '<div class="row"><div class="spinner-border text-success mx-auto text-center" role="status" id = "loading"><span class="visually-hidden">Loading...</span></div></div>';
+        const URL = from_url.replace("placeholder", document.getElementById("search_str").value)
+        let res = await fetch(URL)
+        let data = await res.text()
+        table.innerHTML = data
+    }
+    Main.default.open_as_window.init()
+
+</script>
+</body>
+
+</html>

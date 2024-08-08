@@ -7,6 +7,8 @@ class ESModel(models.Model):
     TAGS = (
         ("ES", "ES"),
         ("面談", "面談"),
+        ("質問", "質問"),
+        ("質問に対する回答", "質問に対する回答"),
             )
     ESModelID = models.CharField(max_length=128)
     created = models.DateTimeField(auto_now_add=True, verbose_name='作成日時')

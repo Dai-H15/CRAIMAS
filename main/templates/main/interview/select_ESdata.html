@@ -11,6 +11,15 @@
                     <div
                         class="table-responsive"
                     >
+                    <div
+                        class="alert alert-info "
+                        role="alert"
+                    >
+                        <p class ="text-center"> <strong>選択された項目が面談メモに追記されます</strong> </p>
+                    </div>
+                    <form method="post" id="ESForm">
+                        {% csrf_token %}
+                    </form>
                         <table
                             class="table border"
                         >
@@ -25,7 +34,7 @@
                             <tbody>
                                 {% for ES in selected_ES %}
                                 <tr class="table-success">
-                                    <td scope="row"><div class="form-check"><input class="form-check-input selectData" type="checkbox" value="{{ES.ESModelID}}" id="" / checked></div></td>
+                                    <td scope="row"><div class="form-check"><input class="form-check-input selectData" type="checkbox" value="{{ES.ESModelID}}" id="" disabled></div></td>
                                     <td>{{ES.created}}</td>
                                     <td>{{ES.title}}</td>
                                     <td><button class = "btn btn-primary" onclick="Main.default.ESdata.get_detail('{% url "GetEsModelDetail" ES.ESModelID %}')">閲覧</button></td>
@@ -50,8 +59,16 @@
             class="btn btn-success col m-2"
             onclick = "Main.default.ESdata.save_check('{% url "ESModelSelect" I_ID %}')"
         >
-            選択を保存
+            選択を保存して面談メモに追記
         </button>
+        <button
+        type="button"
+        class="btn btn-outline-warning col m-2"
+        onclick = "Main.default.ESdata.all_clear('{% url "ESModelSelect" I_ID %}')"
+    >
+        選択済みを全解除
+    </button>
+        
         <button
             type="button"
             class="btn btn-primary col m-2"

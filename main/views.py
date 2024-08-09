@@ -1190,11 +1190,23 @@ def ESModelSelect(request, I_ID):
     ES_set = ESModel.objects.filter(by_U_ID=request.user.U_ID)
     if request.method == "POST":
         returned = json.loads(request.POST["selected_data"])
-        interview.ESlist.clear()
-        for data in returned:
-            interview.ESlist.add(ES_set.get(ESModelID=data))
-        print(interview.ESlist.all())
+        selected = {"sets": [], "date": timezone.now().astimezone().date()}
+        if "all_clear" in request.POST:
+            interview.ESlist.clear()
+            selected["message"] = "すべての選択が解除されました。"
+        else:
+            for data in returned:
+                interview.ESlist.add(ES_set.get(ESModelID=data))
+                selected["sets"].append(
+                    {
+                        "title": ES_set.get(ESModelID=data).title,
+                        "tag": ES_set.get(ESModelID=data).tag,
+                        "desc": ES_set.get(ESModelID=data).desc
+                    }
+                    )
+            selected["message"] = "登録されました。選択された項目を面談メモに追記しました"
         interview.save()
+        return JsonResponse(selected)
     contexts["selected_ES"] = interview.ESlist.all()
     NotSelectedES = ES_set
     for es in contexts["selected_ES"]:

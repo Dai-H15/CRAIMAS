@@ -7,8 +7,13 @@ from main.models import Interview
 # Create your views here.
 
 
-def get_listInterview(request, year, month):
-    return [{"Interview": i, "date": timezone.make_naive(i.date).day} for i in Interview.objects.filter(by_U_ID=request.user.U_ID).filter(date__year=year).filter(date__month=month).filter(RegistID__isActive=True)]
+def get_listInterview(request, year, month, status):
+    if (status == "active"):
+        jsons = [{"Interview": i, "date": timezone.make_naive(i.date).day} for i in Interview.objects.filter(by_U_ID=request.user.U_ID).filter(date__year=year).filter(date__month=month).filter(RegistID__isActive=True)]
+    else:
+        jsons = [{"Interview": i, "date": timezone.make_naive(i.date).day} for i in Interview.objects.filter(by_U_ID=request.user.U_ID).filter(date__year=year).filter(date__month=month)]
+
+    return jsons
 
 
 @login_required
@@ -24,12 +29,12 @@ def calendar_main(request):
 
 
 @login_required
-def get_calendar(request, year, month):
+def get_calendar(request, year, month, status):
     contexts = {}
     calendar.setfirstweekday(calendar.SUNDAY)
     list_calendar = calendar.monthcalendar(int(year), int(month))
     contexts["list_calendar"] = list_calendar
-    contexts["list_interview"] = get_listInterview(request, year, month)
+    contexts["list_interview"] = get_listInterview(request, year, month, status)
     if year == str(timezone.make_naive(timezone.now()).year) and month == str(timezone.make_naive(timezone.now()).month):
         contexts["today"] = timezone.make_naive(timezone.now()).day
         contexts["feature"] = False

@@ -14,9 +14,12 @@
             <div class="container">
                 <div class = "row">
                     <h3 class = "m-2 border-bottom"> カレンダー</h3>
+                    <input type="checkbox" class="btn-check" id="calendar-check" autocomplete="off">
+                <label class="btn btn-outline-secondary mx-2" for="calendar-check">活動終了企業も表示</label>
+                    
                 </div>
                 <div class = "row m-3">
-                    <h5 class = "text-center"><button class = "btn btn-light" style = "margin-right:2cm" onclick = "Main.default.calendar_main.get_calendar('{% url 'get_calendar' month='month' year='year' %}', 'b')">前月</button><span id = "year" style = "font-size:xx-large ">{{def_year}}</span> 年 <span id = "month" style = "font-size:xx-large ">{{def_month}}</span>月<button class = "btn btn-light" style = "margin-left:2cm" onclick = "Main.default.calendar_main.get_calendar('{% url 'get_calendar' month='month' year='year' %}', 'n')">翌月</button></h5>
+                    <h5 class = "text-center"><button class = "btn btn-light" style = "margin-right:2cm" onclick = "Main.default.calendar_main.get_calendar('{% url 'get_calendar' month='month' year='year' status='status'  %}', 'b')">前月</button><span id = "year" style = "font-size:xx-large ">{{def_year}}</span> 年 <span id = "month" style = "font-size:xx-large ">{{def_month}}</span>月<button class = "btn btn-light" style = "margin-left:2cm" onclick = "Main.default.calendar_main.get_calendar('{% url 'get_calendar' month='month' year='year' status='status' %}', 'n')">翌月</button></h5>
                     <table class="table border border-3 ">
                         <div class="spinner-border text-secondary mx-auto" role="status" id = "loading">
                             <span class="visually-hidden">Loading...</span>
@@ -36,7 +39,7 @@
 
 <script>
     Main.default.open_as_window.init()
-    Main.default.calendar_main.init("{% url 'get_calendar' month='month' year='year' %}")
+    Main.default.calendar_main.init("{% url 'get_calendar' month='month' year='year' status='status' %}")
 </script>
 {% include "main/footer.html"  %}
 

@@ -967,7 +967,7 @@ def export_sheet(request, id):
             interviews = Interview.objects.filter(RegistID=id, by_U_ID=request.user.U_ID)
             sets["Interview"] = {
                 "sheet_name": "Interviews",
-                "interviews": [model_to_dict(interview) for interview in interviews],
+                "interviews": [model_to_dict(interview, exclude=["ESlist"]) for interview in interviews],
             }
             for s in sets["Interview"]["interviews"]:
                 if isinstance(s["date"], datetime):

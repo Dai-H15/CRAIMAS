@@ -1010,7 +1010,7 @@ def export_sheet(request, id):
                 )
                 return response
         except UnicodeEncodeError:
-            return HttpResponse("エラーが発生しました<br>環境依存文字が使用されている可能性があります。シートを見直してください<br>")
+            return HttpResponse("エラーが発生しました<br>環境依存文字が使用されている可能性があります。管理者までお問い合わせください<br>")
         else:
 
             class DateTimeEncoder(json.JSONEncoder):

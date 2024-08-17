@@ -202,6 +202,8 @@ class Interview(models.Model):
         ("試験", "試験"),
         ("その他", "その他"),
         ("is_Planned", "[特殊設定] テスト等終日利用不可"),
+        ("Task_not_completed", "[特殊設定] タスク_作業予定"),
+        ("Task_is_completed", "[特殊設定] タスク_作業完了"),
         
     )
     RegistID = models.ForeignKey(RegistSets, on_delete=models.CASCADE)

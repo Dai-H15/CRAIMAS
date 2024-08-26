@@ -114,6 +114,8 @@ def index(request):
         del request.session["result_data"]
     if "Interviewers" in request.session:
         del request.session["Interviewers"]
+    if "interviewer_name" in request.session:
+        del request.session["interviewer_name"]
     contexts = collect_regnum(request)
     if request.user.is_authenticated:
         contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_active=True)
@@ -263,6 +265,7 @@ def regist_all(request):
                             **i,
                             company_name=RegistSets.objects.get(RegistID=R_ID).company,
                             by_U_ID=request.user.U_ID,
+                            interviewer_id=secrets.token_hex(64)
                         )
                         n += 1
                     contexts["Interviewers_count"] = n
@@ -289,7 +292,7 @@ def mypage(request):
     contexts = collect_regnum(request)
     user = CustomUser.objects.get(username=request.user)
     contexts["user"] = user
-    n_regist = RegistSets.objects.filter(by_U_ID=user.U_ID).count()
+    n_regist = collect_regsets(user).count()
     contexts["n_regist"] = n_regist
     n_interview = Interview.objects.filter(by_U_ID=user.U_ID).count()
     contexts["n_interview"] = n_interview
@@ -982,12 +985,8 @@ def export_sheet(request, id):
                 if interviewers.count() > 0:
                     sets["Interviewer"] = {
                         "sheet_name": "Interviewers",
-                        "interviewers": [model_to_dict(interviewer) for interviewer in interviewers],
+                        "interviewers": [model_to_dict(interviewer, exclude=["interviewer_id", "id", "by_U_ID", "company_name"]) for interviewer in interviewers],
                     }
-                    for s in sets["Interviewer"]["interviewers"]:
-                        del s["id"]
-                        del s["by_U_ID"]
-                        del s["company_name"]
         for s in sets.values():
             if "_state" in s:
                 del s["_state"]
@@ -1078,11 +1077,40 @@ def get_interviewer(request, id):
 
 
 @login_required
-def prof_interviewer(request, company_id, i_name):
+def search_interviewer(request, company_id, i_name):
     if request.method == "GET":
         contexts = collect_regnum(request)
         try:
-            company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
+            company = collect_regsets(request.user).get(company=company_id).company
+            contexts["as_staff"] = False
+        except (RegistSets.DoesNotExist, AttributeError):
+            if request.user.is_staff:
+                try:
+                    company = RegistSets.objects.get(company=company_id).company
+                    contexts["as_staff"] = True
+                except (RegistSets.DoesNotExist, AttributeError):
+                    return HttpResponse("データが存在しません。")
+            else:
+                return HttpResponse("不正なリクエストです")
+        interviewer = Interviewer.objects.filter(company_name=company).filter(name__icontains=i_name)
+        contexts["interviewer"] = interviewer
+        contexts["company_id"] = company_id
+        contexts["i_name"] = i_name
+        return render(request, "main/regist/search_interviewer.html", contexts)
+    if request.method == "POST":
+        if request.POST.get("interviewer_name") == "":
+            return redirect(reverse("search_interviewer", kwargs={"company_id": company_id, "i_name": i_name}))
+        request.session["interviewer_name"] = request.POST.get("interviewer_name")
+        return redirect(reverse("prof_interviewer", kwargs={"company_id": company_id, "i_id":"new_user" }))
+    return HttpResponse("不正なリクエストです")
+
+
+@login_required
+def prof_interviewer(request, company_id, i_id):
+    if request.method == "GET":
+        contexts = collect_regnum(request)
+        try:
+            company = collect_regsets(request.user).get(company=company_id).company
             contexts["as_staff"] = False
         except (RegistSets.DoesNotExist, AttributeError):
             if request.user.is_staff:
@@ -1095,58 +1123,89 @@ def prof_interviewer(request, company_id, i_name):
                 return HttpResponse("不正なリクエストです")
         contexts["company"] = company.name
         contexts["company_id"] = company_id
-        contexts["i_name"] = i_name
+        contexts["i_id"] = i_id
+        if i_id == "default":
+            for interviewer in Interviewer.objects.all():
+                interviewer.interviewer_id = secrets.token_hex(64)
+                interviewer.save()
+            return render(request, "main/regist/interviewer_automodified.html", contexts)
         try:
             if contexts["as_staff"] is False:
                 instance_data = Interviewer.objects.get(
                     by_U_ID=request.user.U_ID,
                     company_name=company,
-                    name=i_name,
+                    interviewer_id=i_id,
                 )
             elif contexts["as_staff"] is True:
                 try:
                     instance_data = Interviewer.objects.get(
                         company_name=company,
-                        name=i_name,
+                        interviewer_id=i_id,
                     )
                 except Interviewer.DoesNotExist:
                     return HttpResponse("面談者情報が存在しません。登録を確認してください")
             else:
                 return HttpResponse("不正なリクエストです")
             init_form = Form_Prof_Interviewer(instance=instance_data)
+            contexts["i_name"] = instance_data.name
             if contexts["as_staff"] is False:
                 contexts["message"] = {"type": "success", "texts": ["一致した担当者情報があります", "編集して保存することができます"]}
             if contexts["as_staff"] is True:
                 contexts["message"] = {"type": "info", "texts": ["一致した担当者情報があります", "管理者権限による閲覧のため、閲覧のみ可能です"]}
         except Interviewer.DoesNotExist:
-            init_form = Form_Prof_Interviewer(initial={"company_name": Companies.objects.get(CompanyID=company_id, by_U_ID=request.user.U_ID), "interviewer_name": i_name})
-            contexts["message"] = {"type": "warning", "texts": ["一致する担当者情報が見つかりませんでした。", "新規作成を行います。名前と企業を確認し、項目を埋めてください"]}
+            try:
+                interviewer_name = request.session["interviewer_name"]
+                contexts["i_name"] = interviewer_name
+                init_form = Form_Prof_Interviewer(initial={"company_name": Companies.objects.get(CompanyID=company_id, by_U_ID=request.user.U_ID), "interviewer_name": interviewer_name})
+            except KeyError:
+                return HttpResponse("不正なリクエストです。再度操作を行ってください。")
+            contexts["message"] = {"type": "warning", "texts": ["新規作成を行います。名前と企業を確認し、項目を埋めてください。", "画面の再読み込みは許可されていません"]}
 
     if request.method == "POST":
+        response = {}
         try:
             try:
-                company = RegistSets.objects.filter(by_U_ID=request.user.U_ID).get(company=company_id).company
+                company = collect_regsets(request.user).get(company=company_id).company
             except (RegistSets.DoesNotExist, AttributeError):
-                return JsonResponse({"status": "NG", "reason": "不正なリクエストです。操作は取り消されました。管理者までお問い合わせください。"})
+                response["status"] = "NG"
+                response["reason"] = "不正なリクエストです。操作は取り消されました。管理者までお問い合わせください。"
+                return JsonResponse(response)
             data = Interviewer.objects.get(
                 by_U_ID=request.user.U_ID,
                 company_name=company,
-                name=i_name,
+                interviewer_id=i_id,
             )
             form = Form_Prof_Interviewer(request.POST, instance=data)
+            token = data.interviewer_id
+            interviewerName = data.name
             reason = "上書き保存を行いました"
         except Interviewer.DoesNotExist:
             form = Form_Prof_Interviewer(request.POST)
-            reason = "新規登録を行いました。"
+            token = secrets.token_hex(64)
+            try:
+                interviewerName = request.session["interviewer_name"]
+                del request.session["interviewer_name"]
+                reason = "registered"
+                response["redirect_to"] = reverse("search_interviewer", kwargs={"company_id": company_id, "i_name": interviewerName})
+            except KeyError:
+                response["status"] = "NG"
+                response["reason"] = "不正なリクエストです。再度操作を行ってください。"
+                return JsonResponse(response)
         if form.is_valid():
             data = form.save(commit=False)
             data.by_U_ID = request.user.U_ID
             data.company_name = company
-            data.name = i_name
+            data.name = interviewerName
+            data.interviewer_id = token
             data.save()
-            return JsonResponse({"status": "OK", "reason": reason})
+            response["status"] = "OK"
+            response["reason"] = reason
+            return JsonResponse(response)
         else:
-            return JsonResponse({"status": "ERROR", "reason": "無効なフォームです", "error_list": str(form.errors)})
+            response["status"] = "ERROR"
+            response["reason"] = "無効なフォームです"
+            response["error_list"] = str(form.errors)
+            return JsonResponse(response)
 
     contexts["form"] = init_form
     return render(request, "main/regist/interviewer.html", contexts)
@@ -1155,7 +1214,7 @@ def prof_interviewer(request, company_id, i_name):
 @login_required
 def search_post(request, sheet_from, where):
     contexts = {}
-    res = RegistSets.objects.filter(by_U_ID=request.user.U_ID).order_by("-isActive")
+    res = collect_regsets(request.user).order_by("-isActive")
     if sheet_from == "企業名":
         res = res.filter(company__name__contains=where)
     if sheet_from == "所属業界名":

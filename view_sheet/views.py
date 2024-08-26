@@ -399,6 +399,7 @@ def create_custom_sheet(request):
                     "by_U_ID",
                     "registsets",
                     "ESlist",
+                    "interviewer_id"
                 ]
             }
             contexts["sheet_name_form"] = request.GET["create_sheet_name"]

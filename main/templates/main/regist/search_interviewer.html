@@ -1,0 +1,72 @@
+{% load django_bootstrap5 %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    {% include "main/html_head.html" %}
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        {% include "main/header_newtab.html" %}
+        <div class="row m-2">
+            <h4>検索結果</h4>
+            {% if interviewer %}
+            <div
+                class="table-responsive"
+            >
+                <table
+                    class="table border"
+                >
+                    <thead>
+                        <tr>
+                            <th scope="col">担当者名</th>
+                            <th scope="col">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in interviewer %}
+                        <tr class="table-success">
+                            <td scope="row">{{i.name}}</td>
+                            <td><button class = "btn btn-success" onclick="Main.default.open_as_window.open_as_window('{% url "prof_interviewer" company_id=company_id  i_id=i.interviewer_id %}', 'interviewer_view', 500,600)">閲覧・編集</button>   </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div
+                class="alert alert-info"
+                role="alert"
+            >
+                <strong>検索結果が存在しません。</strong><br>
+                検索は部分一致となります。<br>検索条件を見直すか、以下から新規作成してください
+            </div>
+            
+            {% endif %}
+            <div class = "col">
+                <p class = "m-2">担当者プロフィールを新規作成</p>
+                <form method="POST">
+                {% csrf_token %}
+                <div class="input-group mb-3 ">
+                    <input type="text" class="form-control" placeholder="担当者名を入力" aria-label="担当者名を入力" aria-describedby="create_interviewer" name = "interviewer_name" value = "{{i_name}}" required>
+                    <button class="btn btn-outline-success" type="submit" id="create_interviewer">作成</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    
+    <script>
+        Main.default.open_as_window.init();
+
+    </script>
+      {% include "main/footer.html"  %}
+
+    </body>
+
+</html>

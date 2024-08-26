@@ -224,39 +224,13 @@ class MainViewTests(TestCase):
         only_login_user_with_post(self, "get_interviewer")
 
     def test_prof_interviewer(self):
-        url = "prof_interviewer"
-        u = testasset.create_user()
-        a = testasset.create_admin()
-        user = testasset.test_user_init(u)
-        admin = testasset.test_user_init(a)
-        anonymous = testasset.test_anonymous_init()
-        post = testasset.create_post(client=u)
-        self.assertEqual(testasset.is_error(url, user, uargs={"company_id": post.company, "i_name": "hoge"}), False)
-        self.assertEqual(testasset.is_error(url, admin, uargs={"company_id": post.company, "i_name": "hoge"}), False)
-        self.assertEqual(testasset.is_error(url, anonymous, uargs={"company_id": post.company, "i_name": "hoge"}), False)
-        self.assertEqual(testasset.can_access(url, user, uargs={"company_id": post.company, "i_name": "hoge"}), True)
-        self.assertEqual(testasset.can_access(url, admin, uargs={"company_id": post.company, "i_name": "hoge"}), True)
-        self.assertEqual(testasset.can_access(url, anonymous, uargs={"company_id": post.company, "i_name": "hoge"}), False)
-        self.assertEqual(testasset.cannot_access(url, user, uargs={"company_id": post.company, "i_name": "hoge"}), False)
-        self.assertEqual(testasset.cannot_access(url, admin, uargs={"company_id": post.company, "i_name": "hoge"}), False)
-        self.assertEqual(testasset.cannot_access(url, anonymous, uargs={"company_id": post.company, "i_name": "hoge"}), True)
+        only_login_user_with_args(self, "prof_interviewer", args={"company_id": "dummy", "i_id": "hoge"})
+
+    def test_search_interviewer(self):
+        only_login_user_with_args(self, "search_interviewer", args={"company_id": "dummy", "i_name": "dummy"})
 
     def test_search_post(self):
-        url = "search_post"
-        u = testasset.create_user()
-        a = testasset.create_admin()
-        user = testasset.test_user_init(u)
-        admin = testasset.test_user_init(a)
-        anonymous = testasset.test_anonymous_init()
-        self.assertEqual(testasset.is_error(url, user, uargs={"sheet_from": "企業名", "where": "a"}), False)
-        self.assertEqual(testasset.is_error(url, admin, uargs={"sheet_from": "企業名", "where": "a"}), False)
-        self.assertEqual(testasset.is_error(url, anonymous, uargs={"sheet_from": "企業名", "where": "a"}), False)
-        self.assertEqual(testasset.can_access(url, user, uargs={"sheet_from": "企業名", "where": "a"}), True)
-        self.assertEqual(testasset.can_access(url, admin, uargs={"sheet_from": "企業名", "where": "a"}), True)
-        self.assertEqual(testasset.can_access(url, anonymous, uargs={"sheet_from": "企業名", "where": "a"}), False)
-        self.assertEqual(testasset.cannot_access(url, user, uargs={"sheet_from": "企業名", "where": "a"}), False)
-        self.assertEqual(testasset.cannot_access(url, admin, uargs={"sheet_from": "企業名", "where": "a"}), False)
-        self.assertEqual(testasset.cannot_access(url, anonymous, uargs={"sheet_from": "企業名", "where": "a"}), True)
+        only_login_user_with_args(self, "search_post", args={"sheet_from": "企業名", "where": "a"})
 
     def test_show_interview_num_zero(self):
         url = "mypage"

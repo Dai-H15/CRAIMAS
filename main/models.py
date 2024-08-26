@@ -233,7 +233,7 @@ class Interview(models.Model):
 
 
 class Interviewer(models.Model):
-    interviewer_id = models.CharField(max_length=100, default="default", blank=False)
+    interviewer_id = models.CharField(max_length=255, default="default", blank=False)
     by_U_ID = models.CharField(max_length=100, default="default", blank=False)
     company_name = models.ForeignKey(Companies, on_delete=models.CASCADE, verbose_name="企業名", blank=False)
     name = models.CharField(max_length=200, verbose_name="面接官名", blank=True)

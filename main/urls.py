@@ -39,5 +39,5 @@ urlpatterns = [
     path("get_address_from_sheet/<str:R_id>", views.get_address_from_sheet, name="get_address_from_sheet"),
     path("ESModelSelect/<str:I_ID>", views.ESModelSelect, name="ESModelSelect"),
     path("GetEsModelDetail/<str:id>", views.GetEsModelDetail, name="GetEsModelDetail"),
-    
+    path("interview/get_summary", views.get_summary, name="get_summary")
 ]

@@ -154,7 +154,7 @@ class InterviewForm(forms.ModelForm):
 
     class Meta:
         model = Interview
-        fields = ("RegistID", "InterviewID", "title", "tag", "date", "interviewer", "zipcode", "place", "Event_URL", "aspire", "reason", "want_to", "note", "review")
+        fields = ("RegistID", "InterviewID", "title", "tag", "date", "interviewer", "zipcode", "place", "Event_URL", "aspire", "reason", "want_to", "note", "summary", "review")
         labels = {
                     "RegistID": "登録セットキー",
                     "InterviewID": "インタビューキー",
@@ -169,13 +169,14 @@ class InterviewForm(forms.ModelForm):
                     "reason": "志望理由",
                     "want_to": "やりたいこと",
                     "notes": "面談メモ",
+                    "summary": "AI要約",
                     "review": "面談感想"
                   }
         widgets = {
             "date": forms.DateTimeInput(attrs={"type": "datetime-local"}, format="%Y-%m-%d %H:%M"),
             "aspire": forms.NumberInput(attrs={"min": "0", "max": "100", "step": "1"}),
+            "summary": forms.Textarea(attrs={"readonly": "readonly"}),
             "InterviewID": forms.HiddenInput()
-
         }
 
 

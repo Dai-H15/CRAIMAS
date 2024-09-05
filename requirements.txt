@@ -9,3 +9,4 @@ django-sslserver
 cryptography
 psycopg
 pytz
+openai

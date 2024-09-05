@@ -53,6 +53,18 @@
                 >
                 ES・質問 管理システムから引用
                 </button>
+                {% elif f.name == "note" %}
+                {% bootstrap_field f %}
+                <button
+                type="button"
+                class="form-control btn btn-primary my-2"
+                id="ai-button"
+                onclick="Main.default.interview.get_note_summary()"
+                >
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="ai-status-loading-spin" hidden></span>
+                <span id ="ai-status-loading-text" hidden>要約中...</span>
+                <span id ="ai-status-waiting">面談メモを要約する</span>
+                </button>
                 
                 {% else %}
                 {% bootstrap_field f %}
@@ -79,7 +91,13 @@
         <div class="toast-body text-white" id = "time-toast-status"></div>
       </div>
 </div>
-
+{% if not as_staff %}
+<form id ="config" method = "POST" action = "{% url "get_summary" %}">
+    {% csrf_token %}
+    {{interview.RegistID}}
+    {{interview.InterviewID}}
+</form>
+{% endif %}
 
 <script>
     Main.default.interview.init();

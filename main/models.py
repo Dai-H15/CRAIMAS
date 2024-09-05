@@ -222,6 +222,8 @@ class Interview(models.Model):
     ESlist = models.ManyToManyField(ESModel, verbose_name="ES項目", blank=True)
     want_to = models.TextField(default="", verbose_name="やりたいこと", blank=True)
     note = models.TextField(default="", verbose_name="面談メモ", blank=True)
+    summary = models.TextField(default="", verbose_name="AI要約", blank=True)
+    summary_created = models.DateTimeField(verbose_name="最終要約日時", null=True)
     review = models.TextField(default="", verbose_name="面談感想", blank=True)
 
     def __str__(self):

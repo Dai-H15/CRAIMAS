@@ -266,3 +266,6 @@ class MainViewTests(TestCase):
 
     def test_ES_delete(self):
         only_login_user_with_args(self, "ES_delete", args={"id": "dummy"})
+
+    def test_get_summary(self):
+        only_login_user(self, "get_summary")

@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from main.views import collect_regnum
+from main.views import collect_regnum, collect_regsets
 import calendar
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from main.models import Interview
+
 # Create your views here.
 
 
@@ -43,3 +44,9 @@ def get_calendar(request, year, month, status):
     return render(request, "task_calendar/calendar_base.html", contexts)
 
 
+@login_required
+def new_task(request):
+    contexts = collect_regnum(request)
+    sets = collect_regsets(request.user)
+    contexts["sets"] = sets
+    return render(request, "task_calendar/new_task.html", contexts)

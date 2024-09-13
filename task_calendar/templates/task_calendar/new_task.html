@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    {% include "main/html_head.html" %}
+</head>
+<body>
+    <div class="container-fluid">
+        {% include "main/header_newtab.html" %}
+        <div class="row my-3">
+            <div class="container">
+                <div class ="row m-3">
+                    <h3 class ="border-bottom border-3 my-2">登録先企業を選択してください</h3>
+                    <select class="form-select my-2" >
+                        <option selected>登録先企業を選択してください</option>
+                        {% for one in sets %}
+                        <option value="{{one.RegistID}}">{{one}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+    </div>
+
+    </div>
+
+<script>
+    Main.default.calendar_main.new_task("{% url 'interview_create' 'placeholder' %}")
+</script>
+{% include "main/footer.html"  %}
+
+</body>
+
+</html>

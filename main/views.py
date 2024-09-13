@@ -834,11 +834,14 @@ def interview_main(request, id):
         interviews = Interview.objects.filter(RegistID=R_sets, by_U_ID=request.user.U_ID).order_by("date")
         contexts["as_staff"] = False
     except RegistSets.DoesNotExist:
-        if request.user.is_staff:
-            R_sets = RegistSets.objects.get(RegistID=id)
-            interviews = Interview.objects.filter(RegistID=R_sets).order_by("date")
-            contexts["as_staff"] = True
-        else:
+        try:
+            if request.user.is_staff:
+                R_sets = RegistSets.objects.get(RegistID=id)
+                interviews = Interview.objects.filter(RegistID=R_sets).order_by("date")
+                contexts["as_staff"] = True
+            else:
+                return HttpResponse("存在しない登録情報シート、もしくは閲覧権限がありません。")
+        except RegistSets.DoesNotExist:
             return HttpResponse("存在しない登録情報シート、もしくは閲覧権限がありません。")
     contexts["R_sets"] = R_sets
     contexts["interviews"] = interviews

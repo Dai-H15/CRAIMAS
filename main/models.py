@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.core.validators import URLValidator
 from ESmanage.models import ESModel
 
+
 class Companies(models.Model):
     by_U_ID = models.CharField(max_length=100, default="default")
     name = models.CharField(max_length=200, verbose_name='企業・団体名')

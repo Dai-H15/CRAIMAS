@@ -79,11 +79,7 @@
                             <h3>問い合わせ</h3>
                         </div>
                     </a>
-                    {% else %}
-                    <div class = "row m-3">
-                        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ3ZmqYMQ1uZMx2pPvkqoyl6RfKupj86FJGux4vjRS3GkDOshQ-Cfe-nmiOgA3pP58xk4zIV8nqHhBB/embed?start=true&loop=true&delayms=5000" frameborder="0" width="1024" height="480" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-                    </div>
-                    {% endif %}
+                    
                     
                     <a href="{% url "mypage" %}">
                         <div class="row text-center p-3 border  my-2">
@@ -111,6 +107,21 @@
                     <div class="row text-center p-3 border my-2">
                         <h3> 登録する</h3>
                     </div></a>
+                    {% else %}
+                    <div class = "row m-3">
+                        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ3ZmqYMQ1uZMx2pPvkqoyl6RfKupj86FJGux4vjRS3GkDOshQ-Cfe-nmiOgA3pP58xk4zIV8nqHhBB/embed?start=true&loop=true&delayms=5000" frameborder="0" width="1024" height="480" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                    </div>
+                    <a href="{% url "login" %}">
+                        <div class="col text-center p-3 border my-2">
+                            <h3>ログイン</h3>
+                        </div>
+                    </a>
+                    <a href="{% url "signup" %}">
+                        <div class="col text-center p-3 border my-2">
+                            <h3>ユーザー登録</h3>
+                        </div>
+                    </a>
+                    {% endif %}
                 
             </div>
         </div>

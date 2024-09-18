@@ -28,9 +28,11 @@
                     </thead>
                     <tbody>
                         {% for i in interviewer %}
-                        <tr class="table-success">
+                        <tr class="table-success"  name = "button-addon">
                             <td scope="row">{{i.name}}</td>
-                            <td><button class = "btn btn-success" onclick="Main.default.open_as_window.open_as_window('{% url "prof_interviewer" company_id=company_id  i_id=i.interviewer_id %}', 'interviewer_view', 500,600)">閲覧・編集</button>   </td>
+                            <td>
+                                <button class = "btn btn-success" onclick="Main.default.open_as_window.open_as_window('{% url "prof_interviewer" company_id=company_id  i_id=i.interviewer_id %}', 'interviewer_view', 500,600)">閲覧・編集</button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -62,8 +64,8 @@
     </div>
     
     <script>
-        Main.default.open_as_window.init();
-
+    Main.default.open_as_window.init();
+    Main.default.search_interviewer.init()
     </script>
       {% include "main/footer.html"  %}
 

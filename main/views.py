@@ -121,17 +121,18 @@ def index(request):
         del request.session["interviewer_name"]
     contexts = collect_regnum(request)
     if request.user.is_authenticated:
-        contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_active=True)
-        contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_active=True)
-        contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_active=True)
+        contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_active=True).order_by("-created_at")
+        contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_active=True).order_by("-created_at")
+        contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_active=True).order_by("-created_at")
         contexts["ExpirationDate"] = (request.user.ExpiryDate - dt.date.today()).days
         contexts["updated_date"] = timezone.make_naive(InfomationModel.objects.filter(is_active=True).order_by("-created_at")[0].created_at)
+        contexts["infomation_updated_num"] = InfomationModel.objects.filter(created_at__gte=request.user.last_login).count
         if request.user.is_staff:
             contexts["n_SupportTicket"] = SupportTicketModel.objects.filter(is_solved=False).count()
     else:
-        contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_public=True, is_active=True)
-        contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_public=True, is_active=True)
-        contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_public=True, is_active=True)
+        contexts["infomation_news"] = InfomationModel.objects.filter(category="news", is_public=True, is_active=True).order_by("-created_at")
+        contexts["infomation_maintenance"] = InfomationModel.objects.filter(category="maintenance", is_public=True, is_active=True).order_by("-created_at")
+        contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_public=True, is_active=True).order_by("-created_at")
         contexts["updated_date"] = timezone.make_naive(InfomationModel.objects.filter(is_active=True, is_public=True).order_by("-created_at")[0].created_at)
 
     return render(request, "main/index.html", contexts)

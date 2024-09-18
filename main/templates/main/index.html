@@ -10,9 +10,11 @@
                     <div class = "row p-3 my-3 border rounded  "style = "background-color: #e6ffb3">
                 <div class = "container" >
                     <div class = "border-bottom border-dark row">
-                        <h4 class = "col my-0"> Infomation</h3>
-                            <div class = "col my-0 text-end"><span style="font-size:larger">最新更新日時: </span> <strong>{{updated_date}}</strong></div>
-                        <button class="btn btn-outline-secondary col col-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#info-tables" aria-expanded="false" aria-controls="info-tables">
+                        <h4 class = "col-12 col-sm my-0"> Infomation</h3>
+                            <div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最終ログイン日時</p> <strong>{{user.last_login}}</strong></div>
+                            <div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最新更新日時</p> <strong>{{updated_date}}</strong></div>
+                            
+                        <button class="btn btn-outline-secondary col col-md-3" type="button" data-bs-toggle="collapse" data-bs-target="#info-tables" aria-expanded="false" aria-controls="info-tables">
                             表示を切り替え
                         </button>
                     </div>
@@ -38,7 +40,8 @@
                                     {% for info in infomation_news %}
                                     <li>
                                         <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
-                                        <p>{{info.content}}</p>
+                                        <p>{{ info.content|linebreaksbr }}</p>
+                                        
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -49,7 +52,7 @@
                                     {% for info in infomation_maintenance %}
                                     <li>
                                         <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
-                                        <p>{{info.content}}</p>
+                                        <p>{{ info.content|linebreaksbr }}</p>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -60,7 +63,7 @@
                                     {% for info in infomation_release %}
                                     <li>
                                         <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
-                                        <p>{{info.content}}</p>
+                                        <p>{{info.content|linebreaksbr}}</p>
                                     </li>
                                     {% endfor %}
                                 </ul>

@@ -24,7 +24,7 @@
                     
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{{ field.value }}{% if field.name == "contact" or field.name == "president" %}<button class = "btn btn-outline-primary mx-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.open_as_window.open_as_window('{% url "search_interviewer" company_id=post.company.CompanyID i_name=field.value %}', 'interviewer_view', 530,600)"> {{field.label}}プロフィールを検索</button>{% endif %}</td>
+                            <td>{{ field.value |linebreaksbr}}{% if field.name == "contact" or field.name == "president" %}<button class = "btn btn-outline-primary mx-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.open_as_window.open_as_window('{% url "search_interviewer" company_id=post.company.CompanyID i_name=field.value %}', 'interviewer_view', 530,600)"> {{field.label}}プロフィールを検索</button>{% endif %}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -36,7 +36,7 @@
                     {% for field in A_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{{ field.value }}</td>
+                            <td>{{ field.value |linebreaksbr}}</td>
                         </tr>
                     {% endfor %}
                 </table>
@@ -49,7 +49,7 @@
                             {% for field in I_Form %}
                                 <tr>
                                     <td>{{ field.label }}:</td>
-                                    <td>{{ field.value }}</td>
+                                    <td>{{ field.value |linebreaksbr}}</td>
                                 </tr>
                             {% endfor %}
                         </table>
@@ -65,7 +65,7 @@
             <table class  = "table  table-hover">{% for field in M_Form %}
                 <tr>
                     <td>{{ field.label }}:</td>
-                    <td>{{ field.value }}</td>
+                    <td>{{ field.value |linebreaksbr}}</td>
                 </tr>
             {% endfor %}</table>
             <div class = "border-top">
@@ -85,9 +85,9 @@
                         <tr>
                             <td>{{ field.label }}:</td>
                         {% if field.label == "URL" %}
-                            <td>{{ field.value }}<br><button class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
+                            <td>{{ field.value |linebreaksbr}}<br><button class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
                         {% else %}
-                            <td>{{ field.value }}</td>
+                            <td>{{ field.value |linebreaksbr}}</td>
                         {% endif %}
                     </tr>
 

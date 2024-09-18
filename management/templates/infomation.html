@@ -8,6 +8,15 @@
         {% include "main/header.html" %}
         <div class = "row m-3 border rounded p-3">
             <h4 class = "border-bottom">投稿一覧</h4>
+            <div class = "input-group m-3" id = "infomation-addon">
+                <select  class = "form-select" id = "search-select">
+                    <option value = "0" selected> 検索対象項目を選択 </option>
+                    <option value="1">タイトル</option>
+                    <option value="2">カテゴリ</option>
+                    <option value="3">内容</option>
+                </select>
+                <input type="text" class = "form-control" id = "search-holder" placeholder = "検索対象文字列を入力">
+            </div>
             {% if infomations %}
             
             <div
@@ -28,7 +37,7 @@
                     </thead>
                     <tbody>
                         {% for infomation in infomations %}
-                        <tr class="{% if infomation.is_active %} table-primary {% else %} bg-secondary{% endif %}">
+                        <tr class="{% if infomation.is_active %} table-primary {% else %} bg-secondary{% endif %}" name = "data-rows">
                             <td scope="row">{{infomation.created_at}}</td>
                             <td>{{infomation.title}}</td>
                             <td>{{infomation.category}}</td>
@@ -58,6 +67,9 @@
     </div>
     </div>
 
+<script>
+    Main.default.ManagementInfomation.init()
+</script>
 
 </body>
 

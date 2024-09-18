@@ -10,9 +10,20 @@
         <div class="row my-3">
             <div class="container">
                 <div class ="row m-3">
-                    <h3 class ="border-bottom border-3 my-2">登録先企業を選択してください</h3>
-                    <select class="form-select my-2" >
-                        <option selected>登録先企業を選択してください</option>
+                    <h3 class ="border-bottom border-3 my-2">面談録の新規作成を行います</h3>
+                    <div class="my-3">
+                        <label for="" class="form-label">一覧の企業を企業名から絞り込む</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            name=""
+                            id="search-field"
+                            placeholder="検索する企業名を入力してください"
+                        />
+                    </div>
+                    
+                    <select class="form-select my-2" id = "choices">
+                        <option selected>一覧から登録先企業を選択してください</option>
                         {% for one in sets %}
                         <option value="{{one.RegistID}}">{{one}}</option>
                         {% endfor %}
@@ -25,6 +36,7 @@
 
 <script>
     Main.default.calendar_main.new_task("{% url 'interview_create' 'placeholder' %}")
+    
 </script>
 {% include "main/footer.html"  %}
 

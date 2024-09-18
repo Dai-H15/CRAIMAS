@@ -9,7 +9,13 @@
                 <div class="container">
                     <div class = "row p-3 my-3 border rounded  "style = "background-color: #e6ffb3">
                 <div class = "container" >
-                        <h4 class = "border-bottom border-dark">Infomation</h4>
+                    <div class = "border-bottom border-dark row">
+                        <h4 class = "col my-0"> Infomation</h3>
+                            <div class = "col my-0 text-end"><span style="font-size:larger">最新更新日時: </span> <strong>{{updated_date}}</strong></div>
+                        <button class="btn btn-outline-secondary col col-sm-3" type="button" data-bs-toggle="collapse" data-bs-target="#info-tables" aria-expanded="false" aria-controls="info-tables">
+                            表示を切り替え
+                        </button>
+                    </div>
                         {% if user.is_authenticated %}
                         {% if ExpirationDate < 15 %}
                         <div class="alert alert-warning" role="alert">
@@ -24,6 +30,7 @@
                         </h6></div>
                         {% endif %}
                         {% endif %}
+                        <div class="collapse" id="info-tables">
                         <div class = "row">
                             <div class = "col-12 col-sm border rounded m-2">
                                 <h5>お知らせ</h5>
@@ -59,7 +66,7 @@
                                 </ul>
                             </div>
                         </div>
-                        
+                    </div>
                 </div>
                 </div>
                 <div type= "button" onclick="Main.default.open_as_window.open_as_window('https://howto-site.craimas.com/', 'howto-site', 1200, 900);">

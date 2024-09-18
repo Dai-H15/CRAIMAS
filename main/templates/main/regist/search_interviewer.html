@@ -33,6 +33,8 @@
                             <td>
                                 <button class = "btn btn-success" onclick="Main.default.open_as_window.open_as_window('{% url "prof_interviewer" company_id=company_id  i_id=i.interviewer_id %}', 'interviewer_view', 500,600)">閲覧・編集</button>
                             </td>
+                            <td hidden><input type="text"value = "{{i.name}}" hidden></td>
+
                         </tr>
                         {% endfor %}
                     </tbody>

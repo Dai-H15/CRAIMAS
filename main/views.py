@@ -126,7 +126,7 @@ def index(request):
         contexts["infomation_release"] = InfomationModel.objects.filter(category="release", is_active=True).order_by("-created_at")
         contexts["ExpirationDate"] = (request.user.ExpiryDate - dt.date.today()).days
         contexts["updated_date"] = timezone.make_naive(InfomationModel.objects.filter(is_active=True).order_by("-created_at")[0].created_at)
-        contexts["infomation_updated_num"] = InfomationModel.objects.filter(created_at__gte=request.user.last_login).count
+        contexts["infomation_updated_num"] = InfomationModel.objects.filter(created_at__gte=request.user.infomation_last_checked).count()
         if request.user.is_staff:
             contexts["n_SupportTicket"] = SupportTicketModel.objects.filter(is_solved=False).count()
     else:
@@ -136,6 +136,14 @@ def index(request):
         contexts["updated_date"] = timezone.make_naive(InfomationModel.objects.filter(is_active=True, is_public=True).order_by("-created_at")[0].created_at)
 
     return render(request, "main/index.html", contexts)
+
+
+@login_required
+def infomation_checked(request):
+    user = request.user
+    user.infomation_last_checked = timezone.now()
+    user.save()
+    return redirect('index')
 
 
 @login_required

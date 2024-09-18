@@ -11,10 +11,10 @@
                 <div class = "container" >
                     <div class = "border-bottom border-dark row py-2">
                         <h4 class = "col-12 col-sm my-0"> Infomation</h3>
-                            <div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最終ログイン日時</p> <strong>{{user.last_login}}</strong></div>
+                            {% if user.is_authenticated %}<div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最終ログイン日時</p> <strong>{{user.last_login}}</strong></div>{% endif %}
                             <div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最新更新日時</p> <strong>{{updated_date}}</strong></div>
                         <button class="btn btn-outline-secondary col col-md-3" type="button" data-bs-toggle="collapse" data-bs-target="#info-tables" aria-expanded="false" aria-controls="info-tables">
-                             {% if infomation_updated_num %}{% if infomation_updated_num > 0 %}<strong class = "m-0 text-danger">新着: {{infomation_updated_num}} 件</strong>{% endif %}{% endif %}<br>
+                            {% if user.is_authenticated %}<h5 class = "m-0 {% if infomation_updated_num > 0 %}text-danger{% endif %}">新着: {{infomation_updated_num}} 件</h5>{% endif %}
                             表示を切り替え
                         </button>
                     </div>
@@ -71,7 +71,11 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="text-end">
+                            {% if infomation_updated_num > 0 %}<a class="btn btn-primary" href = " {% url "infomation_checked" %} ">お知らせを確認済みにする</a>{% endif %}
+                        </div>
                     </div>
+                    
                 </div>
                 </div>
                 <div type= "button" onclick="Main.default.open_as_window.open_as_window('https://howto-site.craimas.com/', 'howto-site', 1200, 900);">

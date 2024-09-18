@@ -11,15 +11,19 @@
             <div class="container">
                 <div class ="row m-3">
                     <h3 class ="border-bottom border-3 my-2">面談録の新規作成を行います</h3>
-                    <div class="my-3">
-                        <label for="" class="form-label">一覧の企業を企業名から絞り込む</label>
-                        <input
+                    <div class=" my-3">
+                        <label for="search-field" class="form-label">一覧の企業を企業名から絞り込む</label>
+                        <div class = "input-group">
+                            <input
                             type="text"
                             class="form-control"
-                            name=""
+                            name="search-field"
                             id="search-field"
                             placeholder="検索する企業名を入力してください"
                         />
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon">削除</button>
+                        </div>
+                        
                     </div>
                     
                     <select class="form-select my-2" id = "choices">

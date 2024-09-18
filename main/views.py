@@ -128,7 +128,7 @@ def index(request):
         contexts["ExpirationDate"] = (request.user.ExpiryDate - dt.date.today()).days
         if infomation.count() > 0:
             contexts["updated_date"] = timezone.make_naive(InfomationModel.objects.filter(is_active=True).order_by("-created_at")[0].created_at)
-            contexts["infomation_updated_num"] = InfomationModel.objects.filter(created_at__gte=request.user.infomation_last_checked).count()
+            contexts["infomation_updated_num"] = InfomationModel.objects.filter(created_at__gte=request.user.infomation_last_checked, is_active=True).count()
         if request.user.is_staff:
             contexts["n_SupportTicket"] = SupportTicketModel.objects.filter(is_solved=False).count()
     else:

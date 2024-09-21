@@ -27,7 +27,7 @@ def calendar_main(request):
     year = timezone.make_naive(timezone.now()).year
     month = timezone.make_naive(timezone.now()).month
     today = timezone.make_naive(timezone.now()).day
-    contexts["company_list"] = collect_regsets(request.user)
+    contexts["company_list"] = collect_regsets(request.user).order_by("-isActive")
     contexts["def_year"] = year
     contexts["def_month"] = month
     contexts["today"] = today

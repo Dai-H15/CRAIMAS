@@ -20,11 +20,22 @@
                     </div>
                     <div class ="col text-center">
                         <input type="checkbox" class="btn-check" id="calendar-check" autocomplete="off">
-                        <label class="btn btn-outline-secondary mx-2" for="calendar-check">活動終了企業も表示</label>
+                        <label class="btn btn-outline-secondary mx-2" for="calendar-check">活動終了企業を表示</label>
                     </div></div>
                 </div>
+
                 <div class = "row m-3">
-                    <h5 class = "text-center"><button class = "btn btn-light" style = "margin-right:2cm" onclick = "Main.default.calendar_main.get_calendar('{% url 'get_calendar' month='month' year='year' status='status'  %}', 'b')">前月</button><span id = "year" style = "font-size:xx-large ">{{def_year}}</span> 年 <span id = "month" style = "font-size:xx-large ">{{def_month}}</span>月<button class = "btn btn-light" style = "margin-left:2cm" onclick = "Main.default.calendar_main.get_calendar('{% url 'get_calendar' month='month' year='year' status='status' %}', 'n')">翌月</button></h5>
+                    <label for="select-company" class = "pb-2">企業名を選択して絞り込む</label>
+                    <select name="select-company" id="select-company" class = "form-select">
+                        <option value="0" selected>全ての企業を表示</option>
+                        {% for c in company_list %}
+                        <option value="{{c.RegistID}}"> {% if not c.isActive %} [活動終了] {% endif %} {{c.company.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class = "row m-3">
+                    <h5 class = "text-center"><button class = "btn btn-light" style = "margin-right:2cm" onclick = "Main.default.calendar_main.get_calendar('b')">前月</button><span id = "year" style = "font-size:xx-large ">{{def_year}}</span> 年 <span id = "month" style = "font-size:xx-large ">{{def_month}}</span>月<button class = "btn btn-light" style = "margin-left:2cm" onclick = "Main.default.calendar_main.get_calendar('n')">翌月</button></h5>
                     <table class="table border border-3 ">
                         <div class="spinner-border text-secondary mx-auto" role="status" id = "loading">
                             <span class="visually-hidden">Loading...</span>
@@ -39,7 +50,7 @@
 
 <script>
     Main.default.open_as_window.init()
-    Main.default.calendar_main.init("{% url 'get_calendar' month='month' year='year' status='status' %}")
+    Main.default.calendar_main.init("{% url 'get_calendar' month='month' year='year' status='status' search='search' %}")
 </script>
 
 

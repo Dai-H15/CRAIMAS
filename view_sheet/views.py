@@ -308,6 +308,7 @@ def view_main(request, control, option):
                     "sheet_id": cs.sheet_id,
                 }
                 contexts["results"] = results
+                contexts["count"] = results.count()
                 contexts["th_all"] = cs.selected_field
             else:
                 contexts["message"] = {

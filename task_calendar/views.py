@@ -44,10 +44,10 @@ def get_calendar(request, year, month, status, search):
         contexts["list_interview"] = get_listInterview(request, year, month, status, search)
     except (RegistSets.DoesNotExist, Interview.DoesNotExist):
         return HttpResponse("不正な操作を検出しました。")
-    if year == str(timezone.make_naive(timezone.now()).year) and month == str(timezone.make_naive(timezone.now()).month):
+    if int(year) == int(timezone.make_naive(timezone.now()).year) and int(month) == int(timezone.make_naive(timezone.now()).month):
         contexts["today"] = timezone.make_naive(timezone.now()).day
         contexts["feature"] = False
-    elif year >= str(timezone.make_naive(timezone.now()).year) and month > str(timezone.make_naive(timezone.now()).month):
+    elif int(year) >= int(timezone.make_naive(timezone.now()).year) and int(month) > int(timezone.make_naive(timezone.now()).month):
         contexts["feature"] = True
     return render(request, "task_calendar/calendar_base.html", contexts)
 

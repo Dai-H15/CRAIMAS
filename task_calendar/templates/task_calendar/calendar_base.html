@@ -17,28 +17,28 @@
                         <p class = "">{{day}}</p>
                         {% for interview in list_interview %}
                                 {% if day == interview.date %}
-                                {% if interview.Interview.tag == "is_Planned"%}
-                                <div class = "bg-danger p-2 text-white text-center"><p>予定あり。面談不可</p> [{{interview.Interview.title}}] <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
-                                {% elif interview.Interview.tag == "Task_not_completed" %}
-                                <div class = "bg-secondary p-1 text-white text-center"><small>未完了のタスクあり</small> <br> <small>{{interview.Interview.company_name}}<br> [{{interview.Interview.title}}] </small> <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
-                                {% elif interview.Interview.tag == "Task_is_completed" %}
-                                <div class = "bg-success p-1 text-white text-center"><small>完了済みのタスク</small>  <br> <small>{{interview.Interview.company_name}}<br> [{{interview.Interview.title}}] </small>  <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
-                                {% elif feature is True or interview.date|is_bigger:today%}
-                                {% if interview.Interview.tag == "インターンシップ" %}
-                                <button class = "btn btn-outline-success" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '1000' )">参加予定インターンシップ: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
-                                {% else %}
-                                <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '1000' )">未来の予定 (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
-                                {% endif %}
+                                    {% if interview.Interview.tag == "is_Planned"%}
+                                    <div class = "bg-danger p-2 text-white text-center"><p>予定あり。面談不可</p> [{{interview.Interview.title}}] <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
+                                    {% elif interview.Interview.tag == "Task_not_completed" %}
+                                    <div class = "bg-secondary p-1 text-white text-center"><small>未完了のタスクあり</small> <br> <small>{{interview.Interview.company_name}}<br> [{{interview.Interview.title}}] </small> <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
+                                    {% elif interview.Interview.tag == "Task_is_completed" %}
+                                    <div class = "bg-success p-1 text-white text-center"><small>完了済みのタスク</small>  <br> <small>{{interview.Interview.company_name}}<br> [{{interview.Interview.title}}] </small>  <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '400', '1000' )">変更</button></div>
+                                    {% elif feature is True or interview.date|is_bigger:today%}
+                                    {% if interview.Interview.tag == "インターンシップ" %}
+                                    <button class = "btn btn-outline-success" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '1000' )">参加予定インターンシップ: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                    {% else %}
+                                    <button class = "btn btn-outline-info" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '1000' )">未来の予定 (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                    {% endif %}
                                 {% elif interview.date == today %}
-                                <button class = "btn btn-outline-danger" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '10000' )">本日の面談録（予定） (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
-                                {% else %}
-                                {% if interview.Interview.tag == "インターンシップ" %}
-                                <button class = "btn btn-outline-warning" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '1000' )">参加済みインターンシップ : {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
-                                {% else %}
-                                <button class = "btn btn-outline-secondary" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '10000' )">過去面談録有り: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
-                                {% endif %}
-                                {% endif %}
-                                {% endif %}
+                                    <button class = "btn btn-outline-danger" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '10000' )">本日の面談録（予定） (面談録): {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                    {% else %}
+                                    {% if interview.Interview.tag == "インターンシップ" %}
+                                    <button class = "btn btn-outline-warning" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '1000' )">参加済みインターンシップ : {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                    {% else %}
+                                    <button class = "btn btn-outline-secondary" type = "button" style = " --bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem; margin: 3px" onclick  = "Main.default.open_as_window.open_as_window('{% url "view_interview" interview.Interview.InterviewID %}', 'interview{{forloop.counter}}', '500', '10000' )">過去面談録有り: {{interview.Interview.company_name}} ({{interview.Interview.title}})</button><br>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endif %}
                         {% endfor %}
                     {% endif %}
                 </td>

@@ -45,10 +45,9 @@ def login_view(request):
                 login(request, user)
                 return render(request, "registration/login_redirect.html", contexts)
             else:
-                contexts["status"] = {"results": "error"}
-                contexts['error_message'] = "ユーザーが見つかりませんでした。メールアドレスとパスワードを確認してください。"
+                contexts["status"] = {"results": "error", "message": "ユーザーが見つかりませんでした。メールアドレスとパスワードを確認してください。"}
         else:
-            contexts['error_message'] = "資格情報が無効です。入力値を確認してください。"
+            contexts["status"] = {"results": "NG", "message": "資格情報が無効です。入力値を確認してください。"}
     else:
         form = LoginForm()
 

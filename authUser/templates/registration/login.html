@@ -13,10 +13,14 @@
             {% if status.results == "error" %}
                 
                 <div class = "text-center alert alert-warning">
+                    <h4>{{status.message}}</h4>
                     <h5>もしくは、ユーザーが有効化されていない可能性があります。</h5>
                     <h5>メール認証を行うか、管理者までお問い合わせください。</h5>
                 </div>
-                
+                {% else %}
+                <div class = "text-center alert alert-danger">
+                    <h4>{{status.message}}</h4>
+                </div>
                 {% endif %}
     <p>{{message}}</p>
     <div class = "row">

@@ -8,7 +8,6 @@
 <body>
     <div class="container-fluid">
 
-        {% include "main/header.html" %}
         <div class="row">
             <div class = "border-bottom"><!--プログレスバー-->
                 <h4 class = "text-center">セット登録</h4>
@@ -115,7 +114,7 @@
                         </div>
                         <div class = "row border-top text-center">
                             <div class = "col m-3">
-                            <a class = "btn btn-outline-success" href="{% url "index" %}">トップ画面へ戻る</a>
+                            <button class = "btn btn-outline-success" onclick = "window.parent.document.location.reload()">トップ画面へ戻る</button>
                         </div>
                         </div>
                     </div>

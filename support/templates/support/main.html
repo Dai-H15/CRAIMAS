@@ -8,7 +8,6 @@
 <body>
 
     <div class = "container-fluid">
-        {% include "main/header.html" %}
         <div class = "row py-3">
             <h3> 問い合わせフォーム </h3>
             <form method = "POST">
@@ -18,7 +17,7 @@
         {% endfor %}
     </div>
         <button type = "submit" class = "btn btn-success"> 送信 </button>
-        <a class = "btn btn-primary" href = "{% url "index" %}" > ホームへ戻る </a>
+        <button class = "btn btn-primary" onclick = "window.parent.document.location.reload()" > ホームへ戻る </button>
         </form>
         
     </div>

@@ -138,7 +138,7 @@ def index(request):
         if infomation.count() > 0:
             contexts["updated_date"] = timezone.make_naive(infomation.filter(is_public=True).order_by("-created_at")[0].created_at)
 
-    return render(request, "main/index.html", contexts)
+    return render(request, "main/new_index.html", contexts)
 
 
 @login_required

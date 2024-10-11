@@ -1,0 +1,20 @@
+.app-title{
+    a {
+        text-decoration: none;
+        color: inherit;
+        font-family: 'Times New Roman', Times, serif;
+    }
+}
+.main{
+    height: 100vh;
+}
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+.top-message{
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+}

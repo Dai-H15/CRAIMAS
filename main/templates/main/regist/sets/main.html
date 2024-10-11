@@ -8,7 +8,6 @@
 <body>
     <div class="container-fluid">
 
-        {% include "main/header.html" %}
         
         
         <div class="row  ">
@@ -50,7 +49,7 @@
                 </div>
                 <div class = "text-center"> <a class = "btn btn-outline-success" href="{% url "create_company" %}">次へ進む</a></div>
             </div>
-            <div class = "text-center m-3"><a href="{% url "index" %}"><button class = "btn btn-primary">ホームに戻る</button></a></div>
+            <div class = "text-center m-3"><button class = "btn btn-primary" onclick = "window.parent.document.location.reload()">ホームに戻る</button></div>
         </div>
         
 

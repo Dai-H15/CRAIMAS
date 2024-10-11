@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>{% include "main/html_head.html" %}</head>
+<body>
+    <div class="container-fluid">
+    <div class = "row">
+            <div class = "col-2 p-0">
+                <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" id = "menubar" style="height:100vh" >
+                    <h2 class="app-title"><a href="/"><img src="{% static "assets/icon.png" %}" alt="アイコン"width="58" height="58" style="padding:0;">CRAIMAS v2</h2></a>
+                </a>
+                <hr>
+                <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="https://howto-site.craimas.com/" class="nav-link text-success" aria-current="page" target="_blank">
+                    使い方ガイド
+                    </a>
+                </li>
+                {% if  user.is_authenticated %}
+                <li>
+                    <button onclick="loadContent('{% url "mypage" %}')" class="nav-link text-white">
+                            登録企業一覧
+                    </button>
+                </li>
+                <li>
+                    <button onclick="loadContent('{% url "regist_base" %}')" class="nav-link text-white">
+                    企業を登録
+                    </button>
+                </li>
+                <li>
+                    <button onclick="loadContent('{% url "calendar_main" %}')" class="nav-link text-white">
+                        カレンダー
+                    </button>
+                </li>
+                <li>
+                    <button onclick="loadContent('{% url "view_index" %}')" class="nav-link text-white">
+                        各種シート管理
+                    </button>
+                </li>
+                <li>
+                    <button onclick="loadContent('{% url "ES_index" %}')" class="nav-link text-white">
+                        ES・質問 管理
+                    </button>
+                </li>
+                <li>
+                    <button onclick="loadContent('{% url "support_main" %}')" class="nav-link text-white">
+                            お問い合わせ
+                    </button>
+                </li>
+                {% else %}
+                <li>
+                    <button onclick="loadContent('{% url "login" %}')" class="nav-link text-white">
+                            ログイン
+                    </button>
+                </li>
+                <li>
+                    <button onclick="loadContent('{% url "signup" %}')" class="nav-link text-white">
+                        ユーザー登録
+                    </button>
+                </li>
+                {% endif %}
+                
+                </ul>
+                <div class="dropdown">
+                    <a href="#" class="m-3 d-flex align-items-center  text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        アカウント操作
+                      </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" style="">
+                    
+                    {% if user.is_staff %}
+                    <li><button onclick="loadContent('{% url "management" %}')" class="dropdown-item text-warning" >管理者用ページ</button></li>
+                    {% endif %}
+                    <li>
+                        {% if  user.is_authenticated %}
+                        <li><button onclick="Main.default.open_as_window.open_as_window('{% url "extension" %}', 'extension',600,800)" class="dropdown-item">アカウント有効期限延長</button></li>
+                        <form method="post" action="{% url 'logout' %}" class = "">
+                            {% csrf_token %}
+                            <button class = "dropdown-item"> ログアウト</button>
+                        </form>
+                        
+                        {% endif %}
+                    </li>
+                </ul>
+                </div>
+                <hr>
+
+                {% include "main/footer.html" %}
+                </div>
+                
+            </div>
+        <div class = "col-10 p-0" id = "content">
+            <div class = "main">
+                <div class = "text-bg-dark p-2" id = "infobar">
+                    <div class = "container"> 
+                        <div class = " row py-2">
+                            <h4 class = "col-12 col-sm my-0"> Infomation</h3>
+                                {% if user.is_authenticated %}<div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最終ログイン日時</p> <strong>{{user.last_login}}</strong></div>{% endif %}
+                                <div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最新更新日時</p> <strong>{{updated_date}}</strong></div>
+                            <button class="btn btn-outline-light col col-md-3 mx-3" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                {% if user.is_authenticated %}<h5 class = "m-0 {% if infomation_updated_num > 0 %}text-danger{% endif %}">新着: {{infomation_updated_num}} 件</h5>{% endif %}
+                                お知らせを表示
+                            </button>
+                        </div>
+                            {% if user.is_authenticated %}
+                            {% if ExpirationDate < 15 %}
+                            <div class="alert alert-warning m-2" role="alert">
+                                アカウントの有効期限が15日未満です。マイページから延長手続きを行わないとアカウントが停止されます。
+                                お手続きをお願いいたします
+                            </div>
+                            {% endif %}
+                            {% if n_SupportTicket > 0 %}
+                            <div class="alert alert-primary m-2" role="alert">
+                                <h6 class = "text-center">
+                                サポートが完了していない問い合わせが<b>" {{n_SupportTicket}} 件 "</b>  存在します。確認してください。
+                            </h6></div>
+                            {% endif %}
+                            {% endif %}
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog  modal-xl">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-dark">
+                                        <div class = "row p-2">
+                                            <div class = "col-12 col-sm border m-2 border-light">
+                                                <h5>お知らせ</h5>
+                                                <ul>
+                                                    {% for info in infomation_news %}
+                                                    <li>
+                                                        <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
+                                                        <p>{{ info.content|linebreaksbr }}</p>
+                                                    </li>
+                                                    <br>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                            <div class = "col-12 col-sm border m-2 border-light">
+                                                <h5>メンテナンス情報</h5>
+                                                <ul>
+                                                    {% for info in infomation_maintenance %}
+                                                    <li>
+                                                        <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
+                                                        <p>{{ info.content|linebreaksbr }}</p>
+                                                    </li>
+                                                    <br>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                            <div class = "col-12 col-sm border m-2 border-light">
+                                                <h5>リリース</h5>
+                                                <ul>
+                                                    {% for info in infomation_release %}
+                                                    <li>
+                                                        <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
+                                                        <p>{{info.content|linebreaksbr}}</p>
+                                                    </li>
+                                                    <br>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            {% if infomation_updated_num > 0 %}<a class="btn btn-primary" href = " {% url "infomation_checked" %} ">お知らせを確認済みにする</a>{% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            <div class="collapse " id="info-tables">
+                           
+                        </div>
+                        
+                    </div>
+                    </div>
+                    
+                <div id = "first-show">
+                    <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ3ZmqYMQ1uZMx2pPvkqoyl6RfKupj86FJGux4vjRS3GkDOshQ-Cfe-nmiOgA3pP58xk4zIV8nqHhBB/embed?start=true&loop=true&delayms=5000" frameborder="0" width="100%" height="500px" allowfullscreen="false" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                </div>
+                <iframe id = "data-frame" title = "content" frameborder="0" width="100%" height="100%" allowfullscreen="false" mozallowfullscreen="true" webkitallowfullscreen="true" hidden>
+            </iframe>
+        </div>
+    </div>
+    </div>
+    </div>
+</body>
+<script>
+    const init_size = document.body.scrollHeight;
+    function loadContent(url) {
+        let firstShow = document.getElementById("first-show");
+        firstShow.hidden = true;
+        let iframe = document.getElementById("data-frame");
+        iframe.hidden = false;
+        iframe.src = url;
+    };
+    document.getElementById('data-frame').addEventListener('load', function() {
+        let iframe = document.getElementById('data-frame');
+        let content = document.getElementById("content");
+        let menubar = document.getElementById("menubar");
+        let infobar = document.getElementById("infobar")
+        let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+        let iframe_height = iframeDocument.body.scrollHeight;
+        if(iframe_height < init_size){
+            iframe.style.height = init_size + "px"
+        }else{
+            iframe.style.height = iframe_height  + 'px';
+        }
+        if(init_size<iframe_height + infobar.scrollHeight + 10){
+            menubar.style.height = iframe_height + infobar.scrollHeight + 10 +"px"
+        }else{
+            menubar.style.height = init_size + infobar.scrollHeight+ "px";
+        }
+    });
+    document.getElementById('data-frame').addEventListener("DOMContentLoaded",  () =>{
+        console.log("changed");
+    })
+</script>
+</html>

@@ -7,7 +7,6 @@
 
 <body>
     <div class="container-fluid">
-        {% include "main/header.html" %}
         <div class="row">
             <h3 class = "text-center"> 登録ユーザー全シート </h3>
             <h5 class = "text-center"> システムに登録されている全ユーザーのシートを閲覧のみ行うことができます。削除・編集は行うことができません </h5>
@@ -33,7 +32,7 @@
                     <!--投稿一覧-->
                     <h3 class = "border-bottom my-3">投稿一覧 (全登録数: {{count}}件)</h3>
                     <table class="  border table table-hover"  id = "post_list"></table>
-                    <div class="text-center"><a href="{% url "index" %}"><button class="btn btn-primary">ホームに戻る</button></a>
+                    <div class="text-center"><button class="btn btn-primary" onclick = "window.parent.document.location.reload()">ホームに戻る</button>
                     </div>
                 </div>
             </div>

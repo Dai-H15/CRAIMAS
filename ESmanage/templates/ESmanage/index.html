@@ -6,7 +6,6 @@
     
 <body>
     <div class = "container-fluid">
-        {% include "main/header.html" %}
         <div class = "row p-3 text-center">
             <h3>ES・質問 管理システム</h3>
             <div class = "row m-3">
@@ -30,7 +29,7 @@
             </ul>
         </ul>
     </div>
-    <div class = "text-center"><a href="{% url "index" %}"><button class = "btn btn-primary">ホームに戻る</button></a></div>
+    <div class = "text-center"><button class = "btn btn-primary" onclick = "window.parent.document.location.reload()">ホームに戻る</button></div>
     </div>
     {% include "main/footer.html"  %}
 

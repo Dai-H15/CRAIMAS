@@ -9,7 +9,6 @@
 
     <body>
     <div class = "container-fluid">
-        {% include "main/header.html" %}
         <div class = "row text-center p-3">
             <div class = "col">
                 <h3>一括登録を行います</h3>
@@ -27,7 +26,7 @@
                         <li><a type = "button"  onclick = "Main.default.open_as_window.open_as_window('{% url "json_import" %}','import_json', 400, 200)" class = "btn dropdown-item  btn-outline-info">JSONから引用</a></li>
                     </ul>
                     
-                    <a href="{% url "index" %}" class = "btn btn-outline-warning mx-2" >ホームへ戻る</a>
+                    <button onclick="window.parent.document.location.reload()" class = "btn btn-outline-warning mx-2" >ホームへ戻る</button>
             </div>
             
         </div>

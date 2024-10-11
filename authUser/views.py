@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .forms import SignupForm
-from django.contrib.auth import login
+from .forms import SignupForm, LoginForm
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 import secrets
 import datetime
@@ -31,6 +31,29 @@ def signup_view(request):
 
 def done_view(request):
     pass
+
+
+def login_view(request):
+    contexts = {}
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                print("成功")
+                return render(request, "registration/login_redirect.html", contexts)
+            else:
+                contexts['error_message'] = "ユーザーが見つかりませんでした。メールアドレスとパスワードを確認してください。"
+        else:
+            contexts['error_message'] = "資格情報が無効です。入力値を確認してください。"
+    else:
+        form = LoginForm()
+
+    contexts["form"] = form
+    return render(request, "registration/login.html", contexts)
 
 
 def policy_view(request):

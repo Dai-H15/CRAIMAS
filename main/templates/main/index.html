@@ -1,144 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
     <head>{% include "main/html_head.html" %}</head>
-    
 <body>
     <div class="container-fluid">
         {% include "main/header.html" %}
         <div class="row m-2">
                 <div class="container">
-                    <div class = "row p-3 my-3 border rounded  "style = "background-color: #e6ffb3">
-                <div class = "container" >
-                    <div class = "border-bottom border-dark row py-2">
-                        <h4 class = "col-12 col-sm my-0"> Infomation</h3>
-                            {% if user.is_authenticated %}<div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最終ログイン日時</p> <strong>{{user.last_login}}</strong></div>{% endif %}
-                            <div class = "col-12 col-md-2 m-1 border text-center"><p class = "m-0" style="font-size:larger">最新更新日時</p> <strong>{{updated_date}}</strong></div>
-                        <button class="btn btn-outline-secondary col col-md-3" type="button" data-bs-toggle="collapse" data-bs-target="#info-tables" aria-expanded="false" aria-controls="info-tables">
-                            {% if user.is_authenticated %}<h5 class = "m-0 {% if infomation_updated_num > 0 %}text-danger{% endif %}">新着: {{infomation_updated_num}} 件</h5>{% endif %}
-                            表示を切り替え
-                        </button>
-                    </div>
-                        {% if user.is_authenticated %}
-                        {% if ExpirationDate < 15 %}
-                        <div class="alert alert-warning" role="alert">
-                            アカウントの有効期限が15日未満です。マイページから延長手続きを行わないとアカウントが停止されます。
-                            お手続きをお願いいたします
-                        </div>
-                        {% endif %}
-                        {% if n_SupportTicket > 0 %}
-                        <div class="alert alert-primary" role="alert">
-                            <h6 class = "text-center">
-                            サポートが完了していない問い合わせが<b>" {{n_SupportTicket}} 件 "</b>  存在します。確認してください。
-                        </h6></div>
-                        {% endif %}
-                        {% endif %}
-                        <div class="collapse" id="info-tables">
-                        <div class = "row">
-                            <div class = "col-12 col-sm border rounded m-2 border-dark">
-                                <h5>お知らせ</h5>
-                                <ul>
-                                    {% for info in infomation_news %}
-                                    <li>
-                                        <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
-                                        <p>{{ info.content|linebreaksbr }}</p>
-                                    </li>
-                                    <br>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class = "col-12 col-sm border rounded m-2 border-dark">
-                                <h5>メンテナンス情報</h5>
-                                <ul>
-                                    {% for info in infomation_maintenance %}
-                                    <li>
-                                        <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
-                                        <p>{{ info.content|linebreaksbr }}</p>
-                                    </li>
-                                    <br>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class = "col-12 col-sm border rounded m-2 border-dark">
-                                <h5>リリース</h5>
-                                <ul>
-                                    {% for info in infomation_release %}
-                                    <li>
-                                        <h6>タイトル: {{info.title}} (投稿日時: {{info.created_at}})</h6>
-                                        <p>{{info.content|linebreaksbr}}</p>
-                                    </li>
-                                    <br>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="text-end">
-                            {% if infomation_updated_num > 0 %}<a class="btn btn-primary" href = " {% url "infomation_checked" %} ">お知らせを確認済みにする</a>{% endif %}
-                        </div>
-                    </div>
                     
-                </div>
-                </div>
-                <div type= "button" onclick="Main.default.open_as_window.open_as_window('https://howto-site.craimas.com/', 'howto-site', 1200, 900);">
-                    <div class="row text-center p-3 border text-success my-2">
-                        <h3>使い方ガイド</h3>
-                    </div>
-                </div>
                     {% if  user.is_authenticated %}
-                    <form method="post" action="{% url 'logout' %}" class = "row">
-                        {% csrf_token %}
-                        <button type="submit" class="text-center p-3 border btn my-2" >
-                            <h3>ログアウト</h3>
-                        </button>
-                    </form>
-                    <a href="{% url "support_main" %}">
-                        <div class="row text-center p-3 border my-2">
-                            <h3>問い合わせ</h3>
-                        </div>
-                    </a>
                     
                     
-                    <a href="{% url "mypage" %}">
-                        <div class="row text-center p-3 border  my-2">
-                            <h3>マイページ</h3>
-                        </div>
-                    </a>
-                    <a href="{% url "ES_index" %}">
-                        <div class="row text-center p-3 border my-2">
-                            <h3> ES・質問 管理</h3>
-                        </div></a>
-                    {% if user.is_staff %}
-                    <a href="{% url "management" %}">
-                        <div class="row text-center p-3 border text-success  my-2">
-                            <h3> 管理者用ページ</h3>
-                        </div></a>{% endif %}
-                    <a href="{% url "view_index" %}">
-                    <div class="row text-center p-3 border my-2">
-                        <h3>各種シート管理</h3>
-                    </div></a>
-                    <a href="{% url "calendar_main" %}">
-                        <div class="row text-center p-3 border my-2">
-                            <h3> カレンダー</h3>
-                        </div></a>
-                    <a href="{% url "regist_base" %}">
-                    <div class="row text-center p-3 border my-2">
-                        <h3> 登録する</h3>
-                    </div></a>
-                    {% else %}
-                    <div class = "row m-3">
-                        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQ3ZmqYMQ1uZMx2pPvkqoyl6RfKupj86FJGux4vjRS3GkDOshQ-Cfe-nmiOgA3pP58xk4zIV8nqHhBB/embed?start=true&loop=true&delayms=5000" frameborder="0" width="1024" height="480" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-                    </div>
-                    <a href="{% url "login" %}">
-                        <div class="col text-center p-3 border my-2">
-                            <h3>ログイン</h3>
-                        </div>
-                    </a>
-                    <a href="{% url "signup" %}">
-                        <div class="col text-center p-3 border my-2">
-                            <h3>ユーザー登録</h3>
-                        </div>
-                    </a>
-                    {% endif %}
-                
             </div>
         </div>
     </div>

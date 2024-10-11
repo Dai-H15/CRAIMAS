@@ -138,7 +138,9 @@ def view_main(request, control, option):
         contexts["th_all"] = current_menu["th_all"]
 
     elif control == "R_aspire":
-        R_sets = RegistSets.objects.filter(by_U_ID=request.user.U_ID, isActive=True)
+        R_sets = RegistSets.objects.filter(
+            by_U_ID=request.user.U_ID, isActive=True
+            )
         if R_sets.count() == 0:
             contexts["message"] = {
                     "type": "warning",
@@ -149,7 +151,15 @@ def view_main(request, control, option):
             contexts["results"].append(
                 {
                     "R_sets": R,
-                    "c_interview": Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).count(),
+                    "c_interview": Interview.objects.filter(
+                        RegistID=R, by_U_ID=request.user.U_ID
+                        ).exclude(
+                            tag="is_Planned",
+                            ).exclude(
+                                tag="Task_not_completed",
+                                ).exclude(
+                                    tag="Task_is_completed"
+                                    ).count(),
                     "sum_aspire": (
                         Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(Sum("aspire"))[
                             "aspire__sum"

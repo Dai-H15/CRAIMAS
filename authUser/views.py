@@ -43,9 +43,9 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                print("成功")
                 return render(request, "registration/login_redirect.html", contexts)
             else:
+                contexts["status"] = {"results": "error"}
                 contexts['error_message'] = "ユーザーが見つかりませんでした。メールアドレスとパスワードを確認してください。"
         else:
             contexts['error_message'] = "資格情報が無効です。入力値を確認してください。"

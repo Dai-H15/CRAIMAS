@@ -17,7 +17,7 @@
                     <h5>もしくは、ユーザーが有効化されていない可能性があります。</h5>
                     <h5>メール認証を行うか、管理者までお問い合わせください。</h5>
                 </div>
-                {% else %}
+                {% elif status.results == "NG" %}
                 <div class = "text-center alert alert-danger">
                     <h4>{{status.message}}</h4>
                 </div>

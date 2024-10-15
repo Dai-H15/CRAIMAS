@@ -10,7 +10,6 @@ class SignupForm(UserCreationForm):
         model = CustomUser
         fields = [CustomUser.USERNAME_FIELD] + CustomUser.REQUIRED_FIELDS + ['password1', 'password2']
         labels = {"y_graduation": "卒業(見込)年度",
-                  "gBIZINFO_key": "gBizINFO Web APIキー ",
                   "email": "メールアドレス (大学メールアドレスをお持ちの方はそちらを使用してください。)"}
 
 

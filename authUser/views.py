@@ -52,7 +52,7 @@ def login_view(request):
         form = LoginForm()
 
     contexts["form"] = form
-    return render(request, "registration/login.html", contexts)
+    return render(request, "registration/new_login.html", contexts)
 
 
 def policy_view(request):

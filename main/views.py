@@ -46,7 +46,7 @@ import openai
 from pydantic import BaseModel
 
 # Functions
-from settings.local_settings import OPENAI_APIKEY, OPENAI_BASE
+from settings.local_settings import OPENAI_APIKEY, OPENAI_BASE, GBIZINFO_API_KEY
 
 def collect_regnum(request):
     if request.user.is_authenticated:
@@ -692,10 +692,6 @@ def search_company(request, return_to):
     contexts = collect_regnum(request)
     contexts["return_to"] = return_to
     form = SearchForm_corpnum()
-    if request.user.gBIZINFO_key == "default_key":
-        return HttpResponse(
-            r"GBIZINFO_key is not set. Please set your key in your profile. <a href='/'>Profile</a>"
-        )
     if request.method == "POST":
         if "search" in request.POST:
             form = SearchForm_corpnum(request.POST)
@@ -713,7 +709,7 @@ def search_company(request, return_to):
                     url += "&founded_year=" + str(form.cleaned_data["founded_year"])
                 headers = {
                     "Accept": "application/json",
-                    "X-hojinInfo-api-token": request.user.gBIZINFO_key,
+                    "X-hojinInfo-api-token": GBIZINFO_API_KEY,
                 }
                 if url != "https://info.gbiz.go.jp/hojin/v1/hojin?":
                     try:
@@ -748,13 +744,10 @@ def get_city(request, prefecture):
 def get_more_compinfo(request, corporate_number, return_to):
     contexts = collect_regnum(request)
     contexts["return_to"] = return_to
-    if request.user.gBIZINFO_key == "default_key":
-        return HttpResponse(
-            "GBIZINFO_key is not set. Please set your key in your profile. <a href='{{url 'mypage'}}'>Profile</a>"
-        )
+    
     headers = {
         "Accept": "application/json",
-        "X-hojinInfo-api-token": request.user.gBIZINFO_key,
+        "X-hojinInfo-api-token": GBIZINFO_API_KEY,
     }
     url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
     try:
@@ -772,7 +765,7 @@ def set_searched_data(request):
         url = "https://info.gbiz.go.jp/hojin/v1/hojin/" + corporate_number
         headers = {
             "Accept": "application/json",
-            "X-hojinInfo-api-token": request.user.gBIZINFO_key,
+            "X-hojinInfo-api-token": GBIZINFO_API_KEY,
         }
         try:
             res = requests.get(url, headers=headers).json()["hojin-infos"][0]

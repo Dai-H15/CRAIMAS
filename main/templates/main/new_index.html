@@ -18,43 +18,43 @@
                 </li>
                 {% if  user.is_authenticated %}
                 <li>
-                    <button onclick="loadContent('{% url "mypage" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "mypage" %}')" class="nav-link text-white">
                             登録企業一覧
                     </button>
                 </li>
                 <li>
-                    <button onclick="loadContent('{% url "regist_base" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "regist_base" %}')" class="nav-link text-white">
                     企業を登録
                     </button>
                 </li>
                 <li>
-                    <button onclick="loadContent('{% url "calendar_main" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "calendar_main" %}')" class="nav-link text-white">
                         カレンダー
                     </button>
                 </li>
                 <li>
-                    <button onclick="loadContent('{% url "view_index" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "view_index" %}')" class="nav-link text-white">
                         各種シート管理
                     </button>
                 </li>
                 <li>
-                    <button onclick="loadContent('{% url "ES_index" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "ES_index" %}')" class="nav-link text-white">
                         ES・質問 管理
                     </button>
                 </li>
                 <li>
-                    <button onclick="loadContent('{% url "support_main" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "support_main" %}')" class="nav-link text-white">
                             お問い合わせ
                     </button>
                 </li>
                 {% else %}
                 <li>
-                    <button onclick="loadContent('{% url "login" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "login" %}')" class="nav-link text-white">
                             ログイン
                     </button>
                 </li>
                 <li>
-                    <button onclick="loadContent('{% url "signup" %}')" class="nav-link text-white">
+                    <button onclick="Main.default.Index.loadContent('{% url "signup" %}')" class="nav-link text-white">
                         ユーザー登録
                     </button>
                 </li>
@@ -68,7 +68,7 @@
                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow" style="">
                     
                     {% if user.is_staff %}
-                    <li><button onclick="loadContent('{% url "management" %}')" class="dropdown-item text-warning" >管理者用ページ</button></li>
+                    <li><button onclick="Main.default.Index.loadContent('{% url "management" %}')" class="dropdown-item text-warning" >管理者用ページ</button></li>
                     {% endif %}
                     <li>
                         {% if  user.is_authenticated %}
@@ -189,34 +189,6 @@
     </div>
 </body>
 <script>
-    const init_size = document.body.scrollHeight;
-    function loadContent(url) {
-        let firstShow = document.getElementById("first-show");
-        firstShow.hidden = true;
-        let iframe = document.getElementById("data-frame");
-        iframe.hidden = false;
-        iframe.src = url;
-    };
-    document.getElementById('data-frame').addEventListener('load', function() {
-        let iframe = document.getElementById('data-frame');
-        let content = document.getElementById("content");
-        let menubar = document.getElementById("menubar");
-        let infobar = document.getElementById("infobar")
-        let iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-        let iframe_height = iframeDocument.body.scrollHeight;
-        if(iframe_height < init_size){
-            iframe.style.height = init_size + "px"
-        }else{
-            iframe.style.height = iframe_height  + 'px';
-        }
-        if(init_size<iframe_height + infobar.scrollHeight + 10){
-            menubar.style.height = iframe_height + infobar.scrollHeight + 10 +"px"
-        }else{
-            menubar.style.height = init_size + infobar.scrollHeight+ "px";
-        }
-    });
-    document.getElementById('data-frame').addEventListener("DOMContentLoaded",  () =>{
-        console.log("changed");
-    })
+    Main.default.Index.init()
 </script>
 </html>

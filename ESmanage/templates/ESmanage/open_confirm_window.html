@@ -1,0 +1,20 @@
+{% load static %}
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    {% include "main/html_head.html" %}
+    <title>creating</title>
+</head>
+<body>
+    <div class = "container-fluid">
+        <div class = "row text-center m-3">
+            <h4>新規作成を行いました。</h4>
+            <div class="text-center"><a class = "btn btn-primary" href="{% url "ES_index" %}">戻る</a>
+        </div>
+    </div>
+    <script>
+        Main.default.ESmanage.detail.open_window('{% url "ES_show_detail" ESModelID %}', 'ES_show_detail', 500, 780)
+    </script>
+</body>
+</html>

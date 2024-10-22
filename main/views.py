@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponse
 
-from ESmanage.forms import ESModelForm
+from ESmanage.forms import ESModelConfirmForm
 from .models import (
     Companies,
     About,
@@ -1295,7 +1295,7 @@ def ESModelSelect(request, I_ID):
 def GetEsModelDetail(request, id):
     contexts = {}
     data = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
-    form = ESModelForm(initial={"title": data.title, "desc": data.desc, "tag": data.tag})
+    form = ESModelConfirmForm(initial={"title": data.title, "desc": data.desc, "tag": data.tag})
     contexts["form"] = form
     return render(request, "main/interview/ESdata_detail.html", contexts)
 

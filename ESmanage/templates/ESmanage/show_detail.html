@@ -9,37 +9,34 @@
         {% include "main/header_newtab.html" %}
             <div class="container">
                 <div class = "row">
-                    {% if status == "success" %}
-                    <script>
-                        alert("{{message}}")
-                        window.opener.location.reload()
-                    </script>
-                    {% elif status  %}
-                    <div
-                        class="alert alert-{{status}} text-center"
-                        role="alert"
-                    >
-                        <h5>{{message}}</h5>
+                    <div class = "text-center my-3">
+                        <input type="checkbox" class="btn-check" id="auto-save-check" autocomplete="off">
+                        <label class="btn btn-outline-warning mx-2" for="auto-save-check">自動保存</label>
                     </div>
-                    {% endif %}
-                <form method = "POST">
+                <form method = "POST" action = "{% url "save_by_js" ESModelID %}" id = "ESmodel-form">
                     {% csrf_token %}
                     {% for f in form %}
                     {% bootstrap_field f%}
                     {% endfor %}
                     <div class="row">
+                    <button type="button" onclick = "Main.default.ESmanage.detail.t_save(false)" class = "btn btn-success col-3 mx-auto">登録・更新</button>
 
-                    <button
-                        type="submit"
-                        class="btn btn-success col-3 mx-auto"
-                    >
-                        修正
-                    </button>
                 </div>
             </form>
 
             </div>
     </div>
+    <div class="toast-container position-fixed top-0 start-0 p-3">
+        <div id="status-toast" class="" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="toast-body text-white " id = "toast-status"></div>
+        </div>
+        <div id="time-toast" class="" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide = "false">
+            <div class="toast-body text-white" id = "time-toast-status"></div>
+          </div>
+    </div>
+    <script>
+        Main.default.ESmanage.detail.init()
+    </script>
     {% include "main/footer.html"  %}
 </body>
 

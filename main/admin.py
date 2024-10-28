@@ -13,6 +13,12 @@ class RegistSetsAdmin(admin.ModelAdmin):
     get_company_name.short_description = 'Company Name'
 
 
+class InterviewAdmin(admin.ModelAdmin):
+    model = Interview
+    list_display = ("title", "company_name", "InterviewID", "RegistID")
+    search_fields = ["title", "company_name", "InterviewID", "RegistID"]
+
+
 admin.site.register(RegistSets, RegistSetsAdmin)
 admin.site.register(Companies)
 admin.site.register(About)
@@ -20,5 +26,5 @@ admin.site.register(Idea)
 admin.site.register(Motivation)
 admin.site.register(D_Company)
 admin.site.register(Adoption)
-admin.site.register(Interview)
+admin.site.register(Interview, InterviewAdmin)
 admin.site.register(Interviewer)

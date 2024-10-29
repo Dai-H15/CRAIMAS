@@ -215,19 +215,24 @@
                         </div>
                         <div class="input-group mb-3 ">
                             <span class="input-group-text">表示順制御条件の対象項目</span>
+                            {% if result_data.view_setting == "" %}
+                            <input type="text" class="form-control" name="model" value = '設定しない' readonly>
+                            {% else %}
                             <input type="text" class="form-control" name="model" value = '{{result_data.view_setting}}' readonly>
+                            {% endif %}
                         </div>
                         <div class="input-group mb-3 ">
                             <span class="input-group-text">昇順・降順</span>
                             <select name="" id="" class = "form-control" readonly>
                                 {% if result_data.view_setting_order == "1" %}<option value="1" selected readonly>昇順</option>{% endif %}
                                 {% if result_data.view_setting_order == "2" %}<option value="2" selected readonly>降順</option>{% endif %}
+                                {% if result_data.view_setting_order == "" %} <option value="0" selected readonly>設定しない</option>{% endif %}
                             </select>
                         </div>
                         <div class="input-group mb-3 ">
                             <span class="input-group-text">絞り込み条件</span>
                             <select name="" id="" class = "form-control" readonly>
-                                {% if result_data.view_setting_search_how == "0" %}<option value="0" selected readonly>設定しない </option>{% endif %}
+                                {% if result_data.view_setting_search_how == "" %} <option value="0" selected readonly>設定しない </option>{% endif %}
                                 {% if result_data.view_setting_search_how == "1" %}<option value="1" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' と 完全一致 </option>{% endif %}
                                 {% if result_data.view_setting_search_how == "2" %}<option value="2" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' と 部分一致</option>{% endif %}
                                 {% if result_data.view_setting_search_how == "3" %}<option value="3" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' 以上</option>{% endif %}

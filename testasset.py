@@ -66,11 +66,11 @@ def create_admin(**another):
     return user
 
 
-def create_user(**another):
-    if another:
-        user = User.objects.create_user(username='test_user+1', password='admin123', email='admin@example.com', y_graduation=2026, U_ID="default_U_ID+1")
+def create_user(another=0):
+    if another == 0:
+        user = User.objects.create_user(username='test_user_tempolary', password='admin123', email='admin@example.com', y_graduation=2026, U_ID="default_U_ID")
     else:
-        user = User.objects.create_user(username='test_user', password='admin123', email='admin@example.com', y_graduation=2026, U_ID="default_U_ID")
+        user = User.objects.create_user(username=f'test_user_tempolary_{another}', password='admin123', email=f'admin {another}@example.com', y_graduation=2026, U_ID=f"default_U_ID_{another}")
     return user
 
 
@@ -273,3 +273,4 @@ def only_login_user_with_interview(self, url):
     self.assertEqual(cannot_access(url, user, uargs=[interview.InterviewID]), False)
     self.assertEqual(cannot_access(url, admin, uargs=[interview.InterviewID]), False)
     self.assertEqual(cannot_access(url, anonymous, uargs=[interview.InterviewID]), True)
+

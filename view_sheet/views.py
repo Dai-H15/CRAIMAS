@@ -70,7 +70,7 @@ def view_main(request, control, option):
     ]
     if CustomSheet.objects.filter(by_U_ID=request.user.U_ID).count() > 0:
         for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID):
-            menu.append({"choice": cs.sheet_name, "desc": cs.sheet_name, "th_all": []})
+            menu.append({"choice": cs.sheet_id, "desc": cs.sheet_name, "th_all": []})
     for m in menu:
         if m["choice"] == control:
             current_menu = m
@@ -253,11 +253,11 @@ def view_main(request, control, option):
     else:
         try:
             if control in [
-                cs.sheet_name
+                cs.sheet_id
                 for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID)
             ]:
                 contexts["customsheet"] = "true"
-                cs = CustomSheet.objects.get(sheet_name=control, by_U_ID=request.user.U_ID)
+                cs = CustomSheet.objects.get(sheet_id=control, by_U_ID=request.user.U_ID)
                 results = apps.get_model("main", cs.model).objects.filter(by_U_ID=request.user.U_ID).all()
                 if cs.search_settings != {}:
                     if cs.search_settings["how"] == "1":
@@ -304,8 +304,9 @@ def view_main(request, control, option):
                             list(cs.view_settings.keys())[0]
                         ).reverse()
                 if results.count() == 0:
-                    if (cs.search_settings['where'] in ForeignKeySets):
-                        raise Django_FieldError
+                    if (cs.search_settings != {}):
+                        if (cs.search_settings['where'] in ForeignKeySets):
+                            raise Django_FieldError
                     contexts["message"] = {
                         "type": "warning",
                         "message": "条件に一致するデータが1つもありませんでした。",
@@ -336,6 +337,8 @@ def view_main(request, control, option):
             }
 
     contexts["menu"] = menu
+    if ("message" in contexts) and (contexts["message"]["type"] == "danger"):
+        return render(request, "view/main.html", contexts, status=403)
     return render(request, "view/main.html", contexts)
 
 
@@ -375,7 +378,8 @@ def create_custom_sheet(request):
         else:
             if (
                 CustomSheet.objects.filter(
-                    sheet_name=request.GET["create_sheet_name"]
+                    sheet_name=request.GET["create_sheet_name"],
+                    by_U_ID=request.user.U_ID
                 ).count()
                 > 0
             ):

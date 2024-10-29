@@ -6,18 +6,23 @@ import testasset as ta
 class ManagementTestCase(TestCase):
 
     def test_index(self):
+        print(f"\n{self.__str__()}")
         ta.only_admin_user(self, "management")
     
     def test_all_sheets(self):
+        print(f"\n{self.__str__()}")
         ta.only_admin_user(self, "all_sheets")
     
     def test_management_sheets(self):
+        print(f"\n{self.__str__()}")
         ta.only_admin_user(self, "management_sheets")
     
     def test_all_interviewer(self):
+        print(f"\n{self.__str__()}")
         ta.only_admin_user(self, "all_interviewer")
     
     def test_admin_all_sheet(self):
+        print(f"\n{self.__str__()}")
         url = "admin_all_sheet"
         u = ta.create_user()
         a = ta.create_admin()

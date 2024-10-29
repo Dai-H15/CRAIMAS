@@ -518,6 +518,7 @@ def export_customsheet(request):
         sets = {"sheets": [model_to_dict(i) for i in c_all]}
         for s in sets["sheets"]:
             del s["by_U_ID"]
+            del s["sheet_id"]
         response["Content-Disposition"] = (
                     "attachment; filename*=UTF-8''{}".format(
                         urllib.parse.quote(("export_custom_sheet.json").encode("utf8"))

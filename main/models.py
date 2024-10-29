@@ -149,6 +149,7 @@ class Adoption(models.Model):
     n_adopters = models.IntegerField(verbose_name="採用予定人数", default=0)
     n_enrollment = models.IntegerField(verbose_name="OB・OG在籍数", default=0)
     from_url = models.URLField(verbose_name="採用情報URL", blank=True)
+    salary = models.IntegerField(verbose_name="新卒初任給 (年収) (円)", default=0)
     a_year = models.IntegerField(verbose_name="募集年度", default=0)
     created = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
 

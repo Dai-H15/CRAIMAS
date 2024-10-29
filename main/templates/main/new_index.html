@@ -104,8 +104,8 @@
                             {% if user.is_authenticated %}
                             {% if ExpirationDate < 15 %}
                             <div class="alert alert-warning m-2" role="alert">
-                                アカウントの有効期限が15日未満です。マイページから延長手続きを行わないとアカウントが停止されます。
-                                お手続きをお願いいたします
+                                アカウントの有効期限が15日未満です。<strong>利用を続ける場合は有効期限の延長手続きが必要です</strong><br>
+                                メニューバー下部のアカウント操作内よりお手続きをお願いいたします
                             </div>
                             {% endif %}
                             {% if n_SupportTicket > 0 %}

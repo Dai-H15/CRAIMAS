@@ -58,13 +58,14 @@
             <div class = "row ">
                 <div class = "col border-top">
                 <h5>企業データ</h5>
-                <button type="button" class="btn btn-outline-warning my-3" onclick = "Main.default.open_as_window.open_as_window('{% url "calc" %}','calc',600,300)">金額入力ツール</button>
+                <button type="button" class="btn btn-primary my-3" onclick = "Main.default.open_as_window.open_as_window('{% url "calc" %}','calc',750,300)">金額入力ツール</button>
                     <table class  = "table  table-hover">{% for f in D_Form %}{% bootstrap_field f %}{% endfor %}</table>
                 </div>
             </div>
             <div class = "row">
                 <div class  ="col border-top" >
                     <h5>採用情報</h5>
+                    <button type="button" class="btn btn-primary my-3" onclick = "Main.default.open_as_window.open_as_window('{% url "calc" %}','calc',750,300)">金額入力ツール</button>
                     <table class  = "table  table-hover">{% for f in AD_Form %}{% bootstrap_field f %}{% endfor %}</table>
                 </div>
             </div>

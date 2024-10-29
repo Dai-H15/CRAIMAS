@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="ja">
     <head>
@@ -85,9 +85,13 @@
                         <tr>
                             <td>{{ field.label }}:</td>
                         {% if field.label == "URL" %}
-                            <td>{{ field.value |linebreaksbr}}<br><button class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
-                        {% else %}
-                            <td>{{ field.value |linebreaksbr}}</td>
+                                <td>{{ field.value |linebreaksbr}}<br><button class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'C_Site', 1000,800)"> 開く</button></td>
+                            {% else %}
+                                {% if field.name == "capital" or field.name == "sales_n" %}
+                                <td>{{ field.value |intcomma}}円</td>
+                                {% else %}
+                                    <td>{{ field.value |linebreaksbr}}</td>
+                            {% endif %}
                         {% endif %}
                     </tr>
 
@@ -100,7 +104,18 @@
                     <table class  = "table  table-hover">{% for field in AD_Form %}
                         <tr>
                             <td>{{ field.label }}:</td>
-                            <td>{% if field.name == "from_url" %}{% if field.value  %} URLあり <button class = "btn btn-outline-info" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'AD_Site', 1000,800)"> 開く</button> {% else %} 未登録 {% endif %}{% endif %}</td>
+                            <td>{% if field.name == "from_url" %}
+                                    {% if field.value  %}
+                                        URLあり <button class = "btn btn-outline-info" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick="Main.default.open_as_window.open_as_window('{{ field.value }}', 'AD_Site', 1000,800)"> 開く</button>
+                                        {% else %} 未登録
+                                    {% endif %}
+                                {% endif %}
+                                {% if field.name == "salary" %}
+                                {{ field.value | intcomma}}円
+                                {% else %}
+                                {{ field.value |linebreaksbr}}
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}</table>
                 </div>

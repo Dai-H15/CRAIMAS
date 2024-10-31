@@ -19,6 +19,12 @@ class InterviewAdmin(admin.ModelAdmin):
     search_fields = ["title", "company_name", "InterviewID", "by_U_ID"]
 
 
+class InterviewerAdmin(admin.ModelAdmin):
+    model = Interviewer
+    list_display = ("name", "company_name__name", "by_U_ID",)
+    search_fields = ["name", "company_name__name", "by_U_ID"]
+
+
 admin.site.register(RegistSets, RegistSetsAdmin)
 admin.site.register(Companies)
 admin.site.register(About)
@@ -27,4 +33,4 @@ admin.site.register(Motivation)
 admin.site.register(D_Company)
 admin.site.register(Adoption)
 admin.site.register(Interview, InterviewAdmin)
-admin.site.register(Interviewer)
+admin.site.register(Interviewer, InterviewerAdmin)

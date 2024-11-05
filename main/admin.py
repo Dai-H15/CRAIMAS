@@ -21,8 +21,8 @@ class InterviewAdmin(admin.ModelAdmin):
 
 class InterviewerAdmin(admin.ModelAdmin):
     model = Interviewer
-    list_display = ("name", "company_name__name", "by_U_ID",)
-    search_fields = ["name", "company_name__name", "by_U_ID"]
+    list_display = ("name", "company_name__name", "by_U_ID","interviewer_id", "company_name__CompanyID")
+    search_fields = ["name", "company_name__name", "by_U_ID", "interviewer_id", "company_name__CompanyID"]
 
 
 admin.site.register(RegistSets, RegistSetsAdmin)

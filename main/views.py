@@ -1093,6 +1093,7 @@ def get_interviewer(request, id):
 
 @login_required
 def search_interviewer(request, company_id, i_name):
+    i_name_list = [i for i in i_name.strip(",").split(",")]
     if request.method == "GET":
         contexts = collect_regnum(request)
         try:
@@ -1107,7 +1108,13 @@ def search_interviewer(request, company_id, i_name):
                     return HttpResponse("データが存在しません。")
             else:
                 return HttpResponse("不正なリクエストです")
-        interviewer = Interviewer.objects.filter(company_name=company).filter(name__icontains=i_name)
+        interviewer = Interviewer.objects.filter(company_name=company).filter(
+            name__icontains=i_name_list[0].strip()
+        )
+        for i in range(1, len(i_name_list)):
+            interviewer = interviewer | Interviewer.objects.filter(company_name=company).filter(
+                    name__icontains=i_name_list[i].strip()
+                )
         contexts["interviewer"] = interviewer
         contexts["company_id"] = company_id
         contexts["i_name"] = i_name

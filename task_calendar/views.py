@@ -55,6 +55,6 @@ def get_calendar(request, year, month, status, search):
 @login_required
 def new_task(request):
     contexts = collect_regnum(request)
-    sets = collect_regsets(request.user)
+    sets = collect_regsets(request.user).order_by("-isActive")
     contexts["sets"] = sets
     return render(request, "task_calendar/new_task.html", contexts)

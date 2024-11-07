@@ -29,7 +29,7 @@
                     <select class="form-select my-2" id = "choices">
                         <option selected>一覧から登録先企業を選択してください</option>
                         {% for one in sets %}
-                        <option value="{{one.RegistID}}">{{one}}</option>
+                        <option value="{{one.RegistID}}">{% if not one.isActive %} [活動終了] {% endif %} {{one}}</option>
                         {% endfor %}
                     </select>
                 </div>

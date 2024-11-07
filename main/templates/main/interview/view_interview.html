@@ -40,10 +40,13 @@
                 <button type = "button" class = "btn btn-primary mx-2" onclick="Main.default.interview_create.get_address_from_sheet('{% url 'get_address_from_sheet' RegistID %}')">シートから所在地を引用</button>
                 {% elif f.name == "interviewer" %}
                 {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_interviewer('{% url "search_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> 担当者プロフィールを検索</button>
+                <button type = "button" class = "btn btn-outline-primary mx-3 mb-4"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_interviewer('{% url "search_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> 担当者プロフィールを検索</button>
                 {% elif f.name == "Event_URL" %}
                 {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-3"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
+                <button type = "button" class = "btn btn-outline-primary mx-3 mb-4"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
+                {% elif f.name == "mail_URL" %}
+                {% bootstrap_field f %}
+                <button type = "button" class = "btn btn-outline-primary mx-3 mb-4"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_url('id_mail_URL','mail_url', 1000,800)"> 開く</button>
                 {% elif f.name == "reason" %}
                 {% bootstrap_field f %}
                 <button

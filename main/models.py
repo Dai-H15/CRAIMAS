@@ -215,10 +215,15 @@ class Interview(models.Model):
     title = models.CharField(max_length=200, verbose_name="面談録タイトル", blank=False)
     tag = models.CharField(max_length=50, choices=tags, default="briefing", verbose_name="タグ")
     date = models.DateTimeField(verbose_name="面談日時", default=timezone.now().strftime('%Y-%m-%d %H:%M'))
-    interviewer = models.CharField(max_length=200, verbose_name="面接官名")
+    interviewer = models.CharField(
+        max_length=200,
+        verbose_name="面接官名",
+        help_text="面接官名を入力。カンマ [ , ]  で区切る事により、複数名登録可能"
+        )
     zipcode = models.CharField(max_length=8, verbose_name="郵便番号", blank=True)
     place = models.CharField(max_length=200, verbose_name="面接住所", blank=True)
     Event_URL = models.URLField(verbose_name="イベントURL", blank=True, validators=[URLValidator])
+    mail_URL = models.URLField(verbose_name="関連Emailへのリンク", blank=True, validators=[URLValidator], help_text="面談録に関係するemailへのリンク")
     aspire = models.IntegerField(default=0, verbose_name="志望度(0~100)%")
     reason = models.TextField(default="", verbose_name="志望理由", blank=True)
     ESlist = models.ManyToManyField(ESModel, verbose_name="ES項目", blank=True)

@@ -336,7 +336,7 @@ def delete_posts(request, id):
     contexts = getRegistForms(id, {}, request)
     if request.method == "POST":
         if "del_R_Set" in request.POST:
-            post = RegistSets.objects.get(RegistID=id)
+            post = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID)
             if post.about is not None:
                 post.about.delete()
             if post.idea is not None:
@@ -351,14 +351,15 @@ def delete_posts(request, id):
         elif "del_C_Form" in request.POST:
             try:
                 post = Companies.objects.get(
+                    by_U_ID=request.user.U_ID,
                     CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID
                 )
                 post.delete()
-                RegistSets.objects.get(RegistID=id).delete()
+                RegistSets.objects.get(by_U_ID=request.user.U_ID, RegistID=id).delete()
             except Companies.DoesNotExist:
-                RegistSets.objects.get(RegistID=id).delete()
+                RegistSets.objects.get(by_U_ID=request.user.U_ID, RegistID=id).delete()
         else:
-            post = RegistSets.objects.get(RegistID=id)
+            post = RegistSets.objects.get(by_U_ID=request.user.U_ID, RegistID=id)
             if "del_A_Form" in request.POST:
                 post.about.delete()
             if "del_I_Form" in request.POST:
@@ -1108,11 +1109,11 @@ def search_interviewer(request, company_id, i_name):
                     return HttpResponse("データが存在しません。")
             else:
                 return HttpResponse("不正なリクエストです")
-        interviewer = Interviewer.objects.filter(company_name=company).filter(
+        interviewer = Interviewer.objects.filter(company_name=company, by_U_ID=request.user.U_ID).filter(
             name__icontains=i_name_list[0].strip().strip("様")
         )
         for i in range(1, len(i_name_list)):
-            interviewer = interviewer | Interviewer.objects.filter(company_name=company).filter(
+            interviewer = interviewer | Interviewer.objects.filter(company_name=company, by_U_ID=request.user.U_ID).filter(
                     name__icontains=i_name_list[i].strip().strip("様")
                 )
         contexts["interviewer"] = interviewer
@@ -1323,7 +1324,7 @@ def get_summary(request):
         try:
             request_interview_id = request.POST["InterviewID"]
             request_regist_id = request.POST["RegistID"]
-            interview = Interview.objects.get(InterviewID=request_interview_id, RegistID=request_regist_id)
+            interview = Interview.objects.get(InterviewID=request_interview_id, RegistID=request_regist_id, by_U_ID=request.user.U_ID)
             if interview.summary_created is not None and (timezone.now() - interview.summary_created).total_seconds() < 300:
                 res["status"] = "error"
                 res["reason"] = "要約は5分に1回までしか作成できません"

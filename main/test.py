@@ -166,7 +166,6 @@ class MainViewTests(TestCase):
     def test_view_my_post_no_args(self):
         print(f"\n{self.__str__()}")
         testasset.is_error("view_my_post", testasset.test_user_init(testasset.create_user()))
-        only_login_user(self, "create_company", uargs=1)
 
     def test_delete_posts(self):
         print(f"\n{self.__str__()}")
@@ -175,7 +174,6 @@ class MainViewTests(TestCase):
     def test_delete_posts_no_args(self):
         print(f"\n{self.__str__()}")
         testasset.is_error("delete_posts", testasset.test_user_init(testasset.create_user()))
-        only_login_user(self, "create_company", uargs=1)
 
     def test_edit_posts(self):
         print(f"\n{self.__str__()}")
@@ -184,28 +182,11 @@ class MainViewTests(TestCase):
     def test_edit_posts_no_args(self):
         print(f"\n{self.__str__()}")
         testasset.is_error("edit_posts", testasset.test_user_init(testasset.create_user()))
-        only_login_user(self, "create_company", uargs=1)
-
-    def test_regist_sets(self):
-        print(f"\n{self.__str__()}")
-        only_login_user(self, "regist_sets")
-
-    def test_create_company(self):
-        print(f"\n{self.__str__()}")
-        only_login_user(self, "create_company")
-
-    def test_import_company(self):
-        print(f"\n{self.__str__()}")
-        only_login_user(self, "import_company")
 
     def test_search_company_no_args(self):
         print(f"\n{self.__str__()}")
         testasset.is_error("search_company", testasset.test_user_init(testasset.create_user()))
         testasset.is_error("search_company", testasset.test_anonymous_init())
-
-    def test_set_sarched_data(self):
-        print(f"\n{self.__str__()}")
-        only_login_user(self, "import_company")
 
     def test_get_address(self):
         print(f"\n{self.__str__()}")

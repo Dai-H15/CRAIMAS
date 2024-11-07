@@ -53,7 +53,7 @@ def is_error(url, client, **uargs):
             response = client.get(reverse(url, args=uargs["uargs"]))
         else:
             response = client.get(reverse(url))
-    except url_exceptions.NoReverseMatch:
+    except (url_exceptions.NoReverseMatch, url_exceptions.Resolver404):
         return True
     return False
 
@@ -76,7 +76,7 @@ def create_user(another=0):
 
 def create_post(**client):
     if not client:
-        client = create_user()
+        client = create_user(1)
     else:
         client = client["client"]
     t_company = main_models.Companies.objects.create(

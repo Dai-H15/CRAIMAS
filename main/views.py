@@ -352,7 +352,7 @@ def delete_posts(request, id):
             try:
                 post = Companies.objects.get(
                     by_U_ID=request.user.U_ID,
-                    CompanyID=RegistSets.objects.get(RegistID=id).company.CompanyID
+                    CompanyID=RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.CompanyID
                 )
                 post.delete()
                 RegistSets.objects.get(by_U_ID=request.user.U_ID, RegistID=id).delete()
@@ -396,7 +396,7 @@ def create_company(request):
             Temp_regist = RegistSets.objects.create(
                 RegistID=secrets.token_hex(64),
                 by_U_ID=request.user.U_ID,
-                company=Companies.objects.get(CompanyID=CompanyID),
+                company=Companies.objects.get(CompanyID=CompanyID, by_U_ID=request.user.U_ID),
             )
             request.session["RegistID"] = Temp_regist.RegistID
             print("RegistSets is created.")
@@ -413,7 +413,7 @@ def import_company(request):
     contexts = collect_regnum(request)
     if request.method == "POST":
         if "import" in request.POST:
-            copy_company = Companies.objects.get(CompanyID=request.POST["ID"])
+            copy_company = Companies.objects.get(CompanyID=request.POST["ID"], by_U_ID=request.user.U_ID)
             CompanyID = request.POST["ID"]
             copy_company.CompanyID = CompanyID
             copy_company.by_U_ID = request.user.U_ID
@@ -421,7 +421,7 @@ def import_company(request):
             Temp_regist = RegistSets.objects.create(
                 RegistID=secrets.token_hex(64),
                 by_U_ID=request.user.U_ID,
-                company=Companies.objects.get(CompanyID=CompanyID),
+                company=Companies.objects.get(CompanyID=CompanyID, by_U_ID=request.user.U_ID),
             )
             print("RegistSets is created.")
             request.session["RegistID"] = Temp_regist.RegistID
@@ -569,7 +569,7 @@ def create_adoption(request):
 @login_required
 def create_complete(request):
     contexts = collect_regnum(request)
-    regist = RegistSets.objects.get(RegistID=request.session["RegistID"])
+    regist = RegistSets.objects.get(RegistID=request.session["RegistID"], by_U_ID=request.user.U_ID)
     del request.session["RegistID"]
     contexts["C_Form"] = CompaniesForm(instance=regist.company)
     contexts["A_Form"] = AboutForm(instance=regist.about)

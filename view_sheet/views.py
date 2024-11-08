@@ -148,10 +148,7 @@ def view_main(request, control, option):
                 }
         contexts["results"] = []
         for R in R_sets:
-            contexts["results"].append(
-                {
-                    "R_sets": R,
-                    "c_interview": Interview.objects.filter(
+            interview_no_task = Interview.objects.filter(
                         RegistID=R, by_U_ID=request.user.U_ID
                         ).exclude(
                             tag="is_Planned",
@@ -159,22 +156,26 @@ def view_main(request, control, option):
                                 tag="Task_not_completed",
                                 ).exclude(
                                     tag="Task_is_completed"
-                                    ).count(),
+                                    )
+            contexts["results"].append(
+                {
+                    "R_sets": R,
+                    "c_interview": interview_no_task.count(),
                     "sum_aspire": (
-                        Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(Sum("aspire"))[
+                        interview_no_task.aggregate(Sum("aspire"))[
                             "aspire__sum"
                         ]
-                        if Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(
+                        if interview_no_task.aggregate(
                             Sum("aspire")
                         )["aspire__sum"]
                         is not None
                         else 0
                     ),
                     "avg_aspire": (
-                        Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(Avg("aspire"))[
+                        interview_no_task.aggregate(Avg("aspire"))[
                             "aspire__avg"
                         ]
-                        if Interview.objects.filter(RegistID=R, by_U_ID=request.user.U_ID).aggregate(
+                        if interview_no_task.aggregate(
                             Avg("aspire")
                         )["aspire__avg"]
                         is not None

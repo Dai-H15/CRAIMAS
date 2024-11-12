@@ -16,11 +16,11 @@
                         <span class = "input-group-text">検索文字列</span><input type="text" class = "form-control" id = "search_str">
                         <button type="button" class="btn btn-outline-success dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">項目を選択して検索</button>
                         <ul class="dropdown-menu">
-                            <button class="dropdown-item" onclick = "Main.default.ESmanage.show.search('{% url "ES_search" to="タイトル" what="placeholder" %}')" type = "button">タイトル</button>
-                            <button class="dropdown-item"onclick = "Main.default.ESmanage.show.search('{% url "ES_search" to="タグ" what="placeholder" %}')" type = "button">タグ</button>
+                            <button class="dropdown-item" onclick = "Main.default.ESmanage.show.search('{% url "ES_search" to="タイトル" what="placeholder" page_num="page_num" %}')" type = "button">タイトル</button>
+                            <button class="dropdown-item"onclick = "Main.default.ESmanage.show.search('{% url "ES_search" to="タグ" what="placeholder" page_num="page_num" %}')" type = "button">タグ</button>
                         </ul>
                         </div>
-                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="Main.default.ESmanage.show.init('{% url "ES_get_data" %}')">リセット</button></div>
+                        <div class = "col text-center m-3"><button class = "btn btn-secondary" onclick="Main.default.ESmanage.show.init('{% url "ES_get_data" 1 %}')">リセット</button></div>
                 </div>
                 <div class="row m-3">
                     <!--投稿一覧-->
@@ -36,7 +36,7 @@
     </div>
     {% include "main/footer.html"  %}
 <script>
-    Main.default.ESmanage.show.init('{% url "ES_get_data" %}')
+    Main.default.ESmanage.show.init('{% url "ES_get_data" 1 %}')
     Main.default.open_as_window.init()
 </script>
 </body>

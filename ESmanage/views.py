@@ -1,11 +1,14 @@
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse
+from django.urls import reverse
 from main.views import collect_regnum
 from django.contrib.auth.decorators import login_required
 from .forms import ESModelRegistForm, ESModelConfirmForm
 import secrets
 from .models import ESModel
 from django.utils import timezone
+from django.core.paginator import Paginator
+
 # Create your views here.
 
 
@@ -43,10 +46,25 @@ def show(request):
 
 
 @login_required
-def get_data(request):
+def get_data(request, page_num):
     contexts = {}
-    posts = ESModel.objects.all().filter(by_U_ID=request.user.U_ID)
-    contexts["posts"] = posts
+    posts = ESModel.objects.all().filter(by_U_ID=request.user.U_ID).order_by("-created")
+    paginator = Paginator(posts, 5)
+    page_count = paginator.num_pages
+    try:
+        page_num = int(page_num)
+    except ValueError:
+        return HttpResponse("不正な操作を検出しました。")
+    if (0 < page_num <= page_count):
+        page = paginator.page(page_num)
+    else:
+        page = paginator.page(1)
+    contexts["request_url"] = reverse("ES_get_data", kwargs={
+                        "page_num": "page_num"
+                })
+    contexts["posts"] = page
+    contexts["page_count"] = page_count
+    contexts["page_num"] = page_num
     return render(request, "ESmanage/show_table.html", contexts)
 
 
@@ -76,14 +94,31 @@ def show_detail(request, id):
 
 
 @login_required
-def search(request, to, what):
+def search(request, to, what, page_num):
     contexts = {}
     try:
         if to == "タイトル":
             posts = ESModel.objects.all().filter(by_U_ID=request.user.U_ID).filter(title__contains=what)
         elif to == "タグ":
             posts = ESModel.objects.all().filter(by_U_ID=request.user.U_ID).filter(tag__contains=what)
-        contexts["posts"] = posts
+        paginator = Paginator(posts, 5)
+        page_count = paginator.num_pages
+        try:
+            page_num = int(page_num)
+        except ValueError:
+            return HttpResponse("不正な操作を検出しました。")
+        if (0 < page_num <= page_count):
+            page = paginator.page(page_num)
+        else:
+            page = paginator.page(1)
+        contexts["request_url"] = reverse("ES_search", kwargs={
+                        "to": to,
+                        "what": what,
+                        "page_num": "page_num"
+                })
+        contexts["posts"] = page
+        contexts["page_count"] = page_count
+        contexts["page_num"] = page_num
     except UnboundLocalError:
         return HttpResponse("エラーが発生しました。管理者までお問い合わせください<br><a href = '/'> ホームへ戻る </a>")
     return render(request, "ESmanage/show_table.html", contexts)

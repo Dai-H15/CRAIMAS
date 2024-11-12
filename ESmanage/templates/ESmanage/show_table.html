@@ -32,3 +32,21 @@
         </tr>
         {% endfor %}
     </tbody>
+
+    {% with ''|center:page_count as range %}
+    <div class = "row text-cenrer my-3 mx-3">
+            
+
+        {% for _ in range %}
+        {% if forloop.counter == page_num %}
+        <strong class = "col-1 mx-auto text-success py-2" >{{forloop.counter}}</strong>
+
+        {% else %}
+        <div class = "col-1 mx-auto text-primary py-2" onclick = "Main.default.ESmanage.show.page('{{request_url}}', {{forloop.counter}})" >{{forloop.counter}}</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endwith %}
+<script>
+    
+</script>

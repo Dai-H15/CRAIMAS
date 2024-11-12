@@ -270,7 +270,7 @@ class MainViewTests(TestCase):
 
     def test_ES_get_data(self):
         print(f"\n{self.__str__()}")
-        only_login_user(self, "ES_get_data")
+        only_login_user_with_args(self, "ES_get_data", args={"page_num": "dummy"})
 
     def test_ES_show_detail(self):
         print(f"\n{self.__str__()}")
@@ -278,7 +278,7 @@ class MainViewTests(TestCase):
 
     def test_ES_search(self):
         print(f"\n{self.__str__()}")
-        only_login_user_with_args(self, "ES_search", args={"to": "dummy", "what": "dummy"})
+        only_login_user_with_args(self, "ES_search", args={"to": "dummy", "what": "dummy", "page_num": "page_num"})
 
     def test_ES_delete(self):
         print(f"\n{self.__str__()}")

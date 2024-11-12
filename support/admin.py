@@ -7,9 +7,9 @@ from django.contrib import messages
 
 class SupportTicketModelAdmin(admin.ModelAdmin):
     model = SupportTicketModel
-    list_display = ("posted_at", "title", "category", "request_by",  "is_solved", "TicketID")
+    list_display = ("posted_at", "title", "category", "request_by__U_ID",  "is_solved", "TicketID")
     list_display_links = ("title",)
-    search_fields = ["request_by", "TicketID"]
+    search_fields = ["request_by__U_ID", "TicketID"]
     actions = ["accept_user"]
 
     def accept_user(self, request, queryset):

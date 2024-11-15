@@ -11,6 +11,15 @@
                 <div class = "row mb-3"></div>
                 <h5> CRAIMAS 利用申請フォームです</h5>
                 <h5> 登録後、完了画面のリンクからメール送信で承認申請を行うことで利用を開始することができます。 </h5>
+            {% if message %}
+            <div
+                class="alert alert-danger"
+                role="alert"
+            >
+                <strong>{{message}}</strong>
+            </div>
+            
+            {% endif %}
             <div class = "row">
                 <div class  = "row  border text-center p-3">
                 <form action="{% url 'signup' %}" method="post">

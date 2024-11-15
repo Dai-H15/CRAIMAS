@@ -32,14 +32,14 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><button class="dropdown-item text-bg-success p-2"
-                                onclick="Main.default.open_as_window.open_as_window('{% url "view_my_post" post.RegistID %}','view_my_post',800,900)">閲覧</button>
+                                onclick="Main.default.open_as_window.open_as_window('{% url "view_my_post" post.RegistID %}','view_my_post_{{post.RegistID}}',800,900)">閲覧</button>
                         </li>
                         <li><button class="dropdown-item text-bg-info p-2"
-                                onclick="Main.default.open_as_window.open_as_window('{% url "edit_posts" post.RegistID %}','edit_posts',800,900)">編集</button></li>
+                                onclick="Main.default.open_as_window.open_as_window('{% url "edit_posts" post.RegistID %}','edit_posts_{{post.RegistID}}',800,900)">編集</button></li>
                         <li><button class="dropdown-item text-bg-warning p-2"
-                                onclick="Main.default.open_as_window.open_as_window('{% url "export_sheet" post.RegistID %}','export_sheet',400,600)">保存</button></li>
+                                onclick="Main.default.open_as_window.open_as_window('{% url "export_sheet" post.RegistID %}','export_sheet_{{post.RegistID}}',400,600)">保存</button></li>
                         <li><button class="dropdown-item text-bg-danger p-2"
-                            onclick="Main.default.open_as_window.open_as_window('{% url "delete_posts" post.RegistID %}','export_sheet',800,900)">削除</button>
+                            onclick="Main.default.open_as_window.open_as_window('{% url "delete_posts" post.RegistID %}','delete_posts_{{post.RegistID}}t',800,900)">削除</button>
                         </li>
                     </ul>
                 </div>

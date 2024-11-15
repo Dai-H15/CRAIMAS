@@ -14,6 +14,10 @@ def signup_view(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            if len(user.username) < 5:
+                contexts["message"] = "ユーザー名を5文字以上で設定してください"
+                contexts["form"] = form
+                return render(request, "registration/signup.html", contexts)
             user.U_ID = secrets.token_hex(32)
             user.is_active = False
             user.save()
@@ -24,9 +28,9 @@ def signup_view(request):
     else:
         form = SignupForm()
 
-    param = {"form": form}
+    contexts = {"form": form}
 
-    return render(request, "registration/signup.html", param)
+    return render(request, "registration/signup.html", contexts)
 
 
 def done_view(request):

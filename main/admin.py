@@ -5,12 +5,9 @@ from .models import Companies, About, Idea, Motivation, D_Company, Adoption, Reg
 
 class RegistSetsAdmin(admin.ModelAdmin):
     model = RegistSets
-    list_display = ("get_company_name", "by_U_ID", "created")
+    list_display = ("company__name", "by_U_ID", "created")
     search_fields = ["company__name", "by_U_ID"]
 
-    def get_company_name(self, obj):
-        return obj.company.name
-    get_company_name.short_description = 'Company Name'
 
 
 class InterviewAdmin(admin.ModelAdmin):

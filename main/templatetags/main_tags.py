@@ -28,6 +28,6 @@ def get_item(value, key):
 @register.simple_tag
 def get_interview(value, sets):
     if sets[value] is not None:
-        return mark_safe(f"<button class='btn btn-outline-info' onclick='Main.default.open_as_window.open_as_window(\"{reverse('view_interview', args=[str(sets[value])])}\", \"interview\", 560, 1000)'> 開く</button>")
+        return mark_safe(f"<button class='btn btn-outline-info' onclick='Main.default.open_as_window.open_as_window(\"{reverse('view_interview', args=[str(sets[value])])}\", \"mypage_{str(sets[value])}\", 560, 1000)'> 開く</button>")
     else:
         return mark_safe("<p>未登録</p>")

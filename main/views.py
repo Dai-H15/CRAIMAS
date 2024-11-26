@@ -119,6 +119,8 @@ def index(request):
         del request.session["Interviewers"]
     if "interviewer_name" in request.session:
         del request.session["interviewer_name"]
+    if "interview_session_code" in request.session:
+        del request.session["interview_session_code"]
     contexts = collect_regnum(request)
     infomation = InfomationModel.objects.filter(is_active=True).order_by("-created_at")
     if request.user.is_authenticated:
@@ -921,6 +923,7 @@ def view_interview(request, id):
         contexts["interview"] = interview
         contexts["inst"] = inst
         contexts["RegistID"] = inst.RegistID.RegistID
+        contexts["interview_session_code"] = secrets.token_hex(12)
         try:
             contexts["from_url"] = inst.RegistID.adoption.from_url
         except AttributeError:
@@ -931,18 +934,74 @@ def view_interview(request, id):
                 request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             )
             if form.is_valid():
-                form.save()
-                res["is_saved"] = True
-                res["saved_time"] = timezone.now().astimezone().time()
+                if "interview_session_code" not in request.session:  # session_codeを新規作成
+                    print("session is not found")
+                    request.session["interview_session_code"] = {
+                        id: {
+                            "session_code": request.POST.get("interview_session_code"),
+                            "ex_time": (timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                        }}
+                    form.save()
+                    res["is_saved"] = True
+                    res["saved_time"] = timezone.now().astimezone().time()
+                else:
+                    if id in request.session["interview_session_code"]:  # session_codeを検索
+                        print("valid session is found")
+                        if request.session["interview_session_code"][id]["session_code"] != request.POST.get("interview_session_code"):
+                            session_time_data = request.session["interview_session_code"][id]["ex_time"]
+                            ex_time = timezone.datetime.strptime(session_time_data, '%H:%M:%S').replace(tzinfo=timezone.get_current_timezone())
+                            if ex_time.time() < timezone.now().time():  # sessionの有効期限を確認 (過ぎている場合)
+                                form.save()
+                                res["is_saved"] = True
+                                res["saved_time"] = timezone.now().astimezone().time()
+                                request.session["interview_session_code"][id]["ex_time"] = (
+                                    timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                                request.session["session_code"] = request.POST.get("interview_session_code")
+                            else:  # 有効なsessionによる保存が残っている場合、セーフガードを設定する
+                                res["is_saved"] = False
+                                res["errors"] = "ウィンドウが多重で開かれていませんか？"
+                        else:  # session_codeが存在する場合
+                            session_time_data = request.session["interview_session_code"][id]["ex_time"]
+                            ex_time = timezone.datetime.strptime(session_time_data, '%H:%M:%S').replace(tzinfo=timezone.get_current_timezone())
+                            if ex_time.time() > timezone.now().time():  # sessionの有効期限を確認 (有効期限内の同一セッション)
+                                form.save()
+                                res["is_saved"] = True
+                                res["saved_time"] = timezone.now().astimezone().time()
+                                request.session["interview_session_code"][id]["ex_time"] = (
+                                    timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                            else:  # 有効期限外の同一セッション
+                                res["is_saved"] = False
+                                res["errors"] = "前回の保存から一定時間経過したため、セッションが無効化されました"
+                    else:  # session_codeを検索 (一致するものがない場合)
+                        print("session added.")
+                        request.session["interview_session_code"][id] = {
+                            "session_code": request.POST.get("interview_session_code"),
+                            "ex_time": (timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                        }
+                        form.save()
+                        res["is_saved"] = True
+                        res["saved_time"] = timezone.now().astimezone().time()
             else:
                 res["is_saved"] = False
                 res["errors"] = str(form.errors)
             return JsonResponse(res)
         return render(request, "main/interview/view_interview.html", contexts)
-
     except Interview.DoesNotExist:
         contexts["is_saved"] = False
         return HttpResponse(" <script>window.close()</script> ")
+
+
+@login_required
+def exit_interview_session(request, id, session_id):
+    print(id, session_id)
+    if "interview_session_code" in request.session:
+        print("session is disconnect...")
+        if id in request.session["interview_session_code"]:
+            if request.session["interview_session_code"][id]["session_code"] == session_id:
+                print("session log is deleted.")
+                del request.session["interview_session_code"][id]
+        print(request.session["interview_session_code"])
+    return HttpResponse("セッションを切断しました")
 
 
 @login_required

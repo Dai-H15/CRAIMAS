@@ -10,7 +10,6 @@
 
 <body>
     <div class="container-fluid" id = "form-container">
-
         {% include "main/header_newtab.html" %}
         <div class="row m-2">
             {% if as_staff %}
@@ -33,6 +32,7 @@
             </div>
             <form method = "post" id = "interview-form">
                 {% csrf_token %}
+                <input type="hidden" value = "{{interview_session_code}}" name = "interview_session_code" id = "interview_session_code">
                 {% for f in interview %}
                 {% if f.name == "zipcode" %}
                 {% bootstrap_field f %}
@@ -83,7 +83,6 @@
             
         </div>
     </div>
-    <div class = "row m-3"><button class = "btn btn-success" onclick = "window.close()">閉じる</button></div>
     </div>
 
 <div class="toast-container position-fixed top-0 start-0 p-3">
@@ -103,7 +102,7 @@
 {% endif %}
 
 <script>
-    Main.default.interview.init();
+    Main.default.interview.init("{% url 'exit_interview_session' id=inst.InterviewID session_id='placeholder' %}");
 </script>
 {% include "main/footer.html"  %}
 

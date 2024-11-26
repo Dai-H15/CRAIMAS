@@ -1168,11 +1168,11 @@ def search_interviewer(request, company_id, i_name):
                     return HttpResponse("データが存在しません。")
             else:
                 return HttpResponse("不正なリクエストです")
-        interviewer = Interviewer.objects.filter(company_name=company, by_U_ID=request.user.U_ID).filter(
+        interviewer = Interviewer.objects.filter(company_name=company).filter(
             name__icontains=i_name_list[0].strip().strip("様")
         )
         for i in range(1, len(i_name_list)):
-            interviewer = interviewer | Interviewer.objects.filter(company_name=company, by_U_ID=request.user.U_ID).filter(
+            interviewer = interviewer | Interviewer.objects.filter(company_name=company).filter(
                     name__icontains=i_name_list[i].strip().strip("様")
                 )
         contexts["interviewer"] = interviewer

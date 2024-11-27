@@ -1001,7 +1001,7 @@ def exit_interview_session(request, id, session_id):
                 print("session log is deleted.")
                 del request.session["interview_session_code"][id]
         print(request.session["interview_session_code"])
-    return HttpResponse("セッションを切断しました")
+    return HttpResponse("<div class = 'text-center'>セッションを切断しました<br><button class = 'btn btn-primary' onclick = 'window.close()'> 閉じる </button></div>")
 
 
 @login_required

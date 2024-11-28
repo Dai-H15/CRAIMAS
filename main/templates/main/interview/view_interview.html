@@ -27,60 +27,75 @@
                     <input type="checkbox" class="btn-check" id="auto-save-check" autocomplete="off">
                     <label class="btn btn-outline-warning mx-2" for="auto-save-check">自動保存</label>
                 </div>
-
                 {% if from_url %}<div class = "col text-center"><button type="button" class = "btn btn-outline-success" onclick="Main.default.open_as_window.open_as_window('{{from_url}}','my_post',1000,1000)" >応募元サイト</button></div>{% endif %}
             </div>
+            
             <form method = "post" id = "interview-form">
-                {% csrf_token %}
-                <input type="hidden" value = "{{interview_session_code}}" name = "interview_session_code" id = "interview_session_code">
-                {% for f in interview %}
-                {% if f.name == "zipcode" %}
-                {% bootstrap_field f %}
-                <button type="button" class = "btn btn-warning mx-2" onclick="Main.default.interview.search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
-                <button type = "button" class = "btn btn-primary mx-2" onclick="Main.default.interview_create.get_address_from_sheet('{% url 'get_address_from_sheet' RegistID %}')">シートから所在地を引用</button>
-                {% elif f.name == "interviewer" %}
-                {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-4"  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_interviewer('{% url "search_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> 担当者プロフィールを検索</button>
-                {% elif f.name == "Event_URL" %}
-                {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-4"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
-                {% elif f.name == "mail_URL" %}
-                {% bootstrap_field f %}
-                <button type = "button" class = "btn btn-outline-primary mx-3 mb-4"  style="--bs-btn-padding-y: .5rem;--bs-btn-padding-x: .75rem; --bs-btn-font-size: .75rem;" onclick = "Main.default.interview.open_url('id_mail_URL','mail_url', 1000,800)"> 開く</button>
-                {% elif f.name == "reason" %}
-                {% bootstrap_field f %}
-                <button
+                    {% csrf_token %}
+                    <input type="hidden" value = "{{interview_session_code}}" name = "interview_session_code" id = "interview_session_code">
+                    {% for f in interview %}
+                    <div class = "row">
+                    {% if f.name == "date" %}
+                        {% bootstrap_field interview.date wrapper_class="col-6 mx-auto" %}
+                        {% bootstrap_field interview.end_date wrapper_class="col-6 mx-auto" %}
+                    {% elif f.name != "end_date" %}
+                    {% bootstrap_field f %}
+                    {% endif %}
+                    {% if f.name == "zipcode" %}
+                    <button type="button" class = "btn btn-warning my-2 mx-auto col-4" onclick="Main.default.interview.search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
+                    <button type = "button" class = "btn btn-primary my-2 mx-auto col-6" onclick="Main.default.interview_create.get_address_from_sheet('{% url 'get_address_from_sheet' RegistID %}')">シートから所在地を引用</button>
+                    {% endif %}
+                    {% if f.name == "interviewer" %}
+                    <button type = "button" class = "btn btn-outline-primary mx-auto mb-4 col-6" onclick = "Main.default.interview.open_interviewer('{% url "search_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> <i class="bi bi-binoculars"></i>担当者プロフィールを検索</button>
+                    {% endif %}
+                    {% if f.name == "Event_URL" %}
+                    <button type = "button" class = "btn btn-outline-primary mx-3 mb-4 col-2 py-0"  onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
+                    {% endif %}
+                    {% if f.name == "mail_URL" %}
+                    <button type = "button" class = "btn btn-outline-primary mx-3 mb-4 col-2 py-0"  onclick = "Main.default.interview.open_url('id_mail_URL','mail_url', 1000,800)">開く</button>
+                    {% endif %}
+                    {% if f.name == "reason" %}
+                    <button
+                        type="button"
+                        class="btn btn-primary my-2 mx-auto col-10"
+                        onclick = "Main.default.open_as_window.open_as_window('{% url "ESModelSelect" inst.InterviewID %}', 'ESModelSelect', 700, 800)"
+                    >
+                    <i class="bi bi-mortarboard-fill"></i>
+                    ES・質問 管理システムから引用
+                    </button>
+                    {% endif %}
+                    {% if f.name == "note" %}
+                    <button
                     type="button"
-                    class="form-control btn btn-primary my-2"
-                    onclick = "Main.default.open_as_window.open_as_window('{% url "ESModelSelect" inst.InterviewID %}', 'ESModelSelect', 700, 800)"
-                >
-                ES・質問 管理システムから引用
-                </button>
-                {% elif f.name == "note" %}
-                {% bootstrap_field f %}
-                <button
-                type="button"
-                class="form-control btn btn-primary my-2"
-                id="ai-button"
-                onclick="Main.default.interview.get_note_summary()"
-                >
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="ai-status-loading-spin" hidden></span>
-                <span id ="ai-status-loading-text" hidden>要約中...</span>
-                <span id ="ai-status-waiting">面談メモを要約する</span>
-                </button>
-                
-                {% else %}
-                {% bootstrap_field f %}
-                {% endif %}
-                {% endfor %}
-                {% if not as_staff %}
-                <div class = "text-center">
-                    <button type="button" onclick = "Main.default.interview.t_save(false)" class = "btn btn-success mx-4">登録・更新</button>
-                    <button type="button" onclick="Main.default.interview.delete_interview(`{% url 'delete_interview' inst.InterviewID %}`)" class = "btn btn-danger mx-4">面談録を削除</button>
+                    class=" btn btn-primary my-2 mx-auto col-10"
+                    id="ai-button"
+                    onclick="Main.default.interview.get_note_summary()"
+                    >
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" id="ai-status-loading-spin" hidden></span>
+                    <span id ="ai-status-loading-text" class = "fs-5" hidden>要約中...</span>
+                    <span id ="ai-status-waiting" class = "fs-5">  <i class="bi bi-robot"></i>面談メモを要約する</span>
+                    </button>
+                    {% endif %}
                 </div>
-                {% endif %}
+                    {% endfor %}
+                    {% if not as_staff %}
+                    <div class = "row">
+                        <button type="button" onclick = "Main.default.interview.t_save(false)" class = "btn btn-success mx-auto col-3">登録・更新</button>
+                        <button type="button" onclick="Main.default.interview.delete_interview(`{% url 'delete_interview' inst.InterviewID %}`)" class = "btn btn-danger mx-auto col-3">面談録を削除</button>
+                    </div>
+                    {% endif %}
             </form>
         </div>
+        <div class = "row">
+            <button
+                id = "GoogleCalendar"
+                type="button"
+                class="btn btn-dark col-8 mx-auto my-3"
+            >
+            <span class = "fs-5"><i class="bi bi-calendar-date"></i> Googleカレンダーに追加</span>
+            </button>
+        </div>
+
         <div class = "row m-3"><button class = "btn btn-success" onclick = "Main.default.interview.close_window()">閉じる</button></div>
     </div>
 
@@ -102,6 +117,7 @@
 
 <script>
     Main.default.interview.init("{% url 'exit_interview_session' id=inst.InterviewID session_id='placeholder' %}");
+    Main.default.open_as_window.init()
 </script>
 {% include "main/footer.html"  %}
 

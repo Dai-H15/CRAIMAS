@@ -214,7 +214,8 @@ class Interview(models.Model):
     company_name = models.CharField(max_length=200, verbose_name="企業名")
     title = models.CharField(max_length=200, verbose_name="面談録タイトル", blank=False)
     tag = models.CharField(max_length=50, choices=tags, default="briefing", verbose_name="タグ")
-    date = models.DateTimeField(verbose_name="面談日時", default=timezone.now().strftime('%Y-%m-%d %H:%M'))
+    date = models.DateTimeField(verbose_name="面談開始日時", default=timezone.now().strftime('%Y-%m-%d %H:%M'))
+    end_date = models.DateTimeField(verbose_name="面談終了時刻",  blank=False, null=True)
     interviewer = models.CharField(
         max_length=200,
         verbose_name="面接官名",

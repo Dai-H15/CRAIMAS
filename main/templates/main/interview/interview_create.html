@@ -16,7 +16,7 @@
             <div class  = "text-center"><h4 class = "border-bottom p-3">{{name}}</h4></div>
             <div class="container">
                 <div class="row p-3">
-                    <form method = "post">
+                    <form method = "post" id = "create_form">
                     {% csrf_token %}
                     {% for f in form %}
                     {% if f.name == "zipcode" %}

@@ -862,7 +862,7 @@ def interview_main(request, id):
 @login_required
 def interview_create(request, id):
     contexts = collect_regnum(request)
-    form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64), "date": timezone.now()})
+    form = InterviewForm(initial={"RegistID": id, "InterviewID": secrets.token_hex(64), "date": timezone.now(), "end_date": timezone.now()})
     name = RegistSets.objects.get(RegistID=id, by_U_ID=request.user.U_ID).company.name
     contexts["form"] = form
     contexts["name"] = name
@@ -934,6 +934,10 @@ def view_interview(request, id):
                 request.POST, instance=Interview.objects.get(InterviewID=id, by_U_ID=request.user.U_ID)
             )
             if form.is_valid():
+                if (form.cleaned_data["date"] > form.cleaned_data["end_date"]):
+                    res["is_saved"] = False
+                    res["errors"] = "面談開始日時と面談終了日時の組み合わせが不正です。<br>面談終了日時は面談開始日時よりも未来の日付である必要があります"
+                    return JsonResponse(res)
                 if "interview_session_code" not in request.session:  # session_codeを新規作成
                     print("session is not found")
                     request.session["interview_session_code"] = {

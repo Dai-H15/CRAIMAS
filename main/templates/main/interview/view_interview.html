@@ -19,7 +19,7 @@
             </div>
             {% endif %}
             <div class = "row text-center">
-                <h5>企業名：{{inst.RegistID.company.name}}</h5>
+                <h5>企業名：<span id = "company_name">{{inst.RegistID.company.name}}</span></h5>
             </div>
             <div class ="row">
                 <div class = "col text-center"><button type="button" class = "btn btn-outline-info" onclick="Main.default.open_as_window.open_as_window('{% url "view_my_post" RegistID %}','my_post',800,1000)" >企業情報シート</button></div>

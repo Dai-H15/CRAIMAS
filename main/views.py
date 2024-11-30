@@ -980,7 +980,7 @@ def view_interview(request, id):
                         print("session added.")
                         request.session["interview_session_code"][id] = {
                             "session_code": request.POST.get("interview_session_code"),
-                            "ex_time": (timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                            "ex_time": (timezone.now() + timezone.timedelta(minutes=60)).strftime('%H:%M:%S')
                         }
                         form.save()
                         res["is_saved"] = True

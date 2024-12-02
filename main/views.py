@@ -943,7 +943,7 @@ def view_interview(request, id):
                     request.session["interview_session_code"] = {
                         id: {
                             "session_code": request.POST.get("interview_session_code"),
-                            "ex_time": (timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                            "ex_time": (timezone.now() + timezone.timedelta(minutes=60)).strftime('%H:%M:%S')
                         }}
                     form.save()
                     res["is_saved"] = True
@@ -959,7 +959,7 @@ def view_interview(request, id):
                                 res["is_saved"] = True
                                 res["saved_time"] = timezone.now().astimezone().time()
                                 request.session["interview_session_code"][id]["ex_time"] = (
-                                    timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                                    timezone.now() + timezone.timedelta(minutes=60)).strftime('%H:%M:%S')
                                 request.session["session_code"] = request.POST.get("interview_session_code")
                             else:  # 有効なsessionによる保存が残っている場合、セーフガードを設定する
                                 res["is_saved"] = False
@@ -972,7 +972,7 @@ def view_interview(request, id):
                                 res["is_saved"] = True
                                 res["saved_time"] = timezone.now().astimezone().time()
                                 request.session["interview_session_code"][id]["ex_time"] = (
-                                    timezone.now() + timezone.timedelta(minutes=3)).strftime('%H:%M:%S')
+                                    timezone.now() + timezone.timedelta(minutes=60)).strftime('%H:%M:%S')
                             else:  # 有効期限外の同一セッション
                                 res["is_saved"] = False
                                 res["errors"] = "前回の保存から一定時間経過したため、セッションが無効化されました"

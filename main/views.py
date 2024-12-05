@@ -1376,7 +1376,7 @@ def getESModelTable(request, I_ID):
         what = request.POST.get("what")
         search_str = request.POST.get("search_str")
         if what == "tag":
-            NotSelectedES = NotSelectedES.filter(tag__contains=search_str)
+            NotSelectedES = NotSelectedES.filter(tag=search_str)
         if what == "title":
             NotSelectedES = NotSelectedES.filter(title__contains=search_str)
     contexts["NotSelectedES"] = NotSelectedES

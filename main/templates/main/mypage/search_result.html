@@ -15,7 +15,8 @@
     </thead>
     <tbody>
         {% for post in posts %}
-        <tr class = "{% if post.isActive %}table-success {% else %}table-secondary{% endif %}">
+        
+        <tr class = "{% check_interview_tag post %}">
             <td>{{post.created}}</td>
             <td>{{post.company}}</td>
             <td>{{post.company.industry}}</td>

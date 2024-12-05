@@ -42,3 +42,12 @@ def set_counter(value):
     <div class="form-text text-end">文字数: <span id = "counter_{value}">0</span></div>
     """
     return mark_safe(res)
+
+
+@register.simple_tag
+def check_interview_tag(RegistSets):
+    if RegistSets.interview_set.filter(tag="内定").count() > 0:
+        return "table-danger"
+    if RegistSets.isActive:
+        return "table-success"
+    return "table-secondary"

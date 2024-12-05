@@ -1,5 +1,6 @@
 {% load django_bootstrap5 %}
 {% load static %}
+{% load main_tags %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -36,12 +37,16 @@
                     {% csrf_token %}
                     <input type="hidden" value = "{{interview_session_code}}" name = "interview_session_code" id = "interview_session_code">
                     {% for f in interview %}
-                    <div class = "row">
+                    <div class = "row mb-3">
                     {% if f.name == "date" %}
                         {% bootstrap_field interview.date wrapper_class="col-6 mx-auto" %}
                         {% bootstrap_field interview.end_date wrapper_class="col-6 mx-auto" %}
                     {% elif f.name != "end_date" %}
+                    {% if f.name == "note" or "reason" %}
+                    {% bootstrap_field f wrapper_class="mb-0" %}
+                    {% else %}
                     {% bootstrap_field f %}
+                    {% endif %}
                     {% endif %}
                     {% if f.name == "zipcode" %}
                     <button type="button" class = "btn btn-warning my-2 mx-auto col-4" onclick="Main.default.interview.search_zipcode('{% url 'get_address' 'placeholder' %}')">住所を検索</button>
@@ -51,12 +56,13 @@
                     <button type = "button" class = "btn btn-outline-primary mx-auto mb-4 col-6" onclick = "Main.default.interview.open_interviewer('{% url "search_interviewer" company_id=inst.RegistID.company.CompanyID  i_name="interviewer_name" %}')"> <i class="bi bi-binoculars"></i>担当者プロフィールを検索</button>
                     {% endif %}
                     {% if f.name == "Event_URL" %}
-                    <button type = "button" class = "btn btn-outline-primary mx-3 mb-4 col-2 py-0"  onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
+                    <button type = "button" class = "btn btn-outline-primary mx-3 mb-4 mt-2 col-2 py-0"  onclick = "Main.default.interview.open_url('id_Event_URL','event_url', 1000,800)"> 開く</button>
                     {% endif %}
                     {% if f.name == "mail_URL" %}
                     <button type = "button" class = "btn btn-outline-primary mx-3 mb-4 col-2 py-0"  onclick = "Main.default.interview.open_url('id_mail_URL','mail_url', 1000,800)">開く</button>
                     {% endif %}
                     {% if f.name == "reason" %}
+                    {% set_counter f.name %}
                     {% if not as_staff %}
                     <button
                         type="button"
@@ -69,10 +75,12 @@
                     {% endif %}
                     {% endif %}
                     {% if f.name == "note" %}
+                    {% set_counter f.name %}
                     {% if not as_staff %}
+
                     <button
                     type="button"
-                    class=" btn btn-primary my-2 mx-auto col-10"
+                    class=" btn btn-primary my-3 mx-auto col-10"
                     id="ai-button"
                     onclick="Main.default.interview.get_note_summary()"
                     >
@@ -85,7 +93,7 @@
                 </div>
                     {% endfor %}
                     {% if not as_staff %}
-                    <div class = "row">
+                    <div class = "row mt-3">
                         <button type="button" onclick = "Main.default.interview.t_save(false)" class = "btn btn-success mx-auto col-3">登録・更新</button>
                         <button type="button" onclick="Main.default.interview.delete_interview(`{% url 'delete_interview' inst.InterviewID %}`)" class = "btn btn-danger mx-auto col-3">面談録を削除</button>
                     </div>

@@ -31,3 +31,14 @@ def get_interview(value, sets):
         return mark_safe(f"<button class='btn btn-outline-info' onclick='Main.default.open_as_window.open_as_window(\"{reverse('view_interview', args=[str(sets[value])])}\", \"mypage_{str(sets[value])}\", 560, 1000)'> 開く</button>")
     else:
         return mark_safe("<p>未登録</p>")
+
+
+@register.simple_tag
+def set_counter(value):
+    res = f"""
+        <script>
+            Main.default.interview.set_counter('{value}')
+        </script>
+    <div class="form-text text-end">文字数: <span id = "counter_{value}">0</span></div>
+    """
+    return mark_safe(res)

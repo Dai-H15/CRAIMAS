@@ -22,7 +22,7 @@
                 <div class="row p-3">
                     <ul class = "list-unstyled">
                     {% for interview in interviews %}
-                    <li><a onclick="Main.default.interview_main.view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.title}} <br> ({{interview.date}})  [担当: {{interview.interviewer}}]</p></a></li>
+                    <li><a onclick="Main.default.interview_main.view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.title}}  [ 担当: {{interview.interviewer}} ]<br> ({{interview.date}})</p></a></li>
                     {% endfor %}
                 </ul>
                 {% if not as_staff %}

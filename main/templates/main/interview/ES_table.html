@@ -1,0 +1,33 @@
+
+<table class = "table border" id = "NotSelectedESTable">
+<thead>
+    <tr>
+        <th scope="col">選択</th>
+        <th scope="col">日時</th>
+        <th scope="col">タイトル</th>
+        <th scope="col">タグ</th>
+        <th scope="col">操作</th>
+    </tr>
+</thead>
+<tbody>
+    {% for ES in selected_ES %}
+    <tr class="table-success">
+        <td scope="row"><div class="form-check"><input class="form-check-input selectData" type="checkbox" value="{{ES.ESModelID}}" id="" disabled></div></td>
+        <td>{{ES.created}}</td>
+        <td>{{ES.title}}</td>
+        <td>{{ES.tag}}</td>
+        <td><button class = "btn btn-primary" onclick="Main.default.ESdata.get_detail('{% url "GetEsModelDetail" ES.ESModelID %}')">閲覧</button></td>
+    </tr>
+    {% endfor %}
+
+    {% for ES in NotSelectedES %}
+    <tr class="">
+        <td scope="row"><div class="form-check"><input class="form-check-input selectData" type="checkbox" value="{{ES.ESModelID}}" id="" /></div></td>
+        <td>{{ES.created}}</td>
+        <td>{{ES.title}}</td>
+        <td>{{ES.tag}}</td>
+        <td><button class = "btn btn-primary" onclick="Main.default.ESdata.get_detail('{% url "GetEsModelDetail" ES.ESModelID %}')">閲覧</button></td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>

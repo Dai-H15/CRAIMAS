@@ -48,6 +48,7 @@ from pydantic import BaseModel
 # Functions
 from settings.local_settings import OPENAI_APIKEY, OPENAI_BASE, GBIZINFO_API_KEY
 
+
 def collect_regnum(request):
     if request.user.is_authenticated:
         res = {
@@ -1360,6 +1361,27 @@ def ESModelSelect(request, I_ID):
     contexts["I_ID"] = I_ID
     contexts["ES_set"] = ES_set
     return render(request, "main/interview/select_ESdata.html", contexts)
+
+
+@login_required
+def getESModelTable(request, I_ID):
+    contexts = collect_regnum(request)
+    interview = Interview.objects.get(by_U_ID=request.user.U_ID, InterviewID=I_ID)
+    contexts["selected_ES"] = interview.ESlist.all()
+    ES_set = ESModel.objects.filter(by_U_ID=request.user.U_ID)
+    NotSelectedES = ES_set
+    for es in contexts["selected_ES"]:
+        NotSelectedES = NotSelectedES.exclude(ESModelID=es.ESModelID)
+    if request.method == "POST":
+        what = request.POST.get("what")
+        search_str = request.POST.get("search_str")
+        if what == "tag":
+            NotSelectedES = NotSelectedES.filter(tag=search_str)
+        if what == "title":
+            NotSelectedES = NotSelectedES.filter(title=search_str)
+    contexts["NotSelectedES"] = NotSelectedES
+    contexts["ES_set"] = ES_set
+    return render(request, "main/interview/ES_table.html", contexts)
 
 
 @login_required

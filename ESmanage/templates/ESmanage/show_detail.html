@@ -1,4 +1,5 @@
 {% load django_bootstrap5 %}
+{% load main_tags %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -17,6 +18,9 @@
                     {% csrf_token %}
                     {% for f in form %}
                     {% bootstrap_field f%}
+                    {% if f.name == "desc" %}
+                    {% set_counter f.name %}
+                    {% endif %}
                     {% endfor %}
                     <div class="row">
                     <button type="button" onclick = "Main.default.ESmanage.detail.t_save(false)" class = "btn btn-success col-3 mx-auto">登録・更新</button>

@@ -42,5 +42,6 @@ urlpatterns = [
     path("GetEsModelDetail/<str:id>", views.GetEsModelDetail, name="GetEsModelDetail"),
     path("getESModelTable/<str:I_ID>", views.getESModelTable, name="getESModelTable"),
     path("interview/get_summary", views.get_summary, name="get_summary"),
-    path("interview/exit_interview_session/<str:id>/<str:session_id>", views.exit_interview_session, name="exit_interview_session")
+    path("interview/exit_interview_session/<str:id>/<str:session_id>", views.exit_interview_session, name="exit_interview_session"),
+    path("state/index", views.state_show,  name="state_show"),
 ]

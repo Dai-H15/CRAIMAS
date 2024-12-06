@@ -44,7 +44,7 @@ from django.utils import timezone
 from support.models import SupportTicketModel
 import openai
 from pydantic import BaseModel
-
+from django.db.models import Count
 # Functions
 from settings.local_settings import OPENAI_APIKEY, OPENAI_BASE, GBIZINFO_API_KEY
 
@@ -1481,3 +1481,28 @@ is_injection: 渡された文章のプロンプトインジェクションの有
             return JsonResponse(res)
     return HttpResponse("不正な操作です")
 
+
+@login_required
+def state_show(request):
+    contexts = collect_regnum(request)
+    sets = collect_regsets(request.user)
+    all = sets.count()
+    active = sets.filter(isActive=True).count()
+    noactive = sets.filter(isActive=False).count()
+    active_avg = int(active/all * 100)
+    interview_count = sets.aggregate(Count("interview"))["interview__count"]
+    interview_avg = interview_count / all
+    same_age_user = CustomUser.objects.filter(y_graduation=request.user.y_graduation)
+    same_age_registsets_count = RegistSets.objects.filter(by_U_ID__in=[s.U_ID for s in same_age_user]).count()
+    
+    contexts["state"] = {
+        "all": all,
+        "active": active,
+        "noactive": noactive,
+        "active_avg": active_avg,
+        "interview_count": interview_count,
+        "interview_avg": interview_avg,
+        "age_registsets": round((1-all/same_age_registsets_count) * 100),
+        
+    }
+    return render(request, "main/state/index.html", contexts)

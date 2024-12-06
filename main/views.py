@@ -1491,7 +1491,7 @@ def state_show(request):
     noactive = sets.filter(isActive=False).count()
     active_avg = int(active/all * 100)
     interview_count = sets.aggregate(Count("interview"))["interview__count"]
-    interview_avg = interview_count / all
+    interview_avg = round(interview_count / all, 1)
     same_age_user = CustomUser.objects.filter(y_graduation=request.user.y_graduation)
     same_age_registsets_count = RegistSets.objects.filter(by_U_ID__in=[s.U_ID for s in same_age_user]).count()
     

@@ -1492,6 +1492,7 @@ def state_show(request):
     active_avg = int(active/all * 100)
     interview_count = sets.aggregate(Count("interview"))["interview__count"]
     interview_avg = round(interview_count / all, 1)
+    interviewer_count = Interviewer.objects.filter(by_U_ID=request.user.U_ID).count()
     same_age_user = CustomUser.objects.filter(y_graduation=request.user.y_graduation)
     same_age_registsets_count = RegistSets.objects.filter(by_U_ID__in=[s.U_ID for s in same_age_user]).count()
     
@@ -1502,7 +1503,7 @@ def state_show(request):
         "active_avg": active_avg,
         "interview_count": interview_count,
         "interview_avg": interview_avg,
+        "interviewer_count": interviewer_count,
         "age_registsets": round((1-all/same_age_registsets_count) * 100),
-        
     }
     return render(request, "main/state/index.html", contexts)

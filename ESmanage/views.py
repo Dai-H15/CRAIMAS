@@ -168,3 +168,11 @@ def save_by_js(request, id):
             contexts["message"] = "エラーが発生しました。内容を確認してください"
             contexts["saved_time"] = timezone.datetime.now().time()
     return JsonResponse(contexts)
+
+
+@login_required
+def view_ES_interview(request, id):
+    contexts = collect_regnum(request)
+    interviews = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id).interview_set.filter(by_U_ID=request.user.U_ID)
+    contexts["interviews"] = interviews
+    return render(request, "ESmanage/view_interview.html", contexts)

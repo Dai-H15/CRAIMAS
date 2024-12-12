@@ -9,5 +9,6 @@ urlpatterns = [
     path("show_detail/<str:id>", views.show_detail, name="ES_show_detail"),
     path("search/<str:to>/<str:what>/<str:page_num>", views.search, name="ES_search"),
     path("delete/<str:id>", views.delete, name="ES_delete"),
-    path("save/<str:id>", views.save_by_js, name="save_by_js")
+    path("save/<str:id>", views.save_by_js, name="save_by_js"),
+    path("interview/<str:id>", views.view_ES_interview, name="view_ES_interview")
 ]

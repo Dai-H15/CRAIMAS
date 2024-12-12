@@ -52,7 +52,7 @@ from settings.local_settings import OPENAI_APIKEY, OPENAI_BASE, GBIZINFO_API_KEY
 def collect_regnum(request):
     if request.user.is_authenticated:
         res = {
-            "num_c": Companies.objects.filter(by_U_ID=request.user.U_ID).count(),
+            "num_c": RegistSets.objects.filter(by_U_ID=request.user.U_ID).count(),
             "num_a": RegistSets.objects.filter(isActive=True, by_U_ID=request.user.U_ID).count(),
             "num_i": Interview.objects.filter(by_U_ID=request.user.U_ID, RegistID__isActive=True).count(),
         }

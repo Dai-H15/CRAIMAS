@@ -16,7 +16,7 @@
                 <div class="row p-3">
                     <ul class = "list-unstyled">
                     {% for interview in interviews %}
-                    <li><a onclick="Main.default.interview_main.view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.company_name}}: {{interview.title}}  [ 担当: {{interview.interviewer}} ]<br> ({{interview.date}})</p></a></li>
+                    <li><a onclick="Main.default.interview_main.view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.company_name}}<br>{{interview.title}}  [ 担当: {{interview.interviewer}} ]<br> ({{interview.date}})</p></a></li>
                     {% empty %}
                     <div
                         class="alert alert-warning text-center"

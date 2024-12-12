@@ -11,23 +11,19 @@
 
         {% include "main/header_newtab.html" %}
         <div class="row m-2">
-            <div class  = "text-center"><h4 class = "border-bottom p-3">{{R_sets.company}}</h4><h5> 面談録一覧</h5></div>
-            <div class="container">
-                <div class="row p-3">
-                    <ul class = "list-unstyled">
-                    {% for interview in interviews %}
-                    <li><a onclick="Main.default.interview_main.view_interview('{% url "view_interview" "placeholder" %}','{{interview.InterviewID}}')"><p>{{interview.company_name}}<br>{{interview.title}}  [ 担当: {{interview.interviewer}} ]<br> ({{interview.date}})</p></a></li>
-                    {% empty %}
-                    <div
-                        class="alert alert-warning text-center"
-                        role="alert"
-                    >
-                        <strong>引用された面談録がありません</strong>
-                        <p>面談録に該当のES・質問を引用することで表示できます</p>
-                    </div>
-                    {% endfor %}
-                </ul>
+            <div class = "col text-center">
+                <input type="checkbox" class="btn-check" id="isActive_check" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="isActive_check">活動終了企業を表示</label>
+            </div>
+            <div class  = "text-center"><h4 class = "border-bottom p-3">{{ESModel.title}}</h4><h5> 引用先面談録一覧</h5></div>
+            <div class = "col mx-auto text-center" id = "status_spinner">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">検索中</span>
                 </div>
+                <p class = "">検索中...</p>
+            </div>
+            <div class="container" id = "interview_result">
+                
             </div>
             <button class ="btn btn-outline-primary" onclick="window.close()">閉じる</button>
         </div>
@@ -37,6 +33,7 @@
     <script>
         Main.default.interview_main.init()
         Main.default.open_as_window.init()
+        Main.default.ESmanage.interview.init('{% url "get_ES_interview" id=ESModel.ESModelID setting="placeholder" %}')
     </script>
     {% include "main/footer.html"  %}
 

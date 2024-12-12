@@ -10,5 +10,6 @@ urlpatterns = [
     path("search/<str:to>/<str:what>/<str:page_num>", views.search, name="ES_search"),
     path("delete/<str:id>", views.delete, name="ES_delete"),
     path("save/<str:id>", views.save_by_js, name="save_by_js"),
-    path("interview/<str:id>", views.view_ES_interview, name="view_ES_interview")
+    path("interview/<str:id>", views.view_ES_interview, name="view_ES_interview"),
+    path("interview/get/<str:id>/<str:setting>", views.get_ES_interview, name="get_ES_interview")
 ]

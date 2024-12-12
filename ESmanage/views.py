@@ -173,6 +173,17 @@ def save_by_js(request, id):
 @login_required
 def view_ES_interview(request, id):
     contexts = collect_regnum(request)
-    interviews = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id).interview_set.filter(by_U_ID=request.user.U_ID)
-    contexts["interviews"] = interviews
+    esmodel = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    contexts["ESModel"] = esmodel
     return render(request, "ESmanage/view_interview.html", contexts)
+
+
+@login_required
+def get_ES_interview(request, id, setting):
+    contexts = {}
+    esmodel = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    interviews = esmodel.interview_set.filter(by_U_ID=request.user.U_ID)
+    if setting == "act":
+        interviews = interviews.filter(RegistID__isActive=True)
+    contexts["interviews"] = interviews
+    return render(request, "ESmanage/interview_result.html", contexts)

@@ -22,7 +22,10 @@
                         <li><button class="dropdown-item text-bg-success p-2"
                             onclick = "Main.default.open_as_window.open_as_window('{% url "ES_show_detail" post.ESModelID %}', 'ES_show_detail', 500, 780)">閲覧・編集</button>
                     </li>
-                <li><button class="dropdown-item text-bg-danger p-2"
+                    <li><button class="dropdown-item text-bg-primary p-2"
+                        onclick = "Main.default.open_as_window.open_as_window('{% url "view_ES_interview" post.ESModelID %}', 'ES_interview', 500, 780)">引用先面談録を検索</button>
+                </li>
+            <li><button class="dropdown-item text-bg-danger p-2"
                     onclick = "Main.default.open_as_window.open_as_window('{% url "ES_delete" post.ESModelID %}', 'ES_delete', 440, 780)">削除</button>
             </li>
 </ul>

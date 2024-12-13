@@ -173,7 +173,10 @@ def save_by_js(request, id):
 @login_required
 def view_ES_interview(request, id):
     contexts = collect_regnum(request)
-    esmodel = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    try:
+        esmodel = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    except ESModel.DoesNotExist:
+        return HttpResponse("不正な操作を検出しました。アクセスは拒否されました。<button onclick = 'window.close()'> 閉じる </button>")
     contexts["ESModel"] = esmodel
     return render(request, "ESmanage/view_interview.html", contexts)
 
@@ -181,7 +184,10 @@ def view_ES_interview(request, id):
 @login_required
 def get_ES_interview(request, id, setting):
     contexts = {}
-    esmodel = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    try:
+        esmodel = ESModel.objects.get(by_U_ID=request.user.U_ID, ESModelID=id)
+    except ESModel.DoesNotExist:
+        return HttpResponse("不正な操作を検出しました。アクセスは拒否されました。<button onclick = 'window.close()'> 閉じる </button>")
     interviews = esmodel.interview_set.filter(by_U_ID=request.user.U_ID)
     if setting == "act":
         interviews = interviews.filter(RegistID__isActive=True)

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        {% include "main/html_head.html" %}
+    </head>
+    
+<body>
+    <div class = "container-fluid">
+        {% include "main/header.html" %}
+        <div class = "row p-3 text-center">
+            <h5>操作が完了しました</h5>
+            <h5>数秒後にダウンロードを開始します</h5>
+        </div>
+    </div>
+    </div>
+    <script>
+        Main.default.custom_sheet.download.init('{{req_url}}')
+    </script>
+    {% include "main/footer.html"  %}
+
+</body>
+</html>

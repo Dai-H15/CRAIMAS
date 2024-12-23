@@ -8,4 +8,6 @@ urlpatterns = [
     path("delete_custom_sheet/<str:id>", views.delete_custom_sheet, name="delete_custom_sheet"),
     path("export_customsheet/", views.export_customsheet, name="export_customsheet"),
     path("import_customsheet/", views.import_customsheet, name="import_customsheet"),
+    path("export_to_csv/<str:sheet_id>", views.export_to_csv, name="export_to_csv"),
+    path("start_export_to_csv/<str:sheet_id>", views.start_export_to_csv, name="start_export_to_csv"),
 ]

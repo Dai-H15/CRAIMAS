@@ -14,7 +14,12 @@ from django.apps import apps
 import secrets
 from django.urls import reverse
 from django.forms.models import model_to_dict
-import json, datetime, urllib
+import json
+import datetime
+import urllib
+import csv
+from django.utils import timezone
+from django.urls import resolve
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -30,14 +35,15 @@ def view_index(request):
     return render(request, "view/view_index.html", contexts)
 
 
+ForeignKeySets = {
+        "company_name": "company_name__name"
+    }
+
+
 @login_required
 def view_main(request, control, option):
     contexts = collect_regnum(request)
     contexts["control"] = control
-
-    ForeignKeySets = {
-        "company_name": "company_name__name"
-    }
     menu = [
         {"choice": "top", "desc": "トップページ", "th_all": []},
         {
@@ -258,69 +264,7 @@ def view_main(request, control, option):
                 for cs in CustomSheet.objects.filter(by_U_ID=request.user.U_ID)
             ]:
                 contexts["customsheet"] = "true"
-                cs = CustomSheet.objects.get(sheet_id=control, by_U_ID=request.user.U_ID)
-                results = apps.get_model("main", cs.model).objects.filter(by_U_ID=request.user.U_ID).all()
-                if cs.search_settings != {}:
-                    if cs.search_settings["how"] == "1":
-                        results = results.filter(
-                            **{f"{cs.search_settings['where']}": cs.search_settings["what"]}
-                        )
-                    elif cs.search_settings["how"] == "2":
-                        results = results.filter(
-                            **{
-                                f"{cs.search_settings['where']}__contains": cs.search_settings[
-                                    "what"
-                                ]
-                            }
-                        )
-                    elif cs.search_settings["how"] == "3":
-                        results = results.filter(
-                            **{
-                                f"{cs.search_settings['where']}__gte": cs.search_settings[
-                                    "what"
-                                ]
-                            }
-                        )
-                    elif cs.search_settings["how"] == "4":
-                        results = results.filter(
-                            **{
-                                f"{cs.search_settings['where']}__lte": cs.search_settings[
-                                    "what"
-                                ]
-                            }
-                        )
-                    elif cs.search_settings["how"] == "5":
-                        results = results.exclude(
-                            **{
-                                f"{cs.search_settings['where']}": cs.search_settings[
-                                    "what"
-                                ]
-                            }
-                        )
-                if cs.view_settings != {}:
-                    if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
-                        results = results.order_by(list(cs.view_settings.keys())[0])
-                    elif cs.view_settings[list(cs.view_settings.keys())[0]] == "2":
-                        results = results.order_by(
-                            list(cs.view_settings.keys())[0]
-                        ).reverse()
-                if results.count() == 0:
-                    if (cs.search_settings != {}):
-                        if (cs.search_settings['where'] in ForeignKeySets):
-                            raise Django_FieldError
-                    contexts["message"] = {
-                        "type": "warning",
-                        "message": "条件に一致するデータが1つもありませんでした。",
-                    }
-                contexts["sheet_config"] = {
-                    "model": cs.model,
-                    "selected": cs.selected_field,
-                    "view_settings": cs.view_settings,
-                    "search_settings": cs.search_settings,
-                    "sheet_id": cs.sheet_id,
-                }
-                contexts["results"] = results
-                contexts["count"] = results.count()
+                cs, contexts = fetch_custom_sheet_data(request, control, contexts, ForeignKeySets)
                 contexts["th_all"] = cs.selected_field
             else:
                 contexts["message"] = {
@@ -341,6 +285,73 @@ def view_main(request, control, option):
     if ("message" in contexts) and (contexts["message"]["type"] == "danger"):
         return render(request, "view/main.html", contexts, status=403)
     return render(request, "view/main.html", contexts)
+
+
+def fetch_custom_sheet_data(request, control, contexts, ForeignKeySets):
+    cs = CustomSheet.objects.get(sheet_id=control, by_U_ID=request.user.U_ID)
+    results = apps.get_model("main", cs.model).objects.filter(by_U_ID=request.user.U_ID).all()
+    if cs.search_settings != {}:
+        if cs.search_settings["how"] == "1":
+            results = results.filter(
+                            **{f"{cs.search_settings['where']}": cs.search_settings["what"]}
+                        )
+        elif cs.search_settings["how"] == "2":
+            results = results.filter(
+                            **{
+                                f"{cs.search_settings['where']}__contains": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+        elif cs.search_settings["how"] == "3":
+            results = results.filter(
+                            **{
+                                f"{cs.search_settings['where']}__gte": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+        elif cs.search_settings["how"] == "4":
+            results = results.filter(
+                            **{
+                                f"{cs.search_settings['where']}__lte": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+        elif cs.search_settings["how"] == "5":
+            results = results.exclude(
+                            **{
+                                f"{cs.search_settings['where']}": cs.search_settings[
+                                    "what"
+                                ]
+                            }
+                        )
+    if cs.view_settings != {}:
+        if cs.view_settings[list(cs.view_settings.keys())[0]] == "1":
+            results = results.order_by(list(cs.view_settings.keys())[0])
+        elif cs.view_settings[list(cs.view_settings.keys())[0]] == "2":
+            results = results.order_by(
+                            list(cs.view_settings.keys())[0]
+                        ).reverse()
+    if results.count() == 0:
+        if (cs.search_settings != {}):
+            if (cs.search_settings['where'] in ForeignKeySets):
+                raise Django_FieldError
+        contexts["message"] = {
+                        "type": "warning",
+                        "message": "条件に一致するデータが1つもありませんでした。",
+                    }
+    contexts["sheet_config"] = {
+                    "model": cs.model,
+                    "selected": cs.selected_field,
+                    "view_settings": cs.view_settings,
+                    "search_settings": cs.search_settings,
+                    "sheet_id": cs.sheet_id,
+                }
+    contexts["results"] = results
+    contexts["count"] = results.count()
+    return cs, contexts
 
 
 @login_required
@@ -564,3 +575,45 @@ def import_customsheet(request):
         contexts["name_ng_data"] = name_ng_data
         return render(request, "view/import_result.html", contexts)
     return render(request, "view/import_customsheet.html", contexts)
+
+
+@login_required
+def start_export_to_csv(request, sheet_id):
+    contexts = collect_regnum(request)
+    contexts["sheet_id"] = sheet_id
+    contexts["req_url"] = request.build_absolute_uri(reverse('export_to_csv', kwargs={'sheet_id': sheet_id}))
+    return render(request, "view/start_export.html", contexts)
+
+
+@login_required
+def export_to_csv(request, sheet_id):
+    contexts = {}
+    try:
+        sheet, contexts = fetch_custom_sheet_data(
+                                        request,
+                                        sheet_id,
+                                        contexts,
+                                        ForeignKeySets
+                                        )
+    except CustomSheet.DoesNotExist:
+        return HttpResponse("不正な操作を検出しました")
+    try:
+        response = HttpResponse(content_type="text/csv; charset=shift-jis")
+        selected_field: dict = sheet.selected_field
+        # init
+        csv_columns = list(selected_field.values())
+        writer = csv.writer(response)
+        date = timezone.datetime.now()
+        writer.writerows([[f"抽出対象: {sheet.sheet_name}", f"抽出結果: {contexts['results'].count()} 件"], [f"{date.strftime('%Y年 %m月 %d日')} 抽出"], []])
+        writer.writerow(csv_columns)
+        for datasets in contexts["results"]:
+            data = []
+            for field in (list(selected_field)):
+                data.append(getattr(datasets, field, ''))
+            writer.writerow(data)
+        response["Content-Disposition"] = "attachment; filename*=UTF-8''{}".format(
+            urllib.parse.quote((f"{sheet.sheet_name}_{date.strftime('%Y_%m_%d')}.csv").encode("utf8"))
+        )
+        return response
+    except UnicodeEncodeError:
+        return HttpResponse("エラーが発生しました<br>環境依存文字が使用されている可能性があります。管理者までお問い合わせください<br>")

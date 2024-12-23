@@ -55,7 +55,7 @@
 
                             {% if results %}
                             {% if customsheet %}
-                            {% if count %}<h5 class = " p-3 border-bottom border-top">抽出結果: {{count}} 件</h5>{% endif %}
+                            {% if count %}<h5 class = " p-3 border-bottom border-top">抽出結果: {{count}} 件 <button class = "btn btn-success mx-4 " onclick = "Main.default.open_as_window.open_as_window('{% url "start_export_to_csv" control %}', 'export_to_csv', 500, 500)"> CSVにエクスポート </button></h5> {% endif %}
                                 {% include "view/customsheet/viewer.html" %}
                             {% else %}
                             {% with "view/tables/"|add:control|add:".html" as template_name %}

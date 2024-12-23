@@ -43,7 +43,7 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="{{key}}"
                                                 id="{{forloop.counter}}" name="selected_field"
-                                                onchange="Main.default.custom_sheet_create.change_input('{{forloop.counter}}')">
+                                                onchange="Main.default.custom_sheet.custom_sheet_create.change_input('{{forloop.counter}}')">
                                             <label class="form-check-label" for="{{forloop.counter}}">{{val}}</label>
                                             <div class="input-group ">
                                                 <input class="form-control" type="text" placeholder="表示名を入力"
@@ -59,7 +59,7 @@
                                 </div>
 
                                 
-                        </div><button class="btn btn-success m-3" type="button" onclick="Main.default.custom_sheet_create.submit_sheet_settings('select_model_and_field')">次へ進む</button>{% endif %}
+                        </div><button class="btn btn-success m-3" type="button" onclick="Main.default.custom_sheet.custom_sheet_create.submit_sheet_settings('select_model_and_field')">次へ進む</button>{% endif %}
                                     
                                     {% if selected_field %}
                                     <div class="input-group mb-3">
@@ -191,7 +191,7 @@
                                         </div>
                                     </div>
                             </div></div>
-                        </div><button class = "btn btn-success" type = "button" onclick = "Main.default.custom_sheet_create.submit_sheet_settings('view_setting')">次へ進む</button>
+                        </div><button class = "btn btn-success" type = "button" onclick = "Main.default.custom_sheet.custom_sheet_create.submit_sheet_settings('view_setting')">次へ進む</button>
                         {% endif %}
                     </div>
                     {% if result_data %}
@@ -240,7 +240,7 @@
                                 {% if result_data.view_setting_search_how == "5" %}<option value="5" selected readonly>({{result_data.view_setting_search}}) が '{{result_data.view_setting_search_string}}' を除く</option>{% endif %}
                             </select>
                         </div>
-                        <button class = "btn btn-success" type = "button" onclick = "Main.default.custom_sheet_create.submit_sheet_settings('create_sheet')">登録する</button>
+                        <button class = "btn btn-success" type = "button" onclick = "Main.default.custom_sheet.custom_sheet_create.submit_sheet_settings('create_sheet')">登録する</button>
                         {% endif %}
 
                     </form>

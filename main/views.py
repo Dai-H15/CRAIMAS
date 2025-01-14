@@ -1078,7 +1078,9 @@ def export_sheet(request, id):
         try:
             if request.POST["type"] == "csv":
                 response = HttpResponse(content_type="text/csv; charset=shift-jis")
+                now = ""
                 for s in sets.values():
+                    now = s
                     csv_columns = list(s.keys())
                     writer = csv.DictWriter(response, csv_columns)
                     writer.writeheader()
@@ -1088,8 +1090,8 @@ def export_sheet(request, id):
                     urllib.parse.quote((f"{name}.csv").encode("utf8"))
                 )
                 return response
-        except UnicodeEncodeError:
-            return HttpResponse("エラーが発生しました<br>環境依存文字が使用されている可能性があります。管理者までお問い合わせください<br>")
+        except UnicodeEncodeError as E:
+            return HttpResponse(f"エラーが発生しました<br>環境依存文字が使用されている可能性があります。管理者までお問い合わせください<br>対象箇所:{now}<br> {E}")
         else:
 
             class DateTimeEncoder(json.JSONEncoder):

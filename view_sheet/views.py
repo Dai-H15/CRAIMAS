@@ -615,5 +615,6 @@ def export_to_csv(request, sheet_id):
             urllib.parse.quote((f"{sheet.sheet_name}_{date.strftime('%Y_%m_%d')}.csv").encode("utf8"))
         )
         return response
-    except UnicodeEncodeError:
-        return HttpResponse("エラーが発生しました<br>環境依存文字が使用されている可能性があります。管理者までお問い合わせください<br>")
+    except UnicodeEncodeError as E:
+        error = data
+        return HttpResponse(f"エラーが発生しました<br>環境依存文字が使用されている可能性があります。管理者までお問い合わせください<br>発生箇所: {error}<br>{E}")

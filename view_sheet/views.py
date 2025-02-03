@@ -609,8 +609,27 @@ def export_to_csv(request, sheet_id):
         for datasets in contexts["results"]:
             data = []
             for field in (list(selected_field)):
-                data.append(getattr(datasets, field, ''))
-            writer.writerow(data)
+                col = getattr(datasets, field, '')
+                if type(col) is str:
+                    col = col.replace("～", "-")
+                data.append(col)
+            try:
+                writer.writerow(data)
+            except UnicodeEncodeError:
+                new_data = []
+                for item in data:
+                    if isinstance(item, str):
+                        fixed_item = ""
+                        for ch in item:
+                            try:
+                                ch.encode("shift_jis")
+                                fixed_item += ch
+                            except UnicodeEncodeError:
+                                fixed_item += "?"
+                        new_data.append(fixed_item)
+                    else:
+                        new_data.append(item)
+                writer.writerow(new_data)
         response["Content-Disposition"] = "attachment; filename*=UTF-8''{}".format(
             urllib.parse.quote((f"{sheet.sheet_name}_{date.strftime('%Y_%m_%d')}.csv").encode("utf8"))
         )
